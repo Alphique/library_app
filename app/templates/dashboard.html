@@ -1,0 +1,178 @@
+<!-- app/templates/dashboard.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">📊 Dashboard</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Wallet Balance -->
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Wallet Balance</h5>
+                        <h2>${{ "%.2f"|format(current_user.wallet.balance) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <span style="font-size: 2rem;">💰</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('payments.wallet') }}" class="btn btn-light btn-sm mt-2">Add Funds</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Books -->
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">My Books</h5>
+                        <h2>{{ current_user.books.count() }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <span style="font-size: 2rem;">📚</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('books.my_books') }}" class="btn btn-light btn-sm mt-2">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Transactions</h5>
+                        <h2>{{ current_user.transactions.count() }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <span style="font-size: 2rem;">💳</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-light btn-sm mt-2">View History</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Rentals -->
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Active Rentals</h5>
+                        <h2>{{ current_user.transactions.filter_by(transaction_type='rental').count() }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <span style="font-size: 2rem;">⏰</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-light btn-sm mt-2">View Rentals</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">🚀 Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('books.upload') }}" class="btn btn-outline-primary btn-lg">📤 Upload New Book</a>
+                    <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-primary btn-lg">🔍 Browse Catalog</a>
+                    <a href="{{ url_for('payments.wallet') }}" class="btn btn-outline-primary btn-lg">💰 Manage Wallet</a>
+                    <a href="{{ url_for('books.my_books') }}" class="btn btn-outline-primary btn-lg">📖 View My Books</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">📈 Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.transactions.count() > 0 %}
+                    <div class="list-group list-group-flush">
+                        {% for transaction in current_user.transactions.order_by(Transaction.created_at.desc()).limit(5).all() %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">{{ transaction.created_at.strftime('%b %d, %Y') }}</small>
+                                <br>
+                                <strong>{{ transaction.transaction_type|title }} - ${{ "%.2f"|format(transaction.amount) }}</strong>
+                            </div>
+                            <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} rounded-pill">
+                                {{ transaction.status }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No recent activity</p>
+                    <div class="text-center">
+                        <a href="{{ url_for('books.catalog') }}" class="btn btn-primary">Start Exploring</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- My Recent Books -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📚 My Recent Books</h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.books.count() > 0 %}
+                    <div class="row">
+                        {% for book in current_user.books.order_by(Book.created_at.desc()).limit(4).all() %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ book.title }}</h6>
+                                    <p class="card-text text-muted small">{{ book.author }}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }}">
+                                            {{ book.status }}
+                                        </span>
+                                        {% if book.price > 0 %}
+                                            <strong>${{ "%.2f"|format(book.price) }}</strong>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('books.my_books') }}" class="btn btn-outline-info">View All Books</a>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">You haven't uploaded any books yet.</p>
+                    <div class="text-center">
+                        <a href="{{ url_for('books.upload') }}" class="btn btn-primary">Upload Your First Book</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+<!-- app/templates/admin/announcements.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">📢 Manage Announcements</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Create New Announcement</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control", placeholder="Enter announcement title") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.content.label(class="form-label") }}
+                        {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid", rows="5") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control", rows="5", placeholder="Enter announcement content...") }}
+                        {% endif %}
+                        <div class="form-text">You can use basic HTML formatting if needed</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.is_active.label(class="form-label") }}
+                        {% if form.is_active.errors %}
+                            {{ form.is_active(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.is_active.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.is_active(class="form-select") }}
+                        {% endif %}
+                        <div class="form-text">Active announcements are visible to all users</div>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Existing Announcements -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Current Announcements</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning text-center">
+                    <strong>No announcements created yet.</strong>
+                    <br>
+                    <small class="text-muted">Create your first announcement using the form above.</small>
+                </div>
+                
+                <!-- Example announcement structure (commented out for now) -->
+                <!--
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Welcome to CUZ Library!</strong>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div class="card-body">
+                        <p>Welcome to our new library platform! We're excited to offer peer-to-peer book sharing.</p>
+                        <small class="text-muted">Created: 2024-01-01 | By: Admin</small>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-sm btn-outline-primary">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Announcement Guidelines -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">💡 Announcement Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <ul class="small mb-0">
+                    <li>Keep announcements clear and concise</li>
+                    <li>Use active announcements for important updates</li>
+                    <li>Inactive announcements are archived but not displayed</li>
+                    <li>Include relevant dates and deadlines</li>
+                    <li>Use formatting to improve readability</li>
+                    <li>Test announcements on different devices</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mt-3">
+            <div class="card-header bg-warning">
+                <h6 class="mb-0">⚡ Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm">View All Announcements</button>
+                    <button class="btn btn-outline-primary btn-sm">Export Announcements</button>
+                    <button class="btn btn-outline-primary btn-sm">Announcement Templates</button>
+                    <button class="btn btn-outline-primary btn-sm">Schedule Announcement</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement Stats -->
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">📈 Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <h3 class="text-primary">0</h3>
+                    <small class="text-muted">Total Announcements</small>
+                </div>
+                <div class="row text-center mt-3">
+                    <div class="col-6">
+                        <h5 class="text-success">0</h5>
+                        <small>Active</small>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-secondary">0</h5>
+                        <small>Inactive</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

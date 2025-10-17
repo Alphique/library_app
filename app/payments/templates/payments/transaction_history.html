@@ -1,0 +1,121 @@
+<!-- app/templates/payments/transaction_history.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">💳 Transaction History</h1>
+    </div>
+</div>
+
+{% if transactions %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">All Transactions</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>
+                                    <small>{{ transaction.created_at.strftime('%b %d, %Y') }}</small>
+                                    <br>
+                                    <small class="text-muted">{{ transaction.created_at.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}">
+                                        {{ transaction.transaction_type|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>{{ transaction.book.title }}</strong>
+                                    <br>
+                                    <small class="text-muted">by {{ transaction.book.author }}</small>
+                                </td>
+                                <td>
+                                    <span class="text-{{ 'danger' if transaction.amount > 0 else 'success' }}">
+                                        {{ '-' if transaction.amount > 0 else '+' }}${{ "%.2f"|format(transaction.amount) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }}">
+                                        {{ transaction.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('books.book_detail', book_id=transaction.book.book_id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        View Book
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body text-center">
+                <h5>Total Transactions</h5>
+                <h3>{{ transactions|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body text-center">
+                <h5>Total Spent</h5>
+                <h3>${{ "%.2f"|format(total_spent) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body text-center">
+                <h5>Purchases</h5>
+                <h3>{{ purchase_count }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body text-center">
+                <h5>Rentals</h5>
+                <h3>{{ rental_count }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center py-5">
+            <h4 class="text-muted">📭 No transactions yet</h4>
+            <p class="text-muted">Start renting or purchasing books to see your transaction history.</p>
+            <a href="{{ url_for('books.catalog') }}" class="btn btn-primary btn-lg">Browse Books</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

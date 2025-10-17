@@ -1,0 +1,168 @@
+<!-- app/templates/admin/users.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>👥 Manage Users</h1>
+            <span class="badge bg-primary fs-6">Total: {{ users.total }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">🔍 Search & Filter Users</h6>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('admin.users') }}">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control", value=request.args.get('username', '')) }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", value=request.args.get('email', '')) }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.role.label(class="form-label") }}
+                            {{ form.role(class="form-select", value=request.args.get('role', '')) }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form.status.label(class="form-label") }}
+                            {{ form.status(class="form-select", value=request.args.get('status', '')) }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Users List</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Books</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users.items %}
+                            <tr>
+                                <td><small>{{ user.user_id }}</small></td>
+                                <td>
+                                    <strong>{{ user.username }}</strong>
+                                    {% if user.user_id == current_user.user_id %}
+                                    <span class="badge bg-info">You</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if user.role == 'admin' else 'secondary' }}">
+                                        {{ user.role|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if user.is_active else 'danger' }}">
+                                        {{ 'Active' if user.is_active else 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td><small>{{ user.created_at.strftime('%Y-%m-%d') }}</small></td>
+                                <td>
+                                    <span class="badge bg-info">{{ user.books.count() }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        {% if user.user_id != current_user.user_id %}
+                                            {% if user.role != 'admin' %}
+                                                <a href="{{ url_for('admin.make_admin', user_id=user.user_id) }}" 
+                                                   class="btn btn-outline-primary"
+                                                   onclick="return confirm('Make {{ user.username }} an admin?')">
+                                                    Make Admin
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ url_for('admin.toggle_user', user_id=user.user_id) }}" 
+                                               class="btn btn-{{ 'warning' if user.is_active else 'success' }}"
+                                               onclick="return confirm('{{ 'Deactivate' if user.is_active else 'Activate' }} {{ user.username }}?')">
+                                                {{ 'Deactivate' if user.is_active else 'Activate' }}
+                                            </a>
+                                        {% else %}
+                                            <button class="btn btn-outline-secondary" disabled>Current User</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if users.pages > 1 %}
+<div class="row mt-4">
+    <div class="col-12">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if users.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.users', page=users.prev_num, username=request.args.get('username'), email=request.args.get('email'), role=request.args.get('role'), status=request.args.get('status')) }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in users.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                    {% if page_num %}
+                        {% if users.page == page_num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{{ url_for('admin.users', page=page_num, username=request.args.get('username'), email=request.args.get('email'), role=request.args.get('role'), status=request.args.get('status')) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin.users', page=page_num, username=request.args.get('username'), email=request.args.get('email'), role=request.args.get('role'), status=request.args.get('status')) }}">{{ page_num }}</a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if users.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.users', page=users.next_num, username=request.args.get('username'), email=request.args.get('email'), role=request.args.get('role'), status=request.args.get('status')) }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

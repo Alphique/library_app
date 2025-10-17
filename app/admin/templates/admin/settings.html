@@ -1,0 +1,205 @@
+<!-- app/templates/admin/settings.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">⚙️ System Settings</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">General Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.site_name.label(class="form-label") }}
+                        {% if form.site_name.errors %}
+                            {{ form.site_name(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.site_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.site_name(class="form-control") }}
+                        {% endif %}
+                        <div class="form-text">The name displayed throughout the platform</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.site_description.label(class="form-label") }}
+                        {{ form.site_description(class="form-control", rows="3") }}
+                        <div class="form-text">Brief description of your library platform</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.default_rental_days.label(class="form-label") }}
+                            {% if form.default_rental_days.errors %}
+                                {{ form.default_rental_days(class="form-control is-invalid", type="number") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.default_rental_days.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.default_rental_days(class="form-control", type="number") }}
+                            {% endif %}
+                            <div class="form-text">Default rental period in days</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.transaction_fee.label(class="form-label") }}
+                            {% if form.transaction_fee.errors %}
+                                {{ form.transaction_fee(class="form-control is-invalid", type="number", step="0.01") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.transaction_fee.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.transaction_fee(class="form-control", type="number", step="0.01") }}
+                            {% endif %}
+                            <div class="form-text">Platform fee percentage on transactions</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.max_file_size.label(class="form-label") }}
+                        {% if form.max_file_size.errors %}
+                            {{ form.max_file_size(class="form-control is-invalid", type="number") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.max_file_size.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.max_file_size(class="form-control", type="number") }}
+                        {% endif %}
+                        <div class="form-text">Maximum file upload size in MB</div>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card mt-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">⚠️ Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6>Clear All Data</h6>
+                        <p class="text-muted small">Permanently delete all books, users, and transactions</p>
+                        <button class="btn btn-outline-danger btn-sm" disabled>Clear All Data</button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6>Reset Platform</h6>
+                        <p class="text-muted small">Reset everything to default settings</p>
+                        <button class="btn btn-outline-danger btn-sm" disabled>Reset Platform</button>
+                    </div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> These actions are irreversible and will permanently delete data.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- System Information -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">🖥️ System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Platform Version:</strong>
+                    <span class="float-end">v1.0.0</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Flask Version:</strong>
+                    <span class="float-end">v2.3.3</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Database:</strong>
+                    <span class="float-end">SQLite</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Server Time:</strong>
+                    <span class="float-end" id="serverTime">{{ now.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Uptime:</strong>
+                    <span class="float-end">100%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card mt-3">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">📊 Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small>Total Users:</small>
+                    <strong class="float-end">{{ total_users }}</strong>
+                </div>
+                <div class="mb-2">
+                    <small>Total Books:</small>
+                    <strong class="float-end">{{ total_books }}</strong>
+                </div>
+                <div class="mb-2">
+                    <small>Total Transactions:</small>
+                    <strong class="float-end">{{ total_transactions }}</strong>
+                </div>
+                <div class="mb-2">
+                    <small>Active Rentals:</small>
+                    <strong class="float-end">{{ active_rentals }}</strong>
+                </div>
+                <div class="mb-2">
+                    <small>Platform Revenue:</small>
+                    <strong class="float-end text-success">$0.00</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="card mt-3">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">🔧 Maintenance</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-warning btn-sm">Clear Cache</button>
+                    <button class="btn btn-outline-warning btn-sm">Optimize Database</button>
+                    <button class="btn btn-outline-warning btn-sm">Run Backup</button>
+                    <button class="btn btn-outline-warning btn-sm">Check Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update server time every second
+function updateServerTime() {
+    const now = new Date();
+    document.getElementById('serverTime').textContent = now.toLocaleString();
+}
+setInterval(updateServerTime, 1000);
+</script>
+{% endblock %}

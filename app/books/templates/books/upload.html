@@ -1,0 +1,138 @@
+<!-- app/templates/books/upload.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">📤 Upload New Book</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control", placeholder="Enter book title") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.author.label(class="form-label") }}
+                            {% if form.author.errors %}
+                                {{ form.author(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.author.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.author(class="form-control", placeholder="Enter author name") }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.isbn.label(class="form-label") }}
+                            {{ form.isbn(class="form-control", placeholder="Optional ISBN") }}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.category.label(class="form-label") }}
+                            {% if form.category.errors %}
+                                {{ form.category(class="form-select is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.category.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.category(class="form-select") }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows="4", placeholder="Enter book description...") }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.price.label(class="form-label") }}
+                            {% if form.price.errors %}
+                                {{ form.price(class="form-control is-invalid", type="number", step="0.01", min="0") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.price.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.price(class="form-control", type="number", step="0.01", min="0", placeholder="0.00") }}
+                            {% endif %}
+                            <div class="form-text">Set to 0 if not for sale</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.rental_fee.label(class="form-label") }}
+                            {% if form.rental_fee.errors %}
+                                {{ form.rental_fee(class="form-control is-invalid", type="number", step="0.01", min="0") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.rental_fee.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.rental_fee(class="form-control", type="number", step="0.01", min="0", placeholder="0.00") }}
+                            {% endif %}
+                            <div class="form-text">Set to 0 if not for rent</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.book_file.label(class="form-label") }}
+                        {{ form.book_file(class="form-control") }}
+                        {% if form.book_file.errors %}
+                            <div class="text-danger">
+                                {% for error in form.book_file.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Upload PDF file (max 16MB)</div>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">💡 Upload Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Set both price and rental fee to 0 if you want to share the book for free</li>
+                    <li>PDF files are recommended for best compatibility</li>
+                    <li>Make sure you have the rights to share the book</li>
+                    <li>Provide a clear description to attract more readers</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

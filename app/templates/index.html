@@ -1,0 +1,85 @@
+<!-- app/templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ url_for('static', filename='photos/studentbg.jpg') }}'); background-size: cover; background-position: center; color: white; padding: 5rem 2rem; border-radius: 0.5rem; margin-bottom: 3rem; text-align: center;">
+    <div class="container">
+        <img src="{{ url_for('static', filename='photos/cavendish2.png') }}" alt="Cavendish University" height="80" class="mb-4">
+        <h1 class="display-4 fw-bold">Welcome to CUZ Library Management System</h1>
+        <p class="lead fs-4">A peer-to-peer platform for renting and selling academic resources.</p>
+        <hr class="my-4" style="border-color: white;">
+        <p class="fs-5">Share your books, earn from your resources, and access affordable learning materials.</p>
+        {% if not current_user.is_authenticated %}
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg me-3" href="{{ url_for('auth.register') }}">Get Started</a>
+            <a class="btn btn-outline-light btn-lg" href="{{ url_for('auth.login') }}">Login</a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a class="btn btn-success btn-lg me-3" href="{{ url_for('books.catalog') }}">Browse Catalog</a>
+            <a class="btn btn-outline-light btn-lg" href="{{ url_for('books.upload') }}">Upload Book</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">📚</div>
+                    <h3 class="card-title">Rent Books</h3>
+                    <p class="card-text">Access textbooks at a fraction of the cost through short-term rentals. Perfect for semester-long courses.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">💰</div>
+                    <h3 class="card-title">Sell Books</h3>
+                    <p class="card-text">Monetize your used textbooks and academic materials. Turn your old books into cash!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">👥</div>
+                    <h3 class="card-title">Share Resources</h3>
+                    <p class="card-text">Build a collaborative academic community with your peers. Knowledge shared is knowledge squared.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Quick Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('books.upload') }}" class="btn btn-outline-primary w-100">📤 Upload Book</a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-primary w-100">🔍 Browse Catalog</a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('payments.wallet') }}" class="btn btn-outline-primary w-100">💰 My Wallet</a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('books.my_books') }}" class="btn btn-outline-primary w-100">📖 My Books</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+<!-- app/templates/books/catalog.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4">📚 Book Catalog</h1>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('books.catalog') }}">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            {{ search_form.search.label(class="form-label") }}
+                            {{ search_form.search(class="form-control", placeholder="Search by title or author...") }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ search_form.category.label(class="form-label") }}
+                            {{ search_form.category(class="form-select") }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                {{ search_form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-secondary">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Books Grid -->
+<div class="row">
+    {% if books.items %}
+        {% for book in books.items %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 book-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">by {{ book.author }}</h6>
+                    <p class="card-text small text-muted">
+                        {{ book.description[:100] }}{% if book.description|length > 100 %}...{% endif %}
+                    </p>
+                    <div class="mb-2">
+                        <span class="badge bg-info">{{ book.category|replace('-', ' ')|title }}</span>
+                        <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }}">
+                            {{ book.status|title }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if book.price > 0 %}
+                                <strong class="text-success">${{ "%.2f"|format(book.price) }}</strong>
+                            {% endif %}
+                            {% if book.rental_fee > 0 %}
+                                <small class="text-muted d-block">Rent: ${{ "%.2f"|format(book.rental_fee) }}/day</small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <h4 class="text-muted">📭 No books found</h4>
+                <p class="text-muted">Try adjusting your search criteria or browse all books.</p>
+                <a href="{{ url_for('books.catalog') }}" class="btn btn-primary">Browse All Books</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('books.upload') }}" class="btn btn-outline-primary">Upload a Book</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Pagination -->
+{% if books.pages > 1 %}
+<div class="row mt-4">
+    <div class="col-12">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if books.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('books.catalog', page=books.prev_num, search=request.args.get('search'), category=request.args.get('category')) }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in books.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                    {% if page_num %}
+                        {% if books.page == page_num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{{ url_for('books.catalog', page=page_num, search=request.args.get('search'), category=request.args.get('category')) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('books.catalog', page=page_num, search=request.args.get('search'), category=request.args.get('category')) }}">{{ page_num }}</a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if books.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('books.catalog', page=books.next_num, search=request.args.get('search'), category=request.args.get('category')) }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

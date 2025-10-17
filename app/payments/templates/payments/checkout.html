@@ -1,0 +1,183 @@
+<!-- app/templates/payments/checkout.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">🛒 Checkout</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Order Review</h5>
+            </div>
+            <div class="card-body">
+                {% for item in cart_items %}
+                <div class="row align-items-center mb-3 pb-3 border-bottom">
+                    <div class="col-md-1">
+                        <div class="bg-light rounded p-2 text-center">
+                            {% if item.type == 'purchase' %}
+                                🛒
+                            {% else %}
+                                ⏰
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <h6 class="mb-1">{{ item.title }}</h6>
+                        <p class="text-muted small mb-1">by {{ item.author }}</p>
+                        <span class="badge bg-{{ 'success' if item.type == 'purchase' else 'info' }}">
+                            {{ item.type|title }}
+                        </span>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        {% if item.type == 'purchase' and item.price > 0 %}
+                            <strong class="text-success">${{ "%.2f"|format(item.price) }}</strong>
+                        {% elif item.type == 'rental' and item.rental_fee > 0 %}
+                            <small class="text-info">${{ "%.2f"|format(item.rental_fee) }}/day</small>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a href="{{ url_for('payments.remove_from_cart', book_id=item.book_id) }}" 
+                           class="btn btn-sm btn-outline-danger">
+                            Remove
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">💳 Payment Method</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.payment_method.label(class="form-label") }}
+                        {% if form.payment_method.errors %}
+                            {{ form.payment_method(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.payment_method.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.payment_method(class="form-select") }}
+                        {% endif %}
+                    </div>
+
+                    <!-- Wallet Balance Info -->
+                    {% if current_user.wallet.balance >= total %}
+                    <div class="alert alert-success">
+                        <strong>✅ Sufficient Funds</strong>
+                        <br>
+                        Your wallet balance: <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
+                        <br>
+                        Total due: <strong>${{ "%.2f"|format(total) }}</strong>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Insufficient Funds</strong>
+                        <br>
+                        Your wallet balance: <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
+                        <br>
+                        Total due: <strong>${{ "%.2f"|format(total) }}</strong>
+                        <br>
+                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-sm btn-primary mt-2">Add Funds</a>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        {% if current_user.wallet.balance >= total %}
+                            {{ form.submit(class="btn btn-success btn-lg", onclick="return confirm('Confirm purchase? This action cannot be undone.')") }}
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg" disabled>Complete Purchase</button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Order Summary -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Items ({{ cart_items|length }}):</span>
+                    <strong>${{ "%.2f"|format(total) }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Transaction Fee:</span>
+                    <strong>$0.00</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Platform Fee:</span>
+                    <strong>$0.00</strong>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-3">
+                    <span><strong>Total:</strong></span>
+                    <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+                </div>
+
+                <!-- Wallet Info -->
+                <div class="alert alert-info">
+                    <h6>💰 Wallet Balance</h6>
+                    <div class="d-flex justify-content-between">
+                        <span>Current:</span>
+                        <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>After Purchase:</span>
+                        <strong class="text-{{ 'success' if (current_user.wallet.balance - total) >= 0 else 'danger' }}">
+                            ${{ "%.2f"|format(current_user.wallet.balance - total) }}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Protection -->
+        <div class="card mt-3">
+            <div class="card-header bg-warning">
+                <h6 class="mb-0">🛡️ Purchase Protection</h6>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    • Instant digital delivery<br>
+                    • 7-day money-back guarantee<br>
+                    • Secure payment processing<br>
+                    • 24/7 customer support<br>
+                    • DRM-protected content
+                </small>
+            </div>
+        </div>
+
+        <!-- Need Help -->
+        <div class="card mt-3">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="mb-0">❓ Need Help?</h6>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    Contact our support team:<br>
+                    • Email: library@cavendish.co.zm<br>
+                    • Phone: +260 123 456 789<br>
+                    • Hours: 24/7
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
