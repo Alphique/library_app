@@ -4,20 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CUZ Library System{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <title>{% block title %}CUZ Library Management System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ====== GENERAL ====== */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ====== HEADER ====== */
+        .cavendish-header {
+            background: #003366;
+            color: white;
+            padding: 0.8rem 0;
+            border-bottom: 4px solid #d4af37; /* gold line accent */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            width: 70px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .header-titles h1 {
+            font-size: 1.4rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .header-titles h2 {
+            font-size: 1rem;
+            margin: 0;
+            color: #f1f1f1;
+            font-weight: 400;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user, .nav-guest {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: #f8f9fa;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #d4af37;
+        }
+
+        .user-welcome {
+            font-weight: 500;
+            color: #ffd700;
+        }
+
+        /* ====== MAIN CONTENT ====== */
+        .main-content {
+            min-height: 70vh;
+            padding: 2rem 0;
+        }
+
+        /* ====== FOOTER ====== */
+        .cavendish-footer {
+            background: #002244;
+            color: #ccc;
+            padding: 2rem 0 1rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: auto;
+        }
+
+        .footer-info h4 {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .footer-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #b5b5b5;
+        }
+
+        .footer-links a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            margin-bottom: 0.3rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffd700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% include 'includes/_navbar.html' %}
-    
-    <div class="container mt-4">
-        {% include 'includes/_messages.html' %}
-        {% block content %}{% endblock %}
-    </div>
+    <!-- Cavendish University Header -->
+    <header class="cavendish-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-brand">
+                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="Cavendish University" class="header-logo">
+                    <div class="header-titles">
+                        <h1>Cavendish University Zambia</h1>
+                        <h2>Library Management System</h2>
+                    </div>
+                </div>
+                <nav class="header-nav">
+                    {% if current_user.is_authenticated %}
+                    <div class="nav-user">
+                        <span class="user-welcome">Welcome, {{ current_user.username }}</span>
+                        <div class="nav-links">
+                            <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                            <a class="nav-link" href="{{ url_for('books.catalog') }}">Catalog</a>
+                            <a class="nav-link" href="{{ url_for('payments.wallet') }}">
+                                💰 ${{ "%.2f"|format(current_user.wallet.balance) }}
+                            </a>
+                            {% if current_user.is_admin() %}
+                            <a class="nav-link admin-link" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
+                            {% endif %}
+                            <a class="nav-link logout-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="nav-guest">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Student Login</a>
+                        <a class="nav-link admin-link" href="{{ url_for('auth.login') }}">Admin Login</a>
+                    </div>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% include 'includes/_messages.html' %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Cavendish Footer -->
+    <footer class="cavendish-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="Cavendish University" class="footer-logo">
+                    <div class="footer-text ms-2">
+                        <h4>Cavendish University Zambia</h4>
+                        <p>Transforming Education Through Innovation</p>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="{{ url_for('main.index') }}">Home</a>
+                    <a href="{{ url_for('books.catalog') }}">Book Catalog</a>
+                    <a href="{{ url_for('auth.login') }}">Student Portal</a>
+                    {% if current_user.is_authenticated and current_user.is_admin() %}
+                    <a href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Cavendish University Zambia. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

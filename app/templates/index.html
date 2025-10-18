@@ -1,85 +1,762 @@
 <!-- app/templates/index.html -->
 {% extends "base.html" %}
 
+{% block styles %}
+<style>
+/* ===== PREMIUM CAVENDISH THEME ===== */
+:root {
+    --cavendish-navy: #0f1b35;
+    --cavendish-blue: #1a237e;
+    --cavendish-primary: #3f51b5;
+    --cavendish-accent: #5c6bc0;
+    --cavendish-gold: #ffd700;
+    --cavendish-teal: #26a69a;
+    --cavendish-light: #f8fafc;
+    --cavendish-white: #ffffff;
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-gold: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    --gradient-teal: linear-gradient(135deg, #26a69a 0%, #4db6ac 100%);
+}
+
+/* ===== PREMIUM HERO SECTION ===== */
+.premium-hero {
+    background: var(--cavendish-navy);
+    color: white;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(59, 81, 181, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(38, 166, 154, 0.05) 0%, transparent 50%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 4rem 0;
+}
+
+.hero-badge {
+    background: var(--gradient-gold);
+    color: var(--cavendish-navy);
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-title-accent {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.4rem;
+    opacity: 0.9;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    font-weight: 300;
+    max-width: 600px;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    position: relative;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--cavendish-gold);
+    display: block;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-premium {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    text-decoration: none;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.btn-premium:hover::before {
+    left: 100%;
+}
+
+.btn-primary-premium {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary-premium:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+}
+
+.btn-outline-premium {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-outline-premium:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+.hero-visual-premium {
+    position: relative;
+    height: 600px;
+}
+
+.floating-element {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    animation: float3d 4s ease-in-out infinite;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+.element-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+    background: var(--gradient-primary);
+}
+
+.element-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 1.5s;
+    background: var(--gradient-teal);
+}
+
+.element-3 {
+    top: 35%;
+    left: 65%;
+    animation-delay: 2.5s;
+    background: var(--gradient-gold);
+}
+
+.element-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.element-text {
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+}
+
+.main-visual-premium {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.visual-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes float3d {
+    0%, 100% { 
+        transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
+    }
+    33% { 
+        transform: translateY(-20px) rotateX(5deg) rotateY(5deg); 
+    }
+    66% { 
+        transform: translateY(-10px) rotateX(-3deg) rotateY(-3deg); 
+    }
+}
+
+/* ===== PREMIUM FEATURES ===== */
+.premium-features {
+    background: var(--cavendish-light);
+    padding: 6rem 0;
+    position: relative;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card-premium {
+    background: white;
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 40px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.feature-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.feature-card-premium:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.8);
+}
+
+.feature-icon-premium {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    font-size: 2.5rem;
+    color: white;
+}
+
+.feature-card-premium h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--cavendish-navy);
+}
+
+.feature-card-premium p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.feature-list-premium {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list-premium li {
+    padding: 0.6rem 0;
+    color: var(--cavendish-navy);
+    position: relative;
+    padding-left: 2rem;
+    font-weight: 500;
+}
+
+.feature-list-premium li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--cavendish-teal);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* ===== PREMIUM PROCESS ===== */
+.premium-process {
+    background: white;
+    padding: 6rem 0;
+}
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.process-step {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--cavendish-light);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.process-step:hover {
+    transform: translateY(-5px);
+    background: white;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.step-number {
+    font-size: 4rem;
+    font-weight: 800;
+    color: rgba(59, 81, 181, 0.1);
+    line-height: 1;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.step-icon-premium {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.process-step h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--cavendish-navy);
+}
+
+.process-step p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* ===== PREMIUM CTA ===== */
+.premium-cta {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 5rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-content {
+    position: relative;
+    z-index: 2;
+}
+
+.cta-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.cta-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-cta-premium {
+    background: var(--gradient-gold);
+    color: var(--cavendish-navy);
+    padding: 1.5rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 15px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.btn-cta-premium:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(255, 215, 0, 0.6);
+    color: var(--cavendish-navy);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    
+    .hero-stats {
+        gap: 2rem;
+        justify-content: center;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-premium {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .floating-element {
+        display: none;
+    }
+    
+    .main-visual-premium {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .process-steps {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-title {
+        font-size: 2.2rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.stagger-animation > * {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ url_for('static', filename='photos/studentbg.jpg') }}'); background-size: cover; background-position: center; color: white; padding: 5rem 2rem; border-radius: 0.5rem; margin-bottom: 3rem; text-align: center;">
+<!-- Premium Hero Section -->
+<section class="premium-hero">
+    <div class="hero-background"></div>
     <div class="container">
-        <img src="{{ url_for('static', filename='photos/cavendish2.png') }}" alt="Cavendish University" height="80" class="mb-4">
-        <h1 class="display-4 fw-bold">Welcome to CUZ Library Management System</h1>
-        <p class="lead fs-4">A peer-to-peer platform for renting and selling academic resources.</p>
-        <hr class="my-4" style="border-color: white;">
-        <p class="fs-5">Share your books, earn from your resources, and access affordable learning materials.</p>
-        {% if not current_user.is_authenticated %}
-        <div class="mt-4">
-            <a class="btn btn-primary btn-lg me-3" href="{{ url_for('auth.register') }}">Get Started</a>
-            <a class="btn btn-outline-light btn-lg" href="{{ url_for('auth.login') }}">Login</a>
-        </div>
-        {% else %}
-        <div class="mt-4">
-            <a class="btn btn-success btn-lg me-3" href="{{ url_for('books.catalog') }}">Browse Catalog</a>
-            <a class="btn btn-outline-light btn-lg" href="{{ url_for('books.upload') }}">Upload Book</a>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<div class="container">
-    <div class="row text-center mb-5">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="feature-icon mb-3">📚</div>
-                    <h3 class="card-title">Rent Books</h3>
-                    <p class="card-text">Access textbooks at a fraction of the cost through short-term rentals. Perfect for semester-long courses.</p>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content stagger-animation">
+                    <div class="hero-badge fade-in-up">
+                        🎓 Zambia's Premier Academic Platform
+                    </div>
+                    <h1 class="hero-title fade-in-up">
+                        Revolutionize Your
+                        <span class="hero-title-accent">Learning Experience</span>
+                    </h1>
+                    <p class="hero-subtitle fade-in-up">
+                        Join Cavendish University's cutting-edge platform where students connect, share resources, and build academic success together through peer-to-peer collaboration.
+                    </p>
+                    <div class="hero-stats fade-in-up">
+                        <div class="stat-item">
+                            <span class="stat-number">1K+</span>
+                            <div class="stat-label">Digital Resources</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">2.5K+</span>
+                            <div class="stat-label">Active Scholars</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">$15K+</span>
+                            <div class="stat-label">Total Savings</div>
+                        </div>
+                    </div>
+                    {% if not current_user.is_authenticated %}
+                    <div class="hero-actions fade-in-up">
+                        <a href="{{ url_for('auth.register') }}" class="btn-premium btn-primary-premium">
+                            <span>🚀</span>
+                            Begin Your Journey
+                        </a>
+                        <a href="{{ url_for('auth.login') }}" class="btn-premium btn-outline-premium">
+                            <span>⚡</span>
+                            Access Platform
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="hero-actions fade-in-up">
+                        <a href="{{ url_for('books.catalog') }}" class="btn-premium btn-primary-premium">
+                            <span>🔍</span>
+                            Explore Resources
+                        </a>
+                        <a href="{{ url_for('books.upload') }}" class="btn-premium btn-outline-premium">
+                            <span>📚</span>
+                            Contribute Content
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="feature-icon mb-3">💰</div>
-                    <h3 class="card-title">Sell Books</h3>
-                    <p class="card-text">Monetize your used textbooks and academic materials. Turn your old books into cash!</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="feature-icon mb-3">👥</div>
-                    <h3 class="card-title">Share Resources</h3>
-                    <p class="card-text">Build a collaborative academic community with your peers. Knowledge shared is knowledge squared.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% if current_user.is_authenticated %}
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Quick Actions</h4>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('books.upload') }}" class="btn btn-outline-primary w-100">📤 Upload Book</a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-primary w-100">🔍 Browse Catalog</a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('payments.wallet') }}" class="btn btn-outline-primary w-100">💰 My Wallet</a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('books.my_books') }}" class="btn btn-outline-primary w-100">📖 My Books</a>
-                        </div>
+            <div class="col-lg-6">
+                <div class="hero-visual-premium">
+                    <div class="floating-element element-1">
+                        <span class="element-icon">📖</span>
+                        <div class="element-text">Smart Textbooks</div>
+                    </div>
+                    <div class="floating-element element-2">
+                        <span class="element-icon">💻</span>
+                        <div class="element-text">Digital Notes</div>
+                    </div>
+                    <div class="floating-element element-3">
+                        <span class="element-icon">👥</span>
+                        <div class="element-text">Peer Network</div>
+                    </div>
+                    <div class="main-visual-premium">
+                        <img src="{{ url_for('static', filename='photos/studentbg.jpg') }}" alt="Cavendish Learning Community" class="visual-image">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endif %}
-</div>
+</section>
+
+<!-- Premium Features Section -->
+<section class="premium-features">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title fade-in-up">Why Cavendish Library Stands Out</h2>
+            <p class="section-subtitle fade-in-up">Experience academic innovation at its finest with our premium platform features</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card-premium fade-in-up">
+                <div class="feature-icon-premium">💸</div>
+                <h3>Cost-Effective Excellence</h3>
+                <p>Access premium academic resources without the premium price tag. Our peer-to-peer model ensures affordability.</p>
+                <ul class="feature-list-premium">
+                    <li>Save up to 80% on textbooks</li>
+                    <li>Flexible rental options</li>
+                    <li>Direct peer transactions</li>
+                </ul>
+            </div>
+            <div class="feature-card-premium fade-in-up">
+                <div class="feature-icon-premium">🚀</div>
+                <h3>Seamless Digital Experience</h3>
+                <p>Enjoy a modern, intuitive platform designed for today's digital-native students and educators.</p>
+                <ul class="feature-list-premium">
+                    <li>Instant digital access</li>
+                    <li>Mobile-optimized design</li>
+                    <li>Real-time notifications</li>
+                </ul>
+            </div>
+            <div class="feature-card-premium fade-in-up">
+                <div class="feature-icon-premium">🌐</div>
+                <h3>Global Academic Network</h3>
+                <p>Connect with peers, share knowledge, and build your professional network within our trusted community.</p>
+                <ul class="feature-list-premium">
+                    <li>Verified student community</li>
+                    <li>Academic collaboration tools</li>
+                    <li>Knowledge sharing ecosystem</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Premium Process Section -->
+<section class="premium-process">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-title fade-in-up">How Excellence Works</h2>
+            <p class="section-subtitle fade-in-up">Three simple steps to transform your academic journey</p>
+        </div>
+        <div class="process-steps">
+            <div class="process-step fade-in-up">
+                <span class="step-number">01</span>
+                <span class="step-icon-premium">👤</span>
+                <h4>Create Your Profile</h4>
+                <p>Join our exclusive academic community with your Cavendish credentials and unlock premium features.</p>
+            </div>
+            <div class="process-step fade-in-up">
+                <span class="step-number">02</span>
+                <span class="step-icon-premium">📚</span>
+                <h4>Access & Contribute</h4>
+                <p>Browse thousands of resources or share your own expertise with fellow scholars.</p>
+            </div>
+            <div class="process-step fade-in-up">
+                <span class="step-number">03</span>
+                <span class="step-icon-premium">🎯</span>
+                <h4>Achieve Excellence</h4>
+                <p>Leverage our platform to enhance your learning, save costs, and build your academic reputation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Premium CTA Section -->
+<section class="premium-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title fade-in-up">Ready to Elevate Your Academic Journey?</h2>
+            <p class="cta-subtitle fade-in-up">Join thousands of Cavendish students who are already transforming their educational experience through innovative resource sharing.</p>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.register') }}" class="btn-cta-premium fade-in-up">
+                <span>🎓</span>
+                Join Cavendish Elite
+            </a>
+            {% else %}
+            <a href="{{ url_for('books.catalog') }}" class="btn-cta-premium fade-in-up">
+                <span>⚡</span>
+                Continue Your Journey
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Premium animations and interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced floating animations
+    const floatingElements = document.querySelectorAll('.floating-element');
+    floatingElements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 1.5}s`;
+    });
+
+    // Scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in-up');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all premium elements
+    document.querySelectorAll('.feature-card-premium, .process-step').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Enhanced hover effects
+    const premiumCards = document.querySelectorAll('.feature-card-premium, .process-step');
+    premiumCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Parallax effect for hero background
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const hero = document.querySelector('.premium-hero');
+        if (hero) {
+            hero.style.backgroundPosition = `center ${scrolled * 0.5}px`;
+        }
+    });
+});
+</script>
 {% endblock %}
