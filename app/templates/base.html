@@ -1,4 +1,3 @@
-<!-- app/templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CUZ Library Management System{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* ====== GENERAL ====== */
@@ -14,6 +14,27 @@
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
         }
 
         /* ====== HEADER ====== */
@@ -22,6 +43,7 @@
             color: white;
             padding: 0.8rem 0;
             border-bottom: 4px solid #d4af37; /* gold line accent */
+            width: 100%;
         }
 
         .header-content {
@@ -91,57 +113,186 @@
 
         /* ====== MAIN CONTENT ====== */
         .main-content {
-            min-height: 70vh;
+            flex: 1;
+            width: 100%;
             padding: 2rem 0;
         }
 
-        /* ====== FOOTER ====== */
-        .cavendish-footer {
+        /* ====== FEATURES SECTION ====== */
+        .features-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #003366;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: #e8eaf6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: #003366;
+            font-size: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #003366;
+        }
+
+        .feature-card p {
+            color: #666;
+        }
+
+        /* ====== IMPROVED FOOTER ====== */
+        footer {
             background: #002244;
             color: #ccc;
-            padding: 2rem 0 1rem;
+            padding: 60px 0 20px;
+            width: 100%;
         }
 
-        .footer-content {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
+        .footer-main {
+            padding-bottom: 40px;
         }
 
-        .footer-logo {
-            width: 60px;
-            height: auto;
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
         }
 
-        .footer-info h4 {
-            margin: 0.5rem 0 0;
-            font-size: 1.1rem;
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
             color: white;
+            position: relative;
+            padding-bottom: 10px;
         }
 
-        .footer-text p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #b5b5b5;
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #d4af37;
+        }
+
+        .footer-col p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
         }
 
         .footer-links a {
-            display: block;
-            color: #ccc;
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            margin-bottom: 0.3rem;
-            transition: color 0.3s ease;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a i {
+            margin-right: 8px;
+            font-size: 0.9rem;
         }
 
         .footer-links a:hover {
-            color: #ffd700;
+            color: #d4af37;
+        }
+
+        .footer-contact li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .footer-contact i {
+            margin-right: 10px;
+            margin-top: 4px;
+            color: #d4af37;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #d4af37;
+            transform: translateY(-3px);
         }
 
         .footer-bottom {
             text-align: center;
-            margin-top: 1rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
             color: #999;
         }
@@ -160,6 +311,18 @@
             .nav-links {
                 flex-wrap: wrap;
                 gap: 0.5rem;
+            }
+            
+            .features-section {
+                padding: 60px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -212,28 +375,64 @@
         </div>
     </main>
 
-    <!-- Cavendish Footer -->
-    <footer class="cavendish-footer">
+    <!-- Improved Footer -->
+    <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-info d-flex align-items-center">
-                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="Cavendish University" class="footer-logo">
-                    <div class="footer-text ms-2">
-                        <h4>Cavendish University Zambia</h4>
-                        <p>Transforming Education Through Innovation</p>
+            <div class="footer-main">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3>About Cavendish Library</h3>
+                        <p>Providing exceptional academic resources and digital learning tools to empower students and faculty in their educational journey.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Book Catalog</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Research Portal</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> E-Resources</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>Student Resources</h3>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Study Rooms</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Research Help</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Citation Tools</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Online Tutorials</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-col">
+                        <h3>Contact Information</h3>
+                        <ul class="footer-links footer-contact">
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Plot 14657, Great East Road, Lusaka, Zambia</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <span>+260 211 387 200</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <span>library@cavendish.ac.zm</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div class="footer-links">
-                    <a href="{{ url_for('main.index') }}">Home</a>
-                    <a href="{{ url_for('books.catalog') }}">Book Catalog</a>
-                    <a href="{{ url_for('auth.login') }}">Student Portal</a>
-                    {% if current_user.is_authenticated and current_user.is_admin() %}
-                    <a href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
-                    {% endif %}
-                </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>&copy; 2025 Cavendish University Zambia. All rights reserved.</p>
+                <p>&copy; 2023 Cavendish University Zambia. All rights reserved. | Transforming Education Through Innovation</p>
             </div>
         </div>
     </footer>
