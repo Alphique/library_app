@@ -39,4 +39,11 @@ def create_app(config_name='default'):
     from app.routes import bp as main_bp
     app.register_blueprint(main_bp)
     
+    # Import models and setup user loader
+    from app.models import User
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    
     return app

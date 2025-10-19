@@ -19,7 +19,8 @@ def dashboard():
     total_transactions = Transaction.query.count()
     recent_transactions = Transaction.query.order_by(Transaction.created_at.desc()).limit(5).all()
     
-    return render_template('dashboard.html',  # Remove 'admin/' prefix
+    # FIX: Use the admin-specific dashboard template
+    return render_template('admin/dashboard.html',  # Add 'admin/' prefix
                          title='Admin Dashboard',
                          total_users=total_users,
                          total_books=total_books,
@@ -58,7 +59,8 @@ def users():
     
     users = query.order_by(User.created_at.desc()).paginate(page=page, per_page=20, error_out=False)
     
-    return render_template('users.html', title='Manage Users', users=users, form=form)  # Remove 'admin/' prefix
+    # FIX: Use admin-specific users template
+    return render_template('admin/users.html', title='Manage Users', users=users, form=form)
 
 @bp.route('/toggle_user/<int:user_id>')
 @login_required
@@ -120,7 +122,8 @@ def books():
     
     books = query.order_by(Book.created_at.desc()).paginate(page=page, per_page=20, error_out=False)
     
-    return render_template('books.html', title='Manage Books', books=books, form=form)  # Remove 'admin/' prefix
+    # FIX: Use admin-specific books template
+    return render_template('admin/books.html', title='Manage Books', books=books, form=form)
 
 @bp.route('/delete_book/<int:book_id>')
 @login_required
@@ -136,6 +139,7 @@ def delete_book(book_id):
     flash(f'Book "{book.title}" has been deleted.', 'success')
     return redirect(url_for('admin.books'))
 
+# app/admin/routes.py - Update transactions function
 @bp.route('/transactions')
 @login_required
 def transactions():
@@ -146,7 +150,16 @@ def transactions():
     page = request.args.get('page', 1, type=int)
     transactions = Transaction.query.order_by(Transaction.created_at.desc()).paginate(page=page, per_page=20, error_out=False)
     
-    return render_template('transactions.html', title='Transaction History', transactions=transactions)  # Remove 'admin/' prefix
+    # Calculate total volume
+    total_volume = db.session.query(db.func.sum(Transaction.amount)).scalar() or 0.0
+    
+    return render_template('admin/transactions.html', 
+                         title='Transaction History', 
+                         transactions=transactions,
+                         total_volume=total_volume)  # Add this variable
+
+# app/admin/routes.py - Update settings function
+from datetime import datetime
 
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -162,7 +175,10 @@ def settings():
         flash('System settings have been updated!', 'success')
         return redirect(url_for('admin.settings'))
     
-    return render_template('settings.html', title='System Settings', form=form)  # Remove 'admin/' prefix
+    return render_template('admin/settings.html', 
+                         title='System Settings', 
+                         form=form,
+                         now=datetime.utcnow())  # Add this variable
 
 @bp.route('/announcements', methods=['GET', 'POST'])
 @login_required
@@ -178,4 +194,5 @@ def announcements():
         flash('Announcement has been created!', 'success')
         return redirect(url_for('admin.announcements'))
     
-    return render_template('announcements.html', title='Manage Announcements', form=form)  # Remove 'admin/' prefix
+    # FIX: Use admin-specific announcements template
+    return render_template('admin/announcements.html', title='Manage Announcements', form=form)

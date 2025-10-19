@@ -58,8 +58,9 @@ def register():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # If already logged in, redirect based on role
-        if current_user.is_admin():
+        # If already logged in, redirect based on role - FIXED
+        print(f"Already authenticated: {current_user.username}, Role: {current_user.role}, is_admin: {current_user.is_admin()}")
+        if current_user.role == 'admin':  # Use direct role check for safety
             return redirect(url_for('admin.dashboard'))
         else:
             return redirect(url_for('main.dashboard'))
@@ -69,9 +70,11 @@ def login():
         login_identifier = form.login_identifier.data
         password = form.password.data
         
-        # Try to find user by email OR username
+        # Try to find user by email OR username OR student_id
         user = User.query.filter(
-            (User.email == login_identifier) | (User.username == login_identifier)
+            (User.email == login_identifier) | 
+            (User.username == login_identifier) |
+            (User.student_id == login_identifier)
         ).first()
         
         if user and user.check_password(password):
@@ -88,10 +91,14 @@ def login():
                 db.session.add(wallet)
                 db.session.commit()
             
-            # Role-based redirect after login
+            # DEBUG: Print user info for troubleshooting
+            print(f"LOGIN SUCCESS: User: {user.username}, Role: {user.role}, is_admin(): {user.is_admin()}")
+            
+            # Role-based redirect after login - FIXED with direct role check
             if user.role == 'admin':
                 flash(f'Welcome back, Administrator {user.username}!', 'success')
-                return redirect(next_page) if next_page else redirect(url_for('admin.dashboard'))
+                # Force redirect to admin dashboard, ignore next_page for admins
+                return redirect(url_for('admin.dashboard'))
             else:
                 flash(f'Welcome back, {user.username}!', 'success')
                 return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))

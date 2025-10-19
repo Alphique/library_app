@@ -39,15 +39,26 @@ def book_detail(book_id):
 @bp.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
+    # Prevent admins from uploading books
+    if current_user.is_admin():
+        flash('Admins cannot upload books. Please use the admin panel to manage books.', 'warning')
+        return redirect(url_for('admin.books'))
+    
     form = BookForm()
     if form.validate_on_submit():
         # Handle file upload
         if form.book_file.data:
             filename = secure_filename(form.book_file.data.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            # Store files in static/uploads/books/
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'books')
+            os.makedirs(upload_folder, exist_ok=True)  # Create directory if it doesn't exist
+            file_path = os.path.join(upload_folder, filename)
             form.book_file.data.save(file_path)
+            
+            # Store relative path for web access
+            relative_path = f"uploads/books/{filename}"
         else:
-            file_path = None
+            relative_path = None
         
         book = Book(
             title=form.title.data,
@@ -57,7 +68,7 @@ def upload():
             category=form.category.data,
             price=form.price.data,
             rental_fee=form.rental_fee.data,
-            file_path=file_path,
+            file_path=relative_path,  # Store relative path
             uploaded_by=current_user.user_id
         )
         
@@ -68,6 +79,7 @@ def upload():
         return redirect(url_for('books.catalog'))
     
     return render_template('books/upload.html', title='Upload Book', form=form)
+
 
 @bp.route('/my-books')
 @login_required
@@ -96,3 +108,22 @@ def delete_book(book_id):
     
     flash('Book has been deleted.', 'success')
     return redirect(url_for('books.my_books'))
+
+# Add this debug route
+@bp.route('/debug-book-file/<int:book_id>')
+def debug_book_file(book_id):
+    book = Book.query.get_or_404(book_id)
+    
+    # Build the expected URL
+    expected_url = url_for('static', filename='uploads/books/' + book.file_path, _external=True) if book.file_path else None
+    
+    return f"""
+    <h3>Book File Debug</h3>
+    <strong>Book:</strong> {book.title} (ID: {book.book_id})<br>
+    <strong>File path in database:</strong> {book.file_path}<br>
+    <strong>Expected URL:</strong> {expected_url}<br>
+    <strong>Test Link:</strong> <a href="{expected_url}" target="_blank">{expected_url}</a><br>
+    <br>
+    <strong>Manual Test URLs:</strong><br>
+    <a href="/static/uploads/books/{book.file_path}" target="_blank">/static/uploads/books/{book.file_path}</a>
+    """

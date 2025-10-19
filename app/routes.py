@@ -1,5 +1,5 @@
 # app/routes.py
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models import Book, Transaction, Wallet, User
 from app import db
@@ -15,16 +15,15 @@ def index():
 @login_required
 def dashboard():
     # If admin tries to access student dashboard, redirect to admin dashboard
-    if current_user.is_admin():
-        from flask import redirect, url_for, flash
-        flash('Admins should use the admin dashboard.', 'info')
+    if current_user.role == 'admin':  # Direct role check
+        print(f"Admin user {current_user.username} accessed student dashboard, redirecting...")
         return redirect(url_for('admin.dashboard'))
     
     # Get student-specific data for the dashboard
     user_books = Book.query.filter_by(uploaded_by=current_user.user_id).all()
     user_transactions = Transaction.query.filter_by(user_id=current_user.user_id).order_by(Transaction.created_at.desc()).limit(10).all()
     
-    # Ensure wallet exists and get it - FIXED: Don't reassign current_user
+    # Ensure wallet exists and get it
     wallet = current_user.wallet
     if not wallet:
         wallet = Wallet(user_id=current_user.user_id, balance=0.00)

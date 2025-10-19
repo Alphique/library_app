@@ -7,22 +7,45 @@ from app.models import Book, Transaction, Rental, Wallet
 from app import db
 from app.payments import bp
 
+# app/payments/routes.py - Update wallet function
 @bp.route('/wallet', methods=['GET', 'POST'])
 @login_required
 def wallet():
+    # Prevent admins from accessing wallet
+    if current_user.is_admin():
+        flash('Admins do not have wallets. Please use the admin dashboard.', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
     form = AddFundsForm()
+    
+    # Calculate total earnings from user's uploaded books
+    total_earnings = db.session.query(db.func.sum(Transaction.amount)).filter(
+        Transaction.book_id.in_(
+            db.session.query(Book.book_id).filter_by(uploaded_by=current_user.user_id)
+        )
+    ).scalar() or 0.0
+    
     if form.validate_on_submit():
-        # Add funds to wallet (simulated)
+        # Add funds to wallet
         current_user.wallet.add_funds(form.amount.data)
         db.session.commit()
-        flash(f'${form.amount.data} has been added to your wallet!', 'success')
+        flash(f'${form.amount.data:.2f} has been added to your wallet!', 'success')
         return redirect(url_for('payments.wallet'))
     
-    return render_template('payments/wallet.html', title='My Wallet', form=form)
+    return render_template('payments/wallet.html', 
+                         title='My Wallet', 
+                         form=form,
+                         total_earnings=total_earnings)  # Add this variable
+
 
 @bp.route('/add-to-cart/<int:book_id>')
 @login_required
 def add_to_cart(book_id):
+    # Prevent admins from using cart
+    if current_user.is_admin():
+        flash('Admins cannot purchase or rent books.', 'warning')
+        return redirect(url_for('books.book_detail', book_id=book_id))
+    
     book = Book.query.get_or_404(book_id)
     
     # Initialize cart in session if not exists
@@ -52,6 +75,11 @@ def add_to_cart(book_id):
 @bp.route('/cart')
 @login_required
 def cart():
+    # Prevent admins from accessing cart
+    if current_user.is_admin():
+        flash('Admins cannot purchase or rent books.', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
     cart_items = session.get('cart', [])
     total = sum(item['price'] for item in cart_items if item['type'] == 'purchase')
     return render_template('payments/cart.html', title='Shopping Cart', cart_items=cart_items, total=total)
@@ -59,6 +87,11 @@ def cart():
 @bp.route('/remove-from-cart/<int:book_id>')
 @login_required
 def remove_from_cart(book_id):
+    # Prevent admins from using cart
+    if current_user.is_admin():
+        flash('Admins cannot purchase or rent books.', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
     if 'cart' in session:
         session['cart'] = [item for item in session['cart'] if item['book_id'] != book_id]
         session.modified = True
@@ -69,6 +102,11 @@ def remove_from_cart(book_id):
 @bp.route('/rent/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def rent_book(book_id):
+    # Prevent admins from renting books
+    if current_user.is_admin():
+        flash('Admins cannot rent books.', 'warning')
+        return redirect(url_for('books.book_detail', book_id=book_id))
+    
     book = Book.query.get_or_404(book_id)
     form = RentalForm()
     
@@ -118,6 +156,11 @@ def rent_book(book_id):
 @bp.route('/purchase/<int:book_id>')
 @login_required
 def purchase_book(book_id):
+    # Prevent admins from purchasing books
+    if current_user.is_admin():
+        flash('Admins cannot purchase books.', 'warning')
+        return redirect(url_for('books.book_detail', book_id=book_id))
+    
     book = Book.query.get_or_404(book_id)
     
     # Check if user has enough balance
@@ -152,9 +195,14 @@ def purchase_book(book_id):
 @bp.route('/transaction-history')
 @login_required
 def transaction_history():
-    transactions = Transaction.query.filter_by(user_id=current_user.user_id)\
-                                  .order_by(Transaction.created_at.desc())\
-                                  .all()
+    # Admins see all transactions, students see only their own
+    if current_user.is_admin():
+        transactions = Transaction.query.order_by(Transaction.created_at.desc()).all()
+    else:
+        transactions = Transaction.query.filter_by(user_id=current_user.user_id)\
+                                      .order_by(Transaction.created_at.desc())\
+                                      .all()
+    
     return render_template('payments/transaction_history.html', 
                          title='Transaction History', 
                          transactions=transactions)
