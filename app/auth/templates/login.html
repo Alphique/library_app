@@ -36,37 +36,31 @@
                         <form method="POST" action="" class="login-form">
                             {{ form.hidden_tag() }}
                             
-                            <!-- Student ID Field (shown by default) -->
-                            <div class="form-group student-field">
-                                {{ form.email.label(class="form-label") }}
+                            <!-- Universal Login Field - UPDATED -->
+                            <div class="form-group">
+                                {{ form.login_identifier.label(class="form-label") }}
                                 <div class="input-group">
                                     <span class="input-group-text">
-                                        <i class="fas fa-id-card"></i>
+                                        <i class="fas fa-user" id="identifier-icon"></i>
                                     </span>
-                                    {% if form.email.errors %}
-                                        {{ form.email(class="form-control is-invalid", placeholder="Enter your student ID") }}
+                                    {% if form.login_identifier.errors %}
+                                        {{ form.login_identifier(class="form-control is-invalid", placeholder="Enter your email or username", id="login_identifier") }}
                                         <div class="invalid-feedback">
-                                            {% for error in form.email.errors %}
+                                            {% for error in form.login_identifier.errors %}
                                                 <span>{{ error }}</span>
                                             {% endfor %}
                                         </div>
                                     {% else %}
-                                        {{ form.email(class="form-control", placeholder="Enter your student ID or email") }}
+                                        {{ form.login_identifier(class="form-control", placeholder="Enter your email or username", id="login_identifier") }}
                                     {% endif %}
                                 </div>
-                            </div>
-
-                            <!-- Admin Username Field (hidden by default) -->
-                            <div class="form-group admin-field" style="display: none;">
-                                <label class="form-label">Username</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user-cog"></i>
-                                    </span>
-                                    <input type="text" class="form-control" placeholder="Enter admin username" name="admin_username">
-                                </div>
+                                <small class="form-text text-muted" id="identifier-help">
+                                    Students: Use your email or student ID<br>
+                                    Admins: Use your username
+                                </small>
                             </div>
                             
+                            <!-- Password Field -->
                             <div class="form-group">
                                 {{ form.password.label(class="form-label") }}
                                 <div class="input-group">
@@ -74,7 +68,7 @@
                                         <i class="fas fa-lock"></i>
                                     </span>
                                     {% if form.password.errors %}
-                                        {{ form.password(class="form-control is-invalid") }}
+                                        {{ form.password(class="form-control is-invalid", placeholder="Enter your password") }}
                                         <div class="invalid-feedback">
                                             {% for error in form.password.errors %}
                                                 <span>{{ error }}</span>
@@ -86,6 +80,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Form Options -->
                             <div class="form-options">
                                 <div class="form-check">
                                     {{ form.remember(class="form-check-input") }}
@@ -94,33 +89,47 @@
                                 <a href="#" class="forgot-password">Forgot Password?</a>
                             </div>
                             
+                            <!-- Submit Button -->
                             <div class="form-submit">
                                 {{ form.submit(class="btn btn-primary btn-login") }}
                             </div>
                         </form>
                         
+                        <!-- Quick Access Divider -->
                         <div class="login-divider">
                             <span>Quick Access</span>
                         </div>
                         
+                        <!-- Demo Accounts -->
                         <div class="demo-accounts">
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <button class="btn btn-outline-primary btn-demo w-100" data-type="student">
+                                    <button class="btn btn-outline-primary btn-demo w-100" data-type="student" data-identifier="CUN2025100801" data-password="Testing1@">
                                         <i class="fas fa-user-graduate me-2"></i>
                                         Demo Student
                                     </button>
                                 </div>
                                 <div class="col-6">
-                                    <button class="btn btn-outline-warning btn-demo w-100" data-type="admin">
+                                    <button class="btn btn-outline-warning btn-demo w-100" data-type="admin" data-identifier="admin" data-password="admin123">
                                         <i class="fas fa-user-shield me-2"></i>
                                         Demo Admin
                                     </button>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Demo Accounts Info -->
+                        <div class="demo-info mt-3">
+                            <div class="alert alert-info" role="alert">
+                                <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Demo Accounts</h6>
+                                <hr>
+                                <p class="mb-1"><strong>Student:</strong> CUN2025100801 / Testing1@</p>
+                                <p class="mb-0"><strong>Admin:</strong> admin / admin123</p>
+                            </div>
+                        </div>
                     </div>
                     
+                    <!-- Footer -->
                     <div class="login-footer">
                         <p>Don't have an account? 
                             <a href="{{ url_for('auth.register') }}" class="register-link">Create one here</a>
@@ -142,7 +151,6 @@
         overflow: hidden;
     }
     
-    /* Background with overlay */
     .login-bg {
         position: absolute;
         top: 0;
@@ -150,14 +158,8 @@
         width: 100%;
         height: 100%;
         background: 
-            /* Translucent overlay */
-            linear-gradient(
-                rgba(0, 51, 102, 0.85), 
-                rgba(0, 51, 102, 0.75)
-            ),
-            /* Cavendish University background image */
+            linear-gradient(rgba(0, 51, 102, 0.85), rgba(0, 51, 102, 0.75)),
             url("{{ url_for('static', filename='photos/cavendish2.png') }}"),
-            /* Fallback gradient */
             linear-gradient(135deg, #003366 0%, #1a4d8f 100%);
         background-size: cover;
         background-position: center;
@@ -165,40 +167,19 @@
         z-index: -1;
     }
     
-    /* Fallback if background image doesn't load */
-    .login-bg::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(0, 51, 102, 0.2) 0%, transparent 50%);
-        background-size: cover;
-    }
-    
     .login-card {
         background: rgba(255, 255, 255, 0.95);
         border-radius: 20px;
-        box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         overflow: hidden;
         transition: all 0.4s ease;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        position: relative;
     }
     
     .login-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 
-            0 30px 80px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.98);
+        transform: translateY(-5px);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
     }
     
     .login-card::before {
@@ -223,45 +204,18 @@
         color: white;
         padding: 2.5rem 2rem;
         text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .login-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.3;
     }
     
     .login-logo {
         height: 70px;
         margin-bottom: 1rem;
         border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
-    }
-    
-    .login-logo:hover {
-        transform: scale(1.05);
     }
     
     .login-header h2 {
         font-size: 2rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .login-header p {
-        opacity: 0.9;
-        margin: 0;
-        font-size: 1.1rem;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
     
     .login-body {
@@ -271,29 +225,24 @@
     .user-type-selector .btn-group {
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
     .user-type-selector .btn {
         padding: 0.85rem;
         font-weight: 600;
         border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
     }
     
     .user-type-selector .btn-check:checked + .btn {
         border-color: #003366;
         background: #003366;
         color: white;
-        transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
     }
     
     .user-type-selector .btn-check:checked + .btn-outline-warning {
         border-color: #d4af37;
         background: #d4af37;
         color: #003366;
-        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
     }
     
     .form-group {
@@ -304,29 +253,24 @@
         font-weight: 600;
         color: #003366;
         margin-bottom: 0.5rem;
-        font-size: 0.95rem;
     }
     
     .input-group-text {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background: #f8f9fa;
         border: 2px solid #e9ecef;
         border-right: none;
         color: #003366;
-        font-weight: 500;
     }
     
     .form-control {
         border: 2px solid #e9ecef;
         border-left: none;
         padding: 0.85rem 1rem;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.9);
     }
     
     .form-control:focus {
         border-color: #003366;
-        box-shadow: 0 0 0 0.3rem rgba(0, 51, 102, 0.15);
-        background: white;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.15);
     }
     
     .form-options {
@@ -336,24 +280,10 @@
         margin-bottom: 1.5rem;
     }
     
-    .form-check-label {
-        color: #555;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-    
     .forgot-password {
         color: #003366;
         text-decoration: none;
-        font-size: 0.9rem;
         font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .forgot-password:hover {
-        text-decoration: underline;
-        color: #1a4d8f;
-        transform: translateX(2px);
     }
     
     .btn-login {
@@ -361,38 +291,13 @@
         border: none;
         padding: 1rem 2rem;
         font-weight: 700;
-        font-size: 1.1rem;
         width: 100%;
-        transition: all 0.4s ease;
         border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .btn-login::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.6s;
-    }
-    
-    .btn-login:hover::before {
-        left: 100%;
-    }
-    
-    .btn-login:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0, 51, 102, 0.4);
     }
     
     .login-divider {
         text-align: center;
-        margin: 2.5rem 0;
+        margin: 2rem 0;
         position: relative;
     }
     
@@ -402,138 +307,35 @@
         top: 50%;
         left: 0;
         right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+        height: 1px;
+        background: #e9ecef;
     }
     
     .login-divider span {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 0 1.5rem;
+        background: white;
+        padding: 0 1rem;
         color: #666;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
     
-    .demo-accounts {
-        margin-bottom: 1rem;
-    }
-    
-    .btn-demo {
-        padding: 0.75rem;
-        font-size: 0.9rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border-radius: 10px;
-        border-width: 2px;
-    }
-    
-    .btn-demo:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    .demo-info .alert {
+        background: rgba(13, 110, 253, 0.1);
+        border: 1px solid rgba(13, 110, 253, 0.2);
     }
     
     .login-footer {
         padding: 1.5rem 2rem;
-        background: rgba(248, 249, 250, 0.8);
+        background: #f8f9fa;
         text-align: center;
-        border-top: 1px solid rgba(233, 236, 239, 0.5);
-        backdrop-filter: blur(5px);
+        border-top: 1px solid #e9ecef;
     }
     
-    .login-footer p {
-        margin: 0;
-        color: #666;
-        font-weight: 500;
-    }
-    
-    .register-link {
-        color: #003366;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    
-    .register-link:hover {
-        text-decoration: underline;
-        color: #1a4d8f;
-        transform: translateX(2px);
-    }
-    
-    /* Animation for field switching */
-    .student-field, .admin-field {
-        transition: all 0.4s ease;
-    }
-    
-    /* Floating animation for the card */
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    .login-card {
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    /* Responsive Design */
     @media (max-width: 768px) {
         .login-container {
             padding: 1rem;
         }
         
-        .login-header {
+        .login-header, .login-body {
             padding: 2rem 1.5rem;
-        }
-        
-        .login-body {
-            padding: 2rem 1.5rem;
-        }
-        
-        .login-footer {
-            padding: 1.5rem;
-        }
-        
-        .form-options {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-        
-        .user-type-selector .btn {
-            font-size: 0.9rem;
-            padding: 0.75rem;
-        }
-        
-        .login-card {
-            animation: none;
-        }
-        
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
-    }
-    
-    @media (max-width: 576px) {
-        .login-header h2 {
-            font-size: 1.6rem;
-        }
-        
-        .login-logo {
-            height: 60px;
-        }
-        
-        .demo-accounts .row {
-            flex-direction: column;
-        }
-        
-        .demo-accounts .col-6 {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-        
-        .login-body {
-            padding: 1.5rem;
         }
     }
 </style>
@@ -542,99 +344,46 @@
     document.addEventListener('DOMContentLoaded', function() {
         const studentRadio = document.getElementById('student');
         const adminRadio = document.getElementById('admin');
-        const studentField = document.querySelector('.student-field');
-        const adminField = document.querySelector('.admin-field');
-        const emailInput = document.querySelector('input[name="email"]');
+        const identifierInput = document.getElementById('login_identifier');
+        const identifierIcon = document.getElementById('identifier-icon');
+        const identifierHelp = document.getElementById('identifier-help');
         const demoButtons = document.querySelectorAll('.btn-demo');
         
         // Handle user type selection
         function handleUserTypeChange() {
             if (studentRadio.checked) {
-                studentField.style.display = 'block';
-                adminField.style.display = 'none';
-                emailInput.placeholder = 'Enter your student ID or email';
-                document.querySelector('.student-field .input-group-text i').className = 'fas fa-id-card';
+                identifierInput.placeholder = 'Enter your email or student ID';
+                identifierIcon.className = 'fas fa-user-graduate';
+                identifierHelp.innerHTML = 'Students: Use your email or student ID<br>Example: CUN2025100801 or student@cavendish.ac.zm';
             } else {
-                studentField.style.display = 'none';
-                adminField.style.display = 'block';
-                document.querySelector('.admin-field .input-group-text i').className = 'fas fa-user-cog';
+                identifierInput.placeholder = 'Enter your admin username';
+                identifierIcon.className = 'fas fa-user-shield';
+                identifierHelp.innerHTML = 'Admins: Use your username<br>Example: admin';
             }
         }
         
         studentRadio.addEventListener('change', handleUserTypeChange);
         adminRadio.addEventListener('change', handleUserTypeChange);
         
+        // Initialize on page load
+        handleUserTypeChange();
+        
         // Demo account buttons
         demoButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const type = this.getAttribute('data-type');
+                const identifier = this.getAttribute('data-identifier');
+                const password = this.getAttribute('data-password');
                 
                 if (type === 'student') {
                     studentRadio.checked = true;
-                    handleUserTypeChange();
-                    emailInput.value = 'student@cavendish.ac.zm';
-                    document.querySelector('input[name="password"]').value = 'demo123';
                 } else {
                     adminRadio.checked = true;
-                    handleUserTypeChange();
-                    document.querySelector('input[name="admin_username"]').value = 'admin';
-                    document.querySelector('input[name="password"]').value = 'admin123';
                 }
                 
-                // Show success message
-                const message = type === 'student' ? 
-                    'Demo student credentials filled!' : 
-                    'Demo admin credentials filled!';
-                
-                // Create temporary alert
-                const alert = document.createElement('div');
-                alert.className = `alert alert-${type === 'student' ? 'info' : 'warning'} alert-dismissible fade show mt-3`;
-                alert.innerHTML = `
-                    <i class="fas fa-info-circle me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                document.querySelector('.login-body').insertBefore(alert, document.querySelector('.login-form'));
-                
-                // Auto remove after 3 seconds
-                setTimeout(() => {
-                    if (alert.parentNode) {
-                        alert.remove();
-                    }
-                }, 3000);
-            });
-        });
-        
-        // Form submission handling
-        const loginForm = document.querySelector('.login-form');
-        const loginBtn = document.querySelector('.btn-login');
-        
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
-                // Add user type to form data
-                const userTypeInput = document.createElement('input');
-                userTypeInput.type = 'hidden';
-                userTypeInput.name = 'user_type';
-                userTypeInput.value = studentRadio.checked ? 'student' : 'admin';
-                this.appendChild(userTypeInput);
-                
-                // Show loading state
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
-                loginBtn.disabled = true;
-            });
-        }
-        
-        // Add focus effects
-        const formInputs = document.querySelectorAll('.form-control');
-        formInputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', function() {
-                if (!this.value) {
-                    this.parentElement.classList.remove('focused');
-                }
+                handleUserTypeChange();
+                identifierInput.value = identifier;
+                document.querySelector('input[name="password"]').value = password;
             });
         });
     });

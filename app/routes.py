@@ -1,6 +1,8 @@
 # app/routes.py
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
+from app.models import Book, Transaction, Wallet
+from app import db
 
 bp = Blueprint('main', __name__)
 
@@ -12,7 +14,32 @@ def index():
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard')
+    # If admin tries to access student dashboard, redirect to admin dashboard
+    if current_user.is_admin():
+        from flask import redirect, url_for, flash
+        flash('Admins should use the admin dashboard.', 'info')
+        return redirect(url_for('admin.dashboard'))
+    
+    # Get student-specific data for the dashboard
+    user_books = Book.query.filter_by(uploaded_by=current_user.user_id).all()
+    user_transactions = Transaction.query.filter_by(user_id=current_user.user_id).order_by(Transaction.created_at.desc()).limit(10).all()
+    
+    # Ensure wallet exists and get it
+    wallet = current_user.wallet
+    if not wallet:
+        wallet = Wallet(user_id=current_user.user_id, balance=0.00)
+        db.session.add(wallet)
+        db.session.commit()
+        # Refresh to get the wallet
+        from app.models import User
+        current_user = User.query.get(current_user.user_id)
+        wallet = current_user.wallet
+    
+    return render_template('dashboard.html', 
+                         title='Student Dashboard',
+                         user_books=user_books,
+                         user_transactions=user_transactions,
+                         wallet=wallet)
 
 @bp.route('/profile')
 @login_required

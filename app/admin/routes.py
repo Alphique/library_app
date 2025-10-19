@@ -19,7 +19,7 @@ def dashboard():
     total_transactions = Transaction.query.count()
     recent_transactions = Transaction.query.order_by(Transaction.created_at.desc()).limit(5).all()
     
-    return render_template('admin/dashboard.html', 
+    return render_template('admin/dashboard.html',  # Use admin-specific template
                          title='Admin Dashboard',
                          total_users=total_users,
                          total_books=total_books,

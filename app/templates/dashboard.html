@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h1 class="mb-4">📊 Dashboard</h1>
+        <h1 class="mb-4">📊 Student Dashboard</h1>
     </div>
 </div>
 
@@ -16,7 +16,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h5 class="card-title">Wallet Balance</h5>
-                        <h2>${{ "%.2f"|format(current_user.wallet.balance) }}</h2>
+                        <h2>${{ "%.2f"|format(wallet.balance) if wallet else "0.00" }}</h2>
                     </div>
                     <div class="align-self-center">
                         <span style="font-size: 2rem;">💰</span>
@@ -34,7 +34,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h5 class="card-title">My Books</h5>
-                        <h2>{{ current_user.books.count() }}</h2>
+                        <h2>{{ user_books|length }}</h2>
                     </div>
                     <div class="align-self-center">
                         <span style="font-size: 2rem;">📚</span>
@@ -52,7 +52,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h5 class="card-title">Transactions</h5>
-                        <h2>{{ current_user.transactions.count() }}</h2>
+                        <h2>{{ user_transactions|length }}</h2>
                     </div>
                     <div class="align-self-center">
                         <span style="font-size: 2rem;">💳</span>
@@ -70,7 +70,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h5 class="card-title">Active Rentals</h5>
-                        <h2>{{ current_user.transactions.filter_by(transaction_type='rental').count() }}</h2>
+                        <h2>{{ user_transactions|selectattr("transaction_type", "equalto", "rental")|list|length }}</h2>
                     </div>
                     <div class="align-self-center">
                         <span style="font-size: 2rem;">⏰</span>
@@ -107,9 +107,9 @@
                 <h5 class="mb-0">📈 Recent Activity</h5>
             </div>
             <div class="card-body">
-                {% if current_user.transactions.count() > 0 %}
+                {% if user_transactions %}
                     <div class="list-group list-group-flush">
-                        {% for transaction in current_user.transactions.order_by(Transaction.created_at.desc()).limit(5).all() %}
+                        {% for transaction in user_transactions[:5] %}
                         <div class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <small class="text-muted">{{ transaction.created_at.strftime('%b %d, %Y') }}</small>
@@ -121,6 +121,9 @@
                             </span>
                         </div>
                         {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-outline-success">View All Activity</a>
                     </div>
                 {% else %}
                     <p class="text-muted text-center">No recent activity</p>
@@ -141,9 +144,9 @@
                 <h5 class="mb-0">📚 My Recent Books</h5>
             </div>
             <div class="card-body">
-                {% if current_user.books.count() > 0 %}
+                {% if user_books %}
                     <div class="row">
-                        {% for book in current_user.books.order_by(Book.created_at.desc()).limit(4).all() %}
+                        {% for book in user_books[:4] %}
                         <div class="col-md-3 mb-3">
                             <div class="card h-100">
                                 <div class="card-body">

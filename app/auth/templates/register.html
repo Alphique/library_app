@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="card shadow">
             <div class="card-header bg-success text-white text-center">
                 <h4 class="mb-0">
@@ -14,6 +14,74 @@
             <div class="card-body p-4">
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
+                    
+                    <!-- Role Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Account Type</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-check card h-100 border-2 role-card" id="student-card">
+                                    <input class="form-check-input" type="radio" name="role" id="role_student" value="student" checked style="position: absolute; top: 10px; left: 10px;">
+                                    <label class="form-check-label card-body text-center" for="role_student" style="padding-left: 30px; cursor: pointer;">
+                                        <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
+                                        <h6 class="card-title">Student</h6>
+                                        <small class="text-muted">Access to books, borrowing, and study resources</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check card h-100 border-2 role-card" id="admin-card">
+                                    <input class="form-check-input" type="radio" name="role" id="role_admin" value="admin" style="position: absolute; top: 10px; left: 10px;">
+                                    <label class="form-check-label card-body text-center" for="role_admin" style="padding-left: 30px; cursor: pointer;">
+                                        <i class="fas fa-user-shield fa-2x text-warning mb-2"></i>
+                                        <h6 class="card-title">Administrator</h6>
+                                        <small class="text-muted">Manage library system, books, and users</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.role.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.role.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Student ID Field -->
+                    <div class="mb-3" id="student_id_field">
+                        {{ form.student_id.label(class="form-label") }}
+                        {% if form.student_id.errors %}
+                            {{ form.student_id(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.student_id.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.student_id(class="form-control") }}
+                        {% endif %}
+                        <div class="form-text">Your university student ID number</div>
+                    </div>
+
+                    <!-- Admin Code Field -->
+                    <div class="mb-3" id="admin_code_field" style="display: none;">
+                        {{ form.admin_code.label(class="form-label") }}
+                        {% if form.admin_code.errors %}
+                            {{ form.admin_code(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.admin_code.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.admin_code(class="form-control") }}
+                        {% endif %}
+                        <div class="form-text">Required for administrator account creation</div>
+                    </div>
+
+                    <!-- Username Field -->
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}
                         {% if form.username.errors %}
@@ -28,6 +96,8 @@
                         {% endif %}
                         <div class="form-text">Choose a unique username that others will see.</div>
                     </div>
+
+                    <!-- Email Field -->
                     <div class="mb-3">
                         {{ form.email.label(class="form-label") }}
                         {% if form.email.errors %}
@@ -42,6 +112,8 @@
                         {% endif %}
                         <div class="form-text">We'll never share your email with anyone else.</div>
                     </div>
+
+                    <!-- Password Fields -->
                     <div class="mb-3">
                         {{ form.password.label(class="form-label") }}
                         {% if form.password.errors %}
@@ -54,7 +126,9 @@
                         {% else %}
                             {{ form.password(class="form-control") }}
                         {% endif %}
+                        <div class="form-text">Password must be at least 8 characters with numbers and symbols.</div>
                     </div>
+
                     <div class="mb-3">
                         {{ form.confirm_password.label(class="form-label") }}
                         {% if form.confirm_password.errors %}
@@ -68,22 +142,89 @@
                             {{ form.confirm_password(class="form-control") }}
                         {% endif %}
                     </div>
+
                     <div class="d-grid">
                         {{ form.submit(class="btn btn-success btn-lg") }}
                     </div>
                 </form>
+
                 <div class="text-center mt-3">
                     <small class="text-muted">
                         Already Have An Account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Sign In</a>
                     </small>
                 </div>
-                <div class="alert alert-info mt-3">
+
+                <div class="alert alert-info mt-3" id="welcome-bonus">
                     <small>
-                        <strong>🎁 Welcome Bonus!</strong> New accounts receive $100 in their wallet to get started!
+                        <strong>🎁 Welcome Bonus!</strong> New student accounts receive $100 in their wallet to get started!
                     </small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.role-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.role-card.selected {
+    border-color: #0d6efd !important;
+    background-color: #f8f9fa;
+}
+#admin-card.selected {
+    border-color: #ffc107 !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const studentRadio = document.getElementById('role_student');
+    const adminRadio = document.getElementById('role_admin');
+    const studentIdField = document.getElementById('student_id_field');
+    const adminCodeField = document.getElementById('admin_code_field');
+    const studentCard = document.getElementById('student-card');
+    const adminCard = document.getElementById('admin-card');
+    const welcomeBonus = document.getElementById('welcome-bonus');
+
+    function updateFormFields() {
+        if (studentRadio.checked) {
+            studentIdField.style.display = 'block';
+            adminCodeField.style.display = 'none';
+            studentCard.classList.add('selected');
+            adminCard.classList.remove('selected');
+            welcomeBonus.style.display = 'block';
+        } else {
+            studentIdField.style.display = 'none';
+            adminCodeField.style.display = 'block';
+            adminCard.classList.add('selected');
+            studentCard.classList.remove('selected');
+            welcomeBonus.style.display = 'none';
+        }
+    }
+
+    // Initial setup
+    updateFormFields();
+
+    // Add event listeners
+    studentRadio.addEventListener('change', updateFormFields);
+    adminRadio.addEventListener('change', updateFormFields);
+
+    // Add click handlers for the cards
+    studentCard.addEventListener('click', function() {
+        studentRadio.checked = true;
+        updateFormFields();
+    });
+
+    adminCard.addEventListener('click', function() {
+        adminRadio.checked = true;
+        updateFormFields();
+    });
+});
+</script>
 {% endblock %}

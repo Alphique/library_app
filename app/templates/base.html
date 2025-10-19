@@ -318,7 +318,7 @@
             }
             
             .section-title h2 {
-                font-size: 2rem;
+                fontSize: 2rem;
             }
             
             .features-grid {
@@ -347,7 +347,11 @@
                             <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
                             <a class="nav-link" href="{{ url_for('books.catalog') }}">Catalog</a>
                             <a class="nav-link" href="{{ url_for('payments.wallet') }}">
-                                💰 ${{ "%.2f"|format(current_user.wallet.balance) }}
+                                {% if current_user.wallet %}
+                                    💰 ${{ "%.2f"|format(current_user.wallet.balance) }}
+                                {% else %}
+                                    💰 $0.00
+                                {% endif %}
                             </a>
                             {% if current_user.is_admin() %}
                             <a class="nav-link admin-link" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
