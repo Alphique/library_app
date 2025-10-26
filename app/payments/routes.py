@@ -203,6 +203,14 @@ def transaction_history():
                                       .order_by(Transaction.created_at.desc())\
                                       .all()
     
+    # Calculate statistics for the template
+    total_spent = sum(t.amount for t in transactions if t.amount > 0)
+    purchase_count = sum(1 for t in transactions if t.transaction_type == 'purchase')
+    rental_count = sum(1 for t in transactions if t.transaction_type == 'rental')
+    
     return render_template('payments/transaction_history.html', 
                          title='Transaction History', 
-                         transactions=transactions)
+                         transactions=transactions,
+                         total_spent=total_spent,
+                         purchase_count=purchase_count,
+                         rental_count=rental_count)

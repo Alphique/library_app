@@ -48,7 +48,7 @@
                                 </td>
                                 <td>
                                     <span class="text-{{ 'danger' if transaction.amount > 0 else 'success' }}">
-                                        {{ '-' if transaction.amount > 0 else '+' }}${{ "%.2f"|format(transaction.amount) }}
+                                        {{ '-' if transaction.amount > 0 else '+' }}${{ "%.2f"|format(transaction.amount|abs) }}
                                     </span>
                                 </td>
                                 <td>
