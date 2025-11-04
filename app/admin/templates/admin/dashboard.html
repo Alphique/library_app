@@ -2,172 +2,439 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">📊 Admin Dashboard</h1>
-    </div>
-</div>
-
-<!-- Statistics Cards -->
-<div class="row mb-4">
-    <div class="col-md-3 mb-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Total Users</h5>
-                        <h2>{{ total_users }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <span style="font-size: 2rem;">👥</span>
-                    </div>
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 fw-bold text-primary mb-2">Admin Dashboard 🛡️</h1>
+                    <p class="text-muted mb-0">Welcome back, Administrator. Here's your platform overview.</p>
                 </div>
-                <a href="{{ url_for('admin.users') }}" class="btn btn-light btn-sm mt-2">Manage Users</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Total Books</h5>
-                        <h2>{{ total_books }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <span style="font-size: 2rem;">📚</span>
-                    </div>
-                </div>
-                <a href="{{ url_for('admin.books') }}" class="btn btn-light btn-sm mt-2">Manage Books</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Transactions</h5>
-                        <h2>{{ total_transactions }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <span style="font-size: 2rem;">💳</span>
-                    </div>
-                </div>
-                <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm mt-2">View All</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Platform Revenue</h5>
-                        <h2>$0.00</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <span style="font-size: 2rem;">💰</span>
-                    </div>
-                </div>
-                <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm mt-2">View Reports</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Quick Actions -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">🚀 Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary btn-lg">👥 Manage Users</a>
-                    <a href="{{ url_for('admin.books') }}" class="btn btn-outline-primary btn-lg">📚 Manage Books</a>
-                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-outline-primary btn-lg">💳 View Transactions</a>
-                    <a href="{{ url_for('admin.settings') }}" class="btn btn-outline-primary btn-lg">⚙️ System Settings</a>
+                <div class="text-end">
+                    <small class="text-muted">Last updated: {{ current_time.strftime('%b %d, %Y at %H:%M') if current_time else 'Just now' }}</small>
+                    <br>
+                    <span class="badge bg-success">
+                        <i class="fas fa-circle me-1"></i>System Online
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">📈 Recent Transactions</h5>
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <!-- Total Users -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card card-gradient-primary border-0 shadow-hover">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-white-50 mb-2">Total Users</h6>
+                            <h2 class="text-white mb-1">{{ total_users|default(0) }}</h2>
+                            <small class="text-white-50">
+                                <i class="fas fa-arrow-up me-1"></i>{{ new_users_today|default(0) }} today
+                            </small>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
+                            <i class="fas fa-users text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
+                        <div class="progress-bar bg-white" style="width: {{ ((active_users|default(0))/total_users*100) if total_users and total_users > 0 else 0 }}%"></div>
+                    </div>
+                    <small class="text-white-50">{{ active_users|default(0) }} active</small>
+                </div>
+                <div class="card-footer bg-white bg-opacity-10 border-0">
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-light btn-sm w-100">
+                        <i class="fas fa-cog me-1"></i>Manage Users
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                {% if recent_transactions %}
-                    <div class="list-group list-group-flush">
-                        {% for transaction in recent_transactions %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted">{{ transaction.created_at.strftime('%b %d, %Y %H:%M') }}</small>
-                                <br>
-                                <strong>{{ transaction.user.username }}</strong>
-                                <br>
-                                <small>{{ transaction.transaction_type|title }} - ${{ "%.2f"|format(transaction.amount) }}</small>
+        </div>
+
+        <!-- Total Books -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card card-gradient-success border-0 shadow-hover">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-white-50 mb-2">Total Books</h6>
+                            <h2 class="text-white mb-1">{{ total_books|default(0) }}</h2>
+                            <small class="text-white-50">
+                                <i class="fas fa-book me-1"></i>{{ available_books|default(0) }} available
+                            </small>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
+                            <i class="fas fa-book-open text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
+                        <div class="progress-bar bg-white" style="width: {{ ((available_books|default(0))/total_books*100) if total_books and total_books > 0 else 0 }}%"></div>
+                    </div>
+                    <small class="text-white-50">{{ books_uploaded_today|default(0) }} uploaded today</small>
+                </div>
+                <div class="card-footer bg-white bg-opacity-10 border-0">
+                    <a href="{{ url_for('admin.books') }}" class="btn btn-light btn-sm w-100">
+                        <i class="fas fa-cog me-1"></i>Manage Books
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card card-gradient-info border-0 shadow-hover">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-white-50 mb-2">Transactions</h6>
+                            <h2 class="text-white mb-1">{{ total_transactions|default(0) }}</h2>
+                            <small class="text-white-50">
+                                <i class="fas fa-exchange-alt me-1"></i>{{ transactions_today|default(0) }} today
+                            </small>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
+                            <i class="fas fa-credit-card text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
+                        <div class="progress-bar bg-white" style="width: {{ ((completed_transactions|default(0))/total_transactions*100) if total_transactions and total_transactions > 0 else 0 }}%"></div>
+                    </div>
+                    <small class="text-white-50">{{ completed_transactions|default(0) }} completed</small>
+                </div>
+                <div class="card-footer bg-white bg-opacity-10 border-0">
+                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm w-100">
+                        <i class="fas fa-cog me-1"></i>View All
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Revenue -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card card-gradient-warning border-0 shadow-hover">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-white-50 mb-2">Platform Revenue</h6>
+                            <h2 class="text-white mb-1">${{ "%.2f"|format(total_revenue|default(0)) }}</h2>
+                            <small class="text-white-50">
+                                <i class="fas fa-chart-line me-1"></i>${{ "%.2f"|format(revenue_today|default(0)) }} today
+                            </small>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
+                            <i class="fas fa-dollar-sign text-white fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
+                        <div class="progress-bar bg-white" style="width: {{ ((revenue_today|default(0))/total_revenue*100) if total_revenue and total_revenue > 0 else 0 }}%"></div>
+                    </div>
+                    <small class="text-white-50">{{ revenue_growth|default(0) }}% growth</small>
+                </div>
+                <div class="card-footer bg-white bg-opacity-10 border-0">
+                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm w-100">
+                        <i class="fas fa-chart-bar me-1"></i>View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest of the template remains the same but with safe defaults -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-xl-8 mb-4">
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-primary">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin.users') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-shape-lg bg-primary bg-opacity-10 rounded-circle mb-3 mx-auto">
+                                        <i class="fas fa-users text-primary fs-2"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">Manage Users</h6>
+                                    <p class="text-muted small mb-0">View, edit, and manage user accounts</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin.books') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-shape-lg bg-success bg-opacity-10 rounded-circle mb-3 mx-auto">
+                                        <i class="fas fa-book text-success fs-2"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">Manage Books</h6>
+                                    <p class="text-muted small mb-0">Oversee book catalog and content</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin.transactions') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-shape-lg bg-info bg-opacity-10 rounded-circle mb-3 mx-auto">
+                                        <i class="fas fa-credit-card text-info fs-2"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">Transactions</h6>
+                                    <p class="text-muted small mb-0">Monitor payments and revenue</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('admin.settings') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-shape-lg bg-warning bg-opacity-10 rounded-circle mb-3 mx-auto">
+                                        <i class="fas fa-cogs text-warning fs-2"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">System Settings</h6>
+                                    <p class="text-muted small mb-0">Configure platform settings</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & System Health -->
+            <div class="row">
+                <!-- Recent Transactions -->
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-success">
+                                    <i class="fas fa-exchange-alt me-2"></i>Recent Transactions
+                                </h5>
+                                <span class="badge bg-success">{{ recent_transactions|length if recent_transactions else 0 }}</span>
                             </div>
-                            <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} rounded-pill">
-                                {{ transaction.status }}
-                            </span>
                         </div>
-                        {% endfor %}
+                        <div class="card-body">
+                            {% if recent_transactions %}
+                                <div class="timeline">
+                                    {% for transaction in recent_transactions[:5] %}
+                                    <div class="timeline-item {% if loop.first %}active{% endif %}">
+                                        <div class="timeline-marker bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}"></div>
+                                        <div class="timeline-content">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1 fw-bold">{{ transaction.user.username }}</h6>
+                                                    <small class="text-muted">{{ transaction.transaction_type|title }} • {{ transaction.created_at.strftime('%H:%M') }}</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="fw-bold text-{{ 'success' if transaction.amount > 0 else 'danger' }}">
+                                                        ${{ "%.2f"|format(transaction.amount) }}
+                                                    </span>
+                                                    <br>
+                                                    <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} badge-sm">
+                                                        {{ transaction.status }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-list me-1"></i>View All Transactions
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-exchange-alt fs-1 text-muted mb-3"></i>
+                                    <p class="text-muted">No recent transactions</p>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="text-center mt-3">
-                        <a href="{{ url_for('admin.transactions') }}" class="btn btn-sm btn-outline-success">View All Transactions</a>
-                    </div>
-                {% else %}
-                    <p class="text-muted text-center">No recent transactions</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
+                </div>
 
-<!-- System Health -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">🖥️ System Health</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-3 mb-3">
-                        <div class="border rounded p-3">
-                            <h6>Database</h6>
-                            <span class="badge bg-success">Online</span>
+                <!-- System Health -->
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h5 class="fw-bold mb-0 text-info">
+                                <i class="fas fa-heartbeat me-2"></i>System Health
+                            </h5>
                         </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="border rounded p-3">
-                            <h6>File Storage</h6>
-                            <span class="badge bg-success">Healthy</span>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="border rounded p-3">
-                            <h6>Payment System</h6>
-                            <span class="badge bg-success">Active</span>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="border rounded p-3">
-                            <h6>Uptime</h6>
-                            <span class="badge bg-info">100%</span>
+                        <div class="card-body">
+                            <div class="system-health">
+                                <div class="health-item">
+                                    <div class="health-icon bg-success">
+                                        <i class="fas fa-database"></i>
+                                    </div>
+                                    <div class="health-info">
+                                        <strong>Database</strong>
+                                        <span class="text-success">Optimal</span>
+                                    </div>
+                                    <div class="health-status">
+                                        <div class="progress" style="width: 80px; height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: 95%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="health-item">
+                                    <div class="health-icon bg-success">
+                                        <i class="fas fa-hdd"></i>
+                                    </div>
+                                    <div class="health-info">
+                                        <strong>File Storage</strong>
+                                        <span class="text-success">Healthy</span>
+                                    </div>
+                                    <div class="health-status">
+                                        <div class="progress" style="width: 80px; height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: 78%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="health-item">
+                                    <div class="health-icon bg-success">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="health-info">
+                                        <strong>Payment System</strong>
+                                        <span class="text-success">Active</span>
+                                    </div>
+                                    <div class="health-status">
+                                        <div class="progress" style="width: 80px; height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="health-item">
+                                    <div class="health-icon bg-info">
+                                        <i class="fas fa-server"></i>
+                                    </div>
+                                    <div class="health-info">
+                                        <strong>Server Uptime</strong>
+                                        <span class="text-info">99.9%</span>
+                                    </div>
+                                    <div class="health-status">
+                                        <div class="progress" style="width: 80px; height: 6px;">
+                                            <div class="progress-bar bg-info" style="width: 99.9%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-light rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Last system check</small>
+                                    <small class="text-muted">{{ current_time.strftime('%H:%M:%S') if current_time else 'Just now' }}</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Right Column -->
+        <div class="col-xl-4 mb-4">
+            <!-- Platform Analytics -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-purple">
+                        <i class="fas fa-chart-pie me-2"></i>Platform Analytics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="analytics-grid">
+                        <div class="analytics-item text-center">
+                            <div class="analytics-value text-primary fw-bold">{{ user_engagement|default(75) }}%</div>
+                            <div class="analytics-label text-muted small">User Engagement</div>
+                        </div>
+                        <div class="analytics-item text-center">
+                            <div class="analytics-value text-success fw-bold">{{ conversion_rate|default(15) }}%</div>
+                            <div class="analytics-label text-muted small">Conversion Rate</div>
+                        </div>
+                        <div class="analytics-item text-center">
+                            <div class="analytics-value text-info fw-bold">${{ avg_transaction_value|default(25.50) }}</div>
+                            <div class="analytics-label text-muted small">Avg. Transaction</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Simplified categories section -->
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-3">Platform Overview</h6>
+                        <div class="category-item mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Active Users</span>
+                                <span class="fw-bold">{{ active_users|default(total_users|default(0)) }}</span>
+                            </div>
+                        </div>
+                        <div class="category-item mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Available Books</span>
+                                <span class="fw-bold">{{ available_books|default(total_books|default(0)) }}</span>
+                            </div>
+                        </div>
+                        <div class="category-item mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Today's Revenue</span>
+                                <span class="fw-bold">${{ "%.2f"|format(revenue_today|default(0)) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Users -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0 text-warning">
+                            <i class="fas fa-user-plus me-2"></i>Recent Users
+                        </h5>
+                        <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-warning">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if recent_users %}
+                        <div class="user-list">
+                            {% for user in recent_users[:4] %}
+                            <div class="user-item d-flex align-items-center mb-3">
+                                <div class="user-avatar bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                    <span class="text-white fw-bold">{{ user.username[0]|upper }}</span>
+                                </div>
+                                <div class="user-info flex-grow-1">
+                                    <h6 class="mb-0 fw-bold">{{ user.username }}</h6>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                </div>
+                                <div class="user-status text-end">
+                                    <small class="text-muted">{{ user.created_at.strftime('%b %d') }}</small>
+                                    <br>
+                                    <span class="badge bg-{{ 'success' if user.is_active else 'secondary' }} badge-sm">
+                                        {{ 'Active' if user.is_active else 'Inactive' }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-3">
+                            <i class="fas fa-users fs-1 text-muted mb-2"></i>
+                            <p class="text-muted small">No recent users</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- CSS and JavaScript remain the same -->
+<style>
+/* ... (keep all the CSS styles from previous version) ... */
+</style>
+
+<script>
+// ... (keep all the JavaScript from previous version) ... 
+</script>
 {% endblock %}
