@@ -1,559 +1,1514 @@
-<!-- app/templates/dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <!-- Welcome Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h2 fw-bold text-primary mb-2">Welcome back, {{ current_user.username }}! 👋</h1>
-                    <p class="text-muted mb-0">Here's what's happening with your library today</p>
-                </div>
-                <div class="text-end">
-                    <small class="text-muted">Last login: {{ current_user.last_login.strftime('%b %d, %Y at %H:%M') if current_user.last_login else 'First time!' }}</small>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Background Image Layer - MAXIMUM VISIBILITY -->
+<div class="background-overlay-light"></div>
+<div class="background-image-cuzlib" 
+     style="background-image: url('{{ url_for('static', filename='photos/CuzLib.png') }}');"></div>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <!-- Wallet Balance -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-primary border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
+<!-- Form Overlay Container - DARK CONTENT AREA -->
+<div class="form-overlay-container">
+    <div class="container-fluid py-4 position-relative">
+        <!-- Welcome Header with Enhanced Contrast -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center header-card-enhanced p-4 rounded-4">
+                    <div class="d-flex align-items-center">
+                        <!-- CuzLib Logo with Dark Container -->
+                        <div class="logo-container-dark me-4">
+                            <img src="{{ url_for('static', filename='photos/CuzLib.png') }}" 
+                                 alt="CuzLib Logo" 
+                                 class="logo-img">
+                        </div>
                         <div>
-                            <h6 class="card-title text-white-50 mb-2">Wallet Balance</h6>
-                            <h2 class="text-white mb-0">${{ "%.2f"|format(wallet.balance) if wallet else "0.00" }}</h2>
-                            <small class="text-white-50">Available funds</small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-wallet text-white fs-4"></i>
+                            <h1 class="h2 fw-bold text-white mb-2">Welcome back, <span class="text-gradient-gold">{{ current_user.username }}!</span> 👋</h1>
+                            <p class="text-white-90 mb-0">Here's what's happening with your library today</p>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-light btn-sm w-100">
-                            <i class="fas fa-plus me-1"></i>Add Funds
-                        </a>
+                    <div class="text-end">
+                        <div class="badge bg-white bg-opacity-30 text-white px-3 py-2 rounded-pill">
+                            <i class="fas fa-clock me-1"></i>
+                            {{ current_user.last_login.strftime('%I:%M %p') if current_user.last_login else 'First time!' }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- My Books -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-success border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">My Books</h6>
-                            <h2 class="text-white mb-0">{{ user_books|length }}</h2>
-                            <small class="text-white-50">Total uploaded</small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-book text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ url_for('books.my_books') }}" class="btn btn-light btn-sm w-100">
-                            <i class="fas fa-eye me-1"></i>View All
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Transactions -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-info border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Transactions</h6>
-                            <h2 class="text-white mb-0">{{ user_transactions|length }}</h2>
-                            <small class="text-white-50">All time</small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-exchange-alt text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-light btn-sm w-100">
-                            <i class="fas fa-history me-1"></i>View History
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Active Rentals -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-warning border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Active Rentals</h6>
-                            <h2 class="text-white mb-0">{{ user_transactions|selectattr("transaction_type", "equalto", "rental")|list|length }}</h2>
-                            <small class="text-white-50">Currently reading</small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-clock text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-light btn-sm w-100">
-                            <i class="fas fa-list me-1"></i>Manage
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Quick Actions & Recent Activity -->
-        <div class="col-xl-8 mb-4">
-            <div class="row">
-                <!-- Quick Actions -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-transparent border-0 py-3">
-                            <h5 class="fw-bold mb-0 text-primary">
-                                <i class="fas fa-bolt me-2"></i>Quick Actions
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-3">
-                                <a href="{{ url_for('books.upload') }}" class="btn btn-primary btn-lg py-3 fw-bold">
-                                    <i class="fas fa-cloud-upload-alt me-2"></i>
-                                    Upload New Book
-                                </a>
-                                <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-primary btn-lg py-3 fw-bold">
-                                    <i class="fas fa-search me-2"></i>
-                                    Browse Catalog
-                                </a>
-                                <a href="{{ url_for('payments.wallet') }}" class="btn btn-outline-success btn-lg py-3 fw-bold">
-                                    <i class="fas fa-wallet me-2"></i>
-                                    Manage Wallet
-                                </a>
-                                <a href="{{ url_for('books.my_books') }}" class="btn btn-outline-info btn-lg py-3 fw-bold">
-                                    <i class="fas fa-book-open me-2"></i>
-                                    My Library
-                                </a>
+        <!-- Statistics Cards - Enhanced Contrast -->
+        <div class="row mb-4">
+            <!-- Wallet Balance - Blue Theme -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card card-stat card-gradient-ocean border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-30 rounded-4">
+                                <i class="fas fa-wallet fs-4"></i>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-white p-0 opacity-75" type="button"><i class="fas fa-ellipsis-v"></i></button>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-transparent border-0 py-3">
-                            <h5 class="fw-bold mb-0 text-success">
-                                <i class="fas fa-chart-line me-2"></i>Recent Activity
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            {% if user_transactions %}
-                                <div class="timeline">
-                                    {% for transaction in user_transactions[:6] %}
-                                    <div class="timeline-item {% if loop.first %}active{% endif %}">
-                                        <div class="timeline-marker bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}"></div>
-                                        <div class="timeline-content">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 class="mb-1 fw-bold">{{ transaction.book.title|truncate(25) }}</h6>
-                                                    <small class="text-muted">{{ transaction.transaction_type|title }} • {{ transaction.created_at.strftime('%b %d') }}</small>
-                                                </div>
-                                                <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} rounded-pill">
-                                                    ${{ "%.2f"|format(transaction.amount) }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <div class="text-center mt-3">
-                                    <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-outline-success">
-                                        <i class="fas fa-history me-1"></i>View All Activity
-                                    </a>
-                                </div>
-                            {% else %}
-                                <div class="text-center py-4">
-                                    <i class="fas fa-inbox fs-1 text-muted mb-3"></i>
-                                    <p class="text-muted">No recent activity</p>
-                                    <a href="{{ url_for('books.catalog') }}" class="btn btn-primary">
-                                        <i class="fas fa-rocket me-1"></i>Start Exploring
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- My Recent Books -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-transparent border-0 py-3">
+                        <h2 class="fw-bold mb-1 text-white">${{ "%.2f"|format(wallet.balance) if wallet else "0.00" }}</h2>
+                        <span class="text-white-90 small">Wallet Balance</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-30">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold mb-0 text-info">
-                                    <i class="fas fa-bookmark me-2"></i>My Recent Books
-                                </h5>
-                                <a href="{{ url_for('books.my_books') }}" class="btn btn-sm btn-outline-info">View All</a>
+                                <a href="{{ url_for('payments.wallet') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">
+                                    <i class="fas fa-plus me-1"></i>Add Funds
+                                </a>
+                                <small class="text-white-90">Available</small>
                             </div>
                         </div>
-                        <div class="card-body">
-                            {% if user_books %}
-                                <div class="row g-3">
-                                    {% for book in user_books[:4] %}
-                                    <div class="col-xl-3 col-lg-6">
-                                        <div class="card border-0 shadow-sm-hover h-100">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }} rounded-pill">
-                                                        {{ book.status|title }}
-                                                    </span>
-                                                    {% if book.price > 0 %}
-                                                    <span class="fw-bold text-success">${{ "%.2f"|format(book.price) }}</span>
-                                                    {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Books - Green Theme -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card card-stat card-gradient-forest border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-30 rounded-4">
+                                <i class="fas fa-book fs-4"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-1 text-white">{{ user_books|length }}</h2>
+                        <span class="text-white-90 small">My Books</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-30">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('books.my_books') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">
+                                    <i class="fas fa-eye me-1"></i>View All
+                                </a>
+                                <small class="text-white-90">Uploaded</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions - Purple Theme -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card card-stat card-gradient-purple border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-30 rounded-4">
+                                <i class="fas fa-exchange-alt fs-4"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-1 text-white">{{ user_transactions|length }}</h2>
+                        <span class="text-white-90 small">Transactions</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-30">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">
+                                    <i class="fas fa-history me-1"></i>History
+                                </a>
+                                <small class="text-white-90">All time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Rentals - Orange Theme -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card card-stat card-gradient-sunset border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-30 rounded-4">
+                                <i class="fas fa-clock fs-4"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-1 text-white">{{ user_transactions|selectattr("transaction_type", "equalto", "rental")|list|length }}</h2>
+                        <span class="text-white-90 small">Active Rentals</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-30">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">
+                                    <i class="fas fa-list me-1"></i>Manage
+                                </a>
+                                <small class="text-white-90">Reading</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Main Content Area -->
+            <div class="col-xl-8">
+                <!-- Quick Actions - Glass Cards -->
+                <div class="card glass-card border-0 shadow-lg mb-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
+                        <h5 class="fw-bold mb-0 text-white">
+                            <i class="fas fa-bolt me-2 text-warning"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <!-- Upload - Soft Blue -->
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('books.upload') }}" class="action-card p-4 rounded-4 d-block text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3" style="background: rgba(33, 150, 243, 0.35); color: #2196f3; border: 2px solid rgba(33, 150, 243, 0.5);">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-white mb-1">Upload New Book</h6>
+                                            <small class="text-white-90">Share your knowledge</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Browse - Soft Green -->
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('books.catalog') }}" class="action-card p-4 rounded-4 d-block text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3" style="background: rgba(76, 175, 80, 0.35); color: #4caf50; border: 2px solid rgba(76, 175, 80, 0.5);">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-white mb-1">Browse Catalog</h6>
+                                            <small class="text-white-90">Discover new reads</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Wallet - Soft Teal -->
+                            <div class="col-md-6">
+                                <a href="{{ url_for('payments.wallet') }}" class="action-card p-4 rounded-4 d-block text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3" style="background: rgba(0, 188, 212, 0.35); color: #00bcd4; border: 2px solid rgba(0, 188, 212, 0.5);">
+                                            <i class="fas fa-wallet"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-white mb-1">Manage Wallet</h6>
+                                            <small class="text-white-90">Add funds, view balance</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Library - Soft Purple -->
+                            <div class="col-md-6">
+                                <a href="{{ url_for('books.my_books') }}" class="action-card p-4 rounded-4 d-block text-decoration-none">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3" style="background: rgba(156, 39, 176, 0.35); color: #9c27b0; border: 2px solid rgba(156, 39, 176, 0.5);">
+                                            <i class="fas fa-book-open"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-white mb-1">My Library</h6>
+                                            <small class="text-white-90">View your collection</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & My Books - Side by Side -->
+                <div class="row">
+                    <!-- Recent Activity - Glass Card -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card glass-card border-0 shadow-lg h-100">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-white">
+                                    <i class="fas fa-history me-2 text-primary"></i>Recent Activity
+                                </h5>
+                                <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">View All</a>
+                            </div>
+                            <div class="card-body p-4">
+                                {% if user_transactions %}
+                                    <div class="timeline-simple">
+                                        {% for transaction in user_transactions[:4] %}
+                                        <div class="timeline-item-simple mb-3">
+                                            <div class="d-flex align-items-start">
+                                                <div class="timeline-marker-simple bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }} me-3"></div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold text-white mb-1">{{ transaction.book.title|truncate(20) }}</h6>
+                                                    <div class="d-flex justify-content-between">
+                                                        <small class="text-white-90">{{ transaction.transaction_type|title }} • {{ transaction.created_at.strftime('%b %d') }}</small>
+                                                        <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} rounded-pill px-2">
+                                                            ${{ "%.2f"|format(transaction.amount) }}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <h6 class="card-title fw-bold text-dark mb-2">{{ book.title|truncate(30) }}</h6>
-                                                <p class="card-text text-muted small mb-3">{{ book.author }}</p>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">{{ book.created_at.strftime('%b %d') }}</small>
-                                                    <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" 
-                                                       class="btn btn-sm btn-outline-primary">
-                                                        View
-                                                    </a>
-                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <div class="empty-state mb-3" style="color: rgba(255, 255, 255, 0.7);">
+                                            <i class="fas fa-inbox fs-1"></i>
+                                        </div>
+                                        <h6 class="text-white-90 mb-2">No recent activity</h6>
+                                        <p class="text-white-90 small mb-3">Start your reading journey</p>
+                                        <a href="{{ url_for('books.catalog') }}" class="btn btn-light-glow rounded-pill px-4">
+                                            <i class="fas fa-rocket me-1"></i>Start Exploring
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Recent Books - Glass Card -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card glass-card border-0 shadow-lg h-100">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-white">
+                                    <i class="fas fa-bookmark me-2 text-info"></i>My Recent Books
+                                </h5>
+                                <a href="{{ url_for('books.my_books') }}" class="btn btn-sm btn-light-glow rounded-pill px-3">View All</a>
+                            </div>
+                            <div class="card-body p-4">
+                                {% if user_books %}
+                                    {% for book in user_books[:3] %}
+                                    <div class="book-item-simple mb-3 p-3 rounded-3 glass-card-inner">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="fw-bold text-white mb-0">{{ book.title|truncate(25) }}</h6>
+                                            {% if book.price > 0 %}
+                                            <span class="badge bg-success rounded-pill">${{ "%.2f"|format(book.price) }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-white-90 small mb-2">{{ book.author }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }} bg-opacity-30 text-white border-{{ 'success' if book.status == 'available' else 'warning' }} small">
+                                                {{ book.status|title }}
+                                            </span>
+                                            <div class="d-flex gap-2">
+                                                <small class="text-white-90">{{ book.created_at.strftime('%b %d') }}</small>
+                                                <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" 
+                                                   class="btn btn-sm btn-outline-light-glow rounded-pill px-3">
+                                                    View
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                     {% endfor %}
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <div class="empty-state mb-3" style="color: rgba(255, 255, 255, 0.7);">
+                                            <i class="fas fa-books fs-1"></i>
+                                        </div>
+                                        <h6 class="text-white-90 mb-2">No books uploaded yet</h6>
+                                        <p class="text-white-90 small mb-3">Start building your library</p>
+                                        <a href="{{ url_for('books.upload') }}" class="btn btn-light-glow rounded-pill px-4">
+                                            <i class="fas fa-plus me-1"></i>Upload First Book
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar - Stats Cards -->
+            <div class="col-xl-4">
+                <!-- Reading Stats - Glass Card -->
+                <div class="card glass-card border-0 shadow-lg mb-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <h5 class="fw-bold mb-0 text-white">
+                            <i class="fas fa-trophy me-2 text-warning"></i>Reading Stats
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="progress-circle-simple mx-auto mb-3" data-percentage="65">
+                                <div class="progress-circle-inner-simple">
+                                    <span class="progress-circle-value fw-bold text-white">65%</span>
                                 </div>
-                            {% else %}
-                                <div class="text-center py-5">
-                                    <i class="fas fa-books fs-1 text-muted mb-3"></i>
-                                    <h6 class="text-muted mb-2">No books uploaded yet</h6>
-                                    <p class="text-muted small mb-3">Start building your library by uploading your first book</p>
-                                    <a href="{{ url_for('books.upload') }}" class="btn btn-primary">
-                                        <i class="fas fa-plus me-1"></i>Upload First Book
-                                    </a>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-white">Monthly Reading Goal</h6>
+                            <small class="text-white-90">13 of 20 books completed</small>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-4 text-center">
+                                <div class="stat-box p-2 rounded-3" style="background: rgba(33, 150, 243, 0.3); border: 2px solid rgba(33, 150, 243, 0.5);">
+                                    <div class="stat-value text-primary fw-bold">{{ user_books|length }}</div>
+                                    <div class="stat-label text-white-90 small">Uploaded</div>
                                 </div>
-                            {% endif %}
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="stat-box p-2 rounded-3" style="background: rgba(76, 175, 80, 0.3); border: 2px solid rgba(76, 175, 80, 0.5);">
+                                    <div class="stat-value text-success fw-bold">{{ user_transactions|selectattr("transaction_type", "equalto", "purchase")|list|length }}</div>
+                                    <div class="stat-label text-white-90 small">Purchased</div>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="stat-box p-2 rounded-3" style="background: rgba(156, 39, 176, 0.3); border: 2px solid rgba(156, 39, 176, 0.5);">
+                                    <div class="stat-value text-purple fw-bold">{{ user_transactions|selectattr("transaction_type", "equalto", "rental")|list|length }}</div>
+                                    <div class="stat-label text-white-90 small">Rented</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats - Glass Card -->
+                <div class="card glass-card border-0 shadow-lg">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <h5 class="fw-bold mb-0 text-white">
+                            <i class="fas fa-chart-pie me-2 text-purple"></i>Quick Stats
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="quick-stats-simple">
+                            <!-- Total Spent - Blue -->
+                            <div class="quick-stat-item-simple mb-3 p-3 rounded-3" style="background: rgba(33, 150, 243, 0.25);">
+                                <div class="d-flex align-items-center">
+                                    <div class="quick-stat-icon-simple me-3" style="background: rgba(33, 150, 243, 0.45); color: #2196f3;">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <strong class="d-block text-white-90 small">Total Spent</strong>
+                                        <span class="fw-bold text-white">${{ "%.2f"|format(user_transactions|sum(attribute='amount')) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Member Since - Green -->
+                            <div class="quick-stat-item-simple mb-3 p-3 rounded-3" style="background: rgba(76, 175, 80, 0.25);">
+                                <div class="d-flex align-items-center">
+                                    <div class="quick-stat-icon-simple me-3" style="background: rgba(76, 175, 80, 0.45); color: #4caf50;">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <strong class="d-block text-white-90 small">Member Since</strong>
+                                        <span class="fw-bold text-white">{{ current_user.created_at.strftime('%b %Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Account Level - Orange -->
+                            <div class="quick-stat-item-simple mb-3 p-3 rounded-3" style="background: rgba(255, 152, 0, 0.25);">
+                                <div class="d-flex align-items-center">
+                                    <div class="quick-stat-icon-simple me-3" style="background: rgba(255, 152, 0, 0.45); color: #ff9800;">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <strong class="d-block text-white-90 small">Account Level</strong>
+                                        <span class="fw-bold text-white">Reader <i class="fas fa-crown ms-1" style="color: #ffd700;"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Reading Streak - Red -->
+                            <div class="quick-stat-item-simple p-3 rounded-3" style="background: rgba(244, 67, 54, 0.25);">
+                                <div class="d-flex align-items-center">
+                                    <div class="quick-stat-icon-simple me-3" style="background: rgba(244, 67, 54, 0.45); color: #ff5252;">
+                                        <i class="fas fa-award"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <strong class="d-block text-white-90 small">Reading Streak</strong>
+                                        <span class="fw-bold text-white">7 days <i class="fas fa-fire ms-1" style="color: #ff5722;"></i></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar - Stats & Progress -->
-        <div class="col-xl-4 mb-4">
-            <!-- Reading Progress -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <h5 class="fw-bold mb-0 text-warning">
-                        <i class="fas fa-trophy me-2"></i>Reading Stats
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <div class="progress-circle mx-auto mb-3" data-percentage="65">
-                            <span class="progress-circle-value fw-bold">65%</span>
-                        </div>
-                        <h6 class="fw-bold mb-1">Monthly Reading Goal</h6>
-                        <small class="text-muted">13 of 20 books completed</small>
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-item text-center">
-                            <div class="stat-value text-primary fw-bold">{{ user_books|length }}</div>
-                            <div class="stat-label text-muted small">Books Uploaded</div>
-                        </div>
-                        <div class="stat-item text-center">
-                            <div class="stat-value text-success fw-bold">{{ user_transactions|selectattr("transaction_type", "equalto", "purchase")|list|length }}</div>
-                            <div class="stat-label text-muted small">Books Purchased</div>
-                        </div>
-                        <div class="stat-item text-center">
-                            <div class="stat-value text-info fw-bold">{{ user_transactions|selectattr("transaction_type", "equalto", "rental")|list|length }}</div>
-                            <div class="stat-label text-muted small">Books Rented</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <h5 class="fw-bold mb-0 text-purple">
-                        <i class="fas fa-chart-pie me-2"></i>Quick Stats
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="quick-stats">
-                        <div class="quick-stat-item">
-                            <i class="fas fa-dollar-sign text-success"></i>
-                            <div>
-                                <strong>Total Spent</strong>
-                                <span>${{ "%.2f"|format(user_transactions|sum(attribute='amount')) }}</span>
-                            </div>
-                        </div>
-                        <div class="quick-stat-item">
-                            <i class="fas fa-calendar text-primary"></i>
-                            <div>
-                                <strong>Member Since</strong>
-                                <span>{{ current_user.created_at.strftime('%b %Y') }}</span>
-                            </div>
-                        </div>
-                        <div class="quick-stat-item">
-                            <i class="fas fa-star text-warning"></i>
-                            <div>
-                                <strong>Account Level</strong>
-                                <span>Reader</span>
-                            </div>
-                        </div>
-                        <div class="quick-stat-item">
-                            <i class="fas fa-award text-info"></i>
-                            <div>
-                                <strong>Reading Streak</strong>
-                                <span>7 days</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Footer with CuzLib branding -->
     </div>
-</div>
+</div> 
+<!-- End form overlay container -->
+{% endblock %}
+
+{% block scripts %}
 
 <style>
-/* Gradient backgrounds for cards */
-.card-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+    :root {
+        /* Enhanced color variables for better contrast */
+        --ocean-gradient: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+        --forest-gradient: linear-gradient(135deg, #43a047 0%, #1b5e20 100%);
+        --purple-gradient: linear-gradient(135deg, #8e24aa 0%, #4a148c 100%);
+        --sunset-gradient: linear-gradient(135deg, #fb8c00 0%, #e65100 100%);
+        --warm-gradient: linear-gradient(135deg, #ff6f00 0%, #e53935 100%);
+        
+        /* Form overlay colors */
+        --form-overlay-bg: rgba(15, 15, 25, 0.92);
+        --form-overlay-border: rgba(255, 255, 255, 0.25);
+        --form-overlay-shadow: rgba(0, 0, 0, 0.6);
+    }
 
-.card-gradient-success {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
+    /* Background Image System - MAXIMUM VISIBILITY */
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        position: relative;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow-x: hidden;
+        background: #000000;
+    }
 
-.card-gradient-info {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
+    .background-image-cuzlib {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: -2;
+        /* MAXIMUM VISIBILITY SETTINGS */
+        filter: brightness(1.1) contrast(1.4) saturate(2);
+        opacity: 0.95;
+        animation: backgroundPulse 8s ease-in-out infinite;
+        transform-origin: center;
+    }
 
-.card-gradient-warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
+    @keyframes backgroundPulse {
+        0%, 100% {
+            filter: brightness(1.1) contrast(1.4) saturate(2);
+            transform: scale(1);
+        }
+        50% {
+            filter: brightness(1.2) contrast(1.5) saturate(2.2);
+            transform: scale(1.03);
+        }
+    }
 
-/* Hover effects */
-.shadow-hover {
-    transition: all 0.3s ease;
-}
+    /* LIGHT OVERLAY ONLY (not dark) */
+    .background-overlay-light {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.2) 0%, 
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.25) 100%);
+        z-index: -1;
+        backdrop-filter: blur(3px);
+        animation: overlayPulse 10s ease-in-out infinite;
+    }
 
-.shadow-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-}
+    @keyframes overlayPulse {
+        0%, 100% { opacity: 0.8; }
+        50% { opacity: 1; }
+    }
 
-.shadow-sm-hover {
-    transition: all 0.3s ease;
-}
+    /* FORM OVERLAY CONTAINER - DARK AREA FOR CONTENT */
+    .form-overlay-container {
+        background: var(--form-overlay-bg);
+        backdrop-filter: blur(35px);
+        -webkit-backdrop-filter: blur(35px);
+        border: 2px solid var(--form-overlay-border);
+        box-shadow: 
+            0 25px 80px var(--form-overlay-shadow),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+        border-radius: 28px;
+        padding: 35px;
+        margin: 25px;
+        position: relative;
+        z-index: 100;
+        animation: formSlideIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+    }
 
-.shadow-sm-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
+    .form-overlay-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.4), 
+            transparent);
+        z-index: 1;
+    }
 
-/* Icon shapes */
-.icon-shape {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    @keyframes formSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
 
-/* Timeline */
-.timeline {
-    position: relative;
-    padding-left: 30px;
-}
+    /* ENHANCED HEADER CARD */
+    .header-card-enhanced {
+        background: linear-gradient(135deg, 
+            rgba(255, 111, 0, 0.95) 0%, 
+            rgba(229, 57, 53, 0.95) 100%);
+        backdrop-filter: blur(25px);
+        border: 3px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 
+            0 20px 50px rgba(255, 111, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+    }
 
-.timeline-item {
-    position: relative;
-    padding: 15px 0;
-    border-left: 2px solid #e9ecef;
-}
+    .header-card-enhanced::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0.15) 50%,
+            transparent 100%
+        );
+        transform: rotate(30deg);
+        animation: headerShine 5s linear infinite;
+    }
 
-.timeline-item:last-child {
-    border-left: 2px solid transparent;
-}
+    @keyframes headerShine {
+        0% { transform: rotate(30deg) translateX(-100%); }
+        100% { transform: rotate(30deg) translateX(100%); }
+    }
 
-.timeline-marker {
-    position: absolute;
-    left: -30px;
-    top: 20px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-}
+    /* DARK LOGO CONTAINER FOR MAXIMUM CONTRAST */
+    .logo-container-dark {
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(25px);
+        border-radius: 24px;
+        padding: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.45);
+        box-shadow: 
+            0 12px 40px rgba(0, 0, 0, 0.7),
+            0 0 0 2px rgba(255, 255, 255, 0.25),
+            inset 0 4px 12px rgba(255, 255, 255, 0.1);
+        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-.timeline-item.active .timeline-marker {
-    animation: pulse 2s infinite;
-}
+    .logo-container-dark:hover {
+        transform: scale(1.18) rotate(8deg);
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow: 
+            0 18px 60px rgba(0, 0, 0, 0.9),
+            0 0 0 3px rgba(255, 255, 255, 0.5),
+            inset 0 4px 20px rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.95);
+    }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-}
+    .logo-img {
+        height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.6) contrast(1.3) drop-shadow(0 6px 12px rgba(255, 255, 255, 0.4));
+        transition: all 0.6s ease;
+    }
 
-/* Progress circle */
-.progress-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: conic-gradient(#ffd700 65%, #e9ecef 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+    .logo-container-dark:hover .logo-img {
+        transform: scale(1.25);
+        filter: brightness(2) contrast(1.6) drop-shadow(0 10px 20px rgba(255, 255, 255, 0.6));
+    }
 
-.progress-circle::before {
-    content: '';
-    width: 60px;
-    height: 60px;
-    background: white;
-    border-radius: 50%;
-    position: absolute;
-}
+    /* ENHANCED TEXT COLORS */
+    .text-gradient-gold {
+        background: linear-gradient(45deg, 
+            #ffd700 0%, 
+            #ffed4e 25%, 
+            #fff8a6 50%, 
+            #ffed4e 75%, 
+            #ffd700 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 200% 100%;
+        animation: textShimmer 2.5s ease-in-out infinite;
+        text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+        font-weight: 900;
+        letter-spacing: 0.5px;
+    }
 
-.progress-circle-value {
-    position: relative;
-    z-index: 1;
-    font-size: 0.9rem;
-}
+    @keyframes textShimmer {
+        0%, 100% { background-position: -200% 0; }
+        50% { background-position: 200% 0; }
+    }
 
-/* Stats grid */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-}
+    .text-white-90 {
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
 
-.stat-item {
-    padding: 10px;
-}
+    /* ENHANCED STAT CARDS */
+    .card-stat {
+        border-radius: 24px;
+        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        position: relative;
+        box-shadow: 
+            0 18px 50px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        animation: cardFloat 8s ease-in-out infinite;
+        animation-delay: calc(var(--card-index) * 0.3s);
+    }
 
-.stat-value {
-    font-size: 1.5rem;
-    line-height: 1.2;
-}
+    .card-stat:nth-child(1) { --card-index: 1; }
+    .card-stat:nth-child(2) { --card-index: 2; }
+    .card-stat:nth-child(3) { --card-index: 3; }
+    .card-stat:nth-child(4) { --card-index: 4; }
 
-.stat-label {
-    font-size: 0.75rem;
-}
+    @keyframes cardFloat {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        25% {
+            transform: translateY(-15px) rotate(0.5deg);
+        }
+        75% {
+            transform: translateY(-8px) rotate(-0.5deg);
+        }
+    }
 
-/* Quick stats */
-.quick-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+    .card-stat:hover {
+        transform: translateY(-15px) scale(1.07) rotate(2deg) !important;
+        box-shadow: 
+            0 30px 70px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        border-color: rgba(255, 255, 255, 0.5);
+        animation: none !important;
+    }
 
-.quick-stat-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.quick-stat-item i {
-    font-size: 1.2rem;
-    width: 30px;
-}
-
-.quick-stat-item div {
-    flex: 1;
-}
-
-.quick-stat-item strong {
-    display: block;
-    font-size: 0.8rem;
-    color: #6c757d;
-}
-
-.quick-stat-item span {
-    display: block;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #495057;
-}
-
-/* Text colors */
-.text-purple {
-    color: #6f42c1 !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .card-gradient-ocean { 
+        background: var(--ocean-gradient);
     }
     
-    .icon-shape {
-        width: 50px;
-        height: 50px;
+    .card-gradient-forest { 
+        background: var(--forest-gradient);
     }
     
-    .icon-shape i {
-        font-size: 1.2rem !important;
+    .card-gradient-purple { 
+        background: var(--purple-gradient);
     }
-}
+    
+    .card-gradient-sunset { 
+        background: var(--sunset-gradient);
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        z-index: 2;
+        position: relative;
+        background: rgba(255, 255, 255, 0.35) !important;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.4s ease;
+    }
+
+    .card-stat:hover .icon-box {
+        transform: scale(1.15) rotate(15deg);
+        background: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .card-stat h2 {
+        font-weight: 1000;
+        font-size: 2.8rem;
+        text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        position: relative;
+        z-index: 2;
+        letter-spacing: -1px;
+        background: linear-gradient(to bottom, #fff, #f0f0f0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* ENHANCED BUTTONS */
+    .btn-light-glow {
+        background: rgba(255, 255, 255, 0.98);
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        color: #111;
+        font-weight: 800;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+        box-shadow: 
+            0 6px 25px rgba(0, 0, 0, 0.25),
+            0 0 15px rgba(255, 255, 255, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-light-glow:hover {
+        background: white;
+        transform: translateY(-6px);
+        box-shadow: 
+            0 12px 35px rgba(0, 0, 0, 0.35),
+            0 0 25px rgba(255, 255, 255, 0.6);
+        border-color: white;
+    }
+
+    .btn-outline-light-glow {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.2),
+            inset 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-outline-light-glow:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-3px);
+        box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.3),
+            inset 0 0 15px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* GLASS CARDS INSIDE FORM */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(30px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 15px 50px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.5), 
+            transparent);
+    }
+
+    .glass-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 
+            0 25px 70px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.22);
+    }
+
+    .glass-card-inner {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+    }
+
+    /* ACTION CARDS */
+    .action-card {
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.12);
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.35), 
+            transparent);
+        transition: left 0.9s;
+    }
+
+    .action-card:hover::before {
+        left: 100%;
+    }
+
+    .action-card:hover {
+        transform: translateY(-8px) scale(1.04);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .icon-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        position: relative;
+        z-index: 2;
+        transition: all 0.6s ease;
+        backdrop-filter: blur(8px);
+        border: 2px solid;
+    }
+
+    .action-card:hover .icon-circle {
+        transform: scale(1.25) rotate(15deg);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    /* TIMELINE */
+    .timeline-simple {
+        position: relative;
+    }
+
+    .timeline-item-simple {
+        position: relative;
+        transition: all 0.4s ease;
+    }
+
+    .timeline-item-simple:hover {
+        transform: translateX(10px);
+    }
+
+    .timeline-marker-simple {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 6px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 
+            0 0 0 5px rgba(255, 255, 255, 0.2),
+            inset 0 3px 6px rgba(0, 0, 0, 0.3);
+        animation: markerPulse 3s infinite;
+    }
+
+    @keyframes markerPulse {
+        0%, 100% {
+            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    /* BOOK ITEMS */
+    .book-item-simple {
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .book-item-simple::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        background: linear-gradient(to bottom, #4caf50, #2196f3, #9c27b0);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .book-item-simple:hover::before {
+        opacity: 1;
+    }
+
+    .book-item-simple:hover {
+        transform: translateX(15px) translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* PROGRESS CIRCLE */
+    .progress-circle-simple {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: conic-gradient(#ffd700 65%, rgba(255, 255, 255, 0.3) 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 
+            0 12px 45px rgba(255, 215, 0, 0.5),
+            inset 0 6px 25px rgba(255, 255, 255, 0.15);
+        transition: all 0.6s ease;
+        animation: progressRotate 20s linear infinite;
+    }
+
+    @keyframes progressRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .progress-circle-simple:hover {
+        transform: scale(1.12) rotate(20deg);
+        animation: none;
+        box-shadow: 
+            0 18px 60px rgba(255, 215, 0, 0.6),
+            inset 0 6px 25px rgba(255, 255, 255, 0.25);
+    }
+
+    .progress-circle-inner-simple {
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(15px);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .progress-circle-value {
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* STAT BOXES */
+    .stat-box {
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        border: 2px solid;
+        border-radius: 18px;
+    }
+
+    .stat-box::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            transparent 100%
+        );
+        transform: rotate(30deg);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+    }
+
+    .stat-box:hover::before {
+        opacity: 1;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 1000;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* QUICK STATS */
+    .quick-stat-item-simple {
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+    }
+
+    .quick-stat-item-simple::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.25), 
+            transparent);
+        transition: left 1.2s;
+    }
+
+    .quick-stat-item-simple:hover::before {
+        left: 100%;
+    }
+
+    .quick-stat-item-simple:hover {
+        transform: translateX(15px);
+        border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .quick-stat-icon-simple {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        position: relative;
+        z-index: 2;
+        transition: all 0.6s ease;
+        backdrop-filter: blur(8px);
+        border: 2px solid;
+    }
+
+    .quick-stat-item-simple:hover .quick-stat-icon-simple {
+        transform: scale(1.2) rotate(10deg);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* FOOTER LOGO */
+    .footer-logo-container {
+        vertical-align: middle;
+        transition: all 0.4s ease;
+    }
+
+    .footer-logo-container:hover {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    .footer-logo-img {
+        height: 45px;
+        width: auto;
+        object-fit: contain;
+        opacity: 0.95;
+        filter: brightness(1.4) contrast(1.2) drop-shadow(0 3px 6px rgba(255, 255, 255, 0.4));
+        transition: all 0.4s ease;
+    }
+
+    .footer-logo-container:hover .footer-logo-img {
+        opacity: 1;
+        filter: brightness(1.8) contrast(1.4) drop-shadow(0 6px 12px rgba(255, 255, 255, 0.6));
+    }
+
+    /* EMPTY STATES */
+    .empty-state {
+        opacity: 0.75;
+        transition: all 0.4s ease;
+    }
+
+    .empty-state:hover {
+        opacity: 0.95;
+        transform: scale(1.1);
+    }
+
+    /* BADGE COLORS */
+    .bg-purple {
+        background-color: #8e24aa !important;
+    }
+    
+    .text-purple {
+        color: #ba68c8 !important;
+    }
+    
+    .border-purple {
+        border-color: #8e24aa !important;
+    }
+
+    /* SCROLLBAR STYLING */
+    ::-webkit-scrollbar {
+        width: 14px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        margin: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #ff6f00, #e53935);
+        border-radius: 12px;
+        border: 4px solid rgba(255, 255, 255, 0.15);
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #ff8f00, #ff5252);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1200px) {
+        .form-overlay-container {
+            margin: 20px;
+            padding: 30px;
+        }
+        
+        .card-stat h2 {
+            font-size: 2.4rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-overlay-container {
+            margin: 15px;
+            padding: 25px;
+            border-radius: 24px;
+        }
+        
+        .logo-img {
+            height: 55px;
+        }
+        
+        .logo-container-dark {
+            padding: 16px;
+        }
+        
+        .background-image-cuzlib {
+            animation: backgroundPulse 12s ease-in-out infinite;
+        }
+        
+        .card-stat {
+            animation: cardFloat 10s ease-in-out infinite;
+        }
+        
+        .header-card-enhanced .d-flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .header-card-enhanced .text-end {
+            width: 100%;
+            text-align: left !important;
+            margin-top: 1rem;
+        }
+        
+        .progress-circle-simple {
+            width: 110px;
+            height: 110px;
+            animation-duration: 25s;
+        }
+        
+        .progress-circle-inner-simple {
+            width: 85px;
+            height: 85px;
+        }
+        
+        .icon-box {
+            width: 52px;
+            height: 52px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .form-overlay-container {
+            margin: 10px;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        
+        .logo-container-dark {
+            margin-bottom: 1rem;
+        }
+        
+        .glass-card {
+            backdrop-filter: blur(20px);
+        }
+        
+        .card-stat {
+            animation: cardFloat 12s ease-in-out infinite;
+        }
+        
+        .form-overlay-container {
+            backdrop-filter: blur(25px);
+        }
+    }
+
+    /* KEYFRAMES FOR PARTICLE EFFECT */
+    @keyframes floatUp {
+        0% {
+            transform: translateY(100vh) translateX(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.6;
+        }
+        90% {
+            opacity: 0.6;
+        }
+        100% {
+            transform: translateY(-100px) translateX(calc(var(--move-x) * 100px));
+            opacity: 0;
+        }
+    }
 </style>
 
 <script>
-// Add interactive elements
-document.addEventListener('DOMContentLoaded', function() {
-    // Add loading animations to cards
-    const cards = document.querySelectorAll('.shadow-hover, .shadow-sm-hover');
-    cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.classList.add('animate__animated', 'animate__fadeInUp');
-    });
-
-    // Add click effects to buttons
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!this.classList.contains('disabled')) {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                this.classList.add('disabled');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced background interaction
+        const background = document.querySelector('.background-image-cuzlib');
+        
+        if (background) {
+            // Mouse move parallax with enhanced effect
+            document.addEventListener('mousemove', function(e) {
+                const x = (e.clientX / window.innerWidth - 0.5) * 60;
+                const y = (e.clientY / window.innerHeight - 0.5) * 60;
+                
+                background.style.transform = `
+                    translateX(${x}px) 
+                    translateY(${y}px) 
+                    scale(1.08)
+                `;
+                background.style.transition = 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+            
+            // Enhanced background brightness pulse
+            setInterval(() => {
+                background.style.filter = 'brightness(1.25) contrast(1.6) saturate(2.3)';
+                setTimeout(() => {
+                    background.style.filter = 'brightness(1.1) contrast(1.4) saturate(2)';
+                }, 1500);
+            }, 7000);
+        }
+        
+        // Form overlay hover effect
+        const formOverlay = document.querySelector('.form-overlay-container');
+        if (formOverlay) {
+            formOverlay.addEventListener('mouseenter', function() {
+                this.style.boxShadow = 
+                    '0 30px 100px rgba(0, 0, 0, 0.7), ' +
+                    '0 0 30px rgba(255, 111, 0, 0.4), ' +
+                    'inset 0 1px 0 rgba(255, 255, 255, 0.2), ' +
+                    'inset 0 -1px 0 rgba(0, 0, 0, 0.3)';
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            formOverlay.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 
+                    '0 25px 80px rgba(0, 0, 0, 0.6), ' +
+                    'inset 0 1px 0 rgba(255, 255, 255, 0.15), ' +
+                    'inset 0 -1px 0 rgba(0, 0, 0, 0.2)';
+                this.style.transform = 'translateY(0)';
+            });
+        }
+        
+        // Logo interaction
+        const logoContainer = document.querySelector('.logo-container-dark');
+        if (logoContainer) {
+            logoContainer.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.18) rotate(8deg)';
+                this.style.borderColor = 'rgba(255, 255, 255, 0.7)';
+                this.style.boxShadow = 
+                    '0 18px 60px rgba(0, 0, 0, 0.9), ' +
+                    '0 0 0 3px rgba(255, 255, 255, 0.5), ' +
+                    'inset 0 4px 20px rgba(255, 255, 255, 0.2)';
+            });
+            
+            logoContainer.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+                this.style.borderColor = 'rgba(255, 255, 255, 0.45)';
+                this.style.boxShadow = 
+                    '0 12px 40px rgba(0, 0, 0, 0.7), ' +
+                    '0 0 0 2px rgba(255, 255, 255, 0.25), ' +
+                    'inset 0 4px 12px rgba(255, 255, 255, 0.1)';
+            });
+        }
+        
+        // Add initial glow to form overlay
+        setTimeout(() => {
+            if (formOverlay) {
+                formOverlay.style.boxShadow = 
+                    '0 30px 90px rgba(255, 111, 0, 0.5), ' +
+                    '0 25px 80px rgba(0, 0, 0, 0.6), ' +
+                    'inset 0 1px 0 rgba(255, 255, 255, 0.15), ' +
+                    'inset 0 -1px 0 rgba(0, 0, 0, 0.2)';
                 
                 setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.classList.remove('disabled');
-                }, 2000);
+                    formOverlay.style.boxShadow = 
+                        '0 25px 80px rgba(0, 0, 0, 0.6), ' +
+                        'inset 0 1px 0 rgba(255, 255, 255, 0.15), ' +
+                        'inset 0 -1px 0 rgba(0, 0, 0, 0.2)';
+                }, 1200);
             }
+        }, 600);
+        
+        // Create enhanced particle effect
+        const createParticles = () => {
+            if (!background) return;
+            
+            const particleColors = [
+                'rgba(255, 215, 0, 0.6)',    // Gold
+                'rgba(255, 111, 0, 0.5)',    // Orange
+                'rgba(33, 150, 243, 0.4)',   // Blue
+                'rgba(255, 255, 255, 0.7)'   // White
+            ];
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                const size = Math.random() * 5 + 2;
+                const duration = Math.random() * 15 + 10;
+                const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+                
+                particle.style.cssText = `
+                    position: fixed;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${color};
+                    border-radius: ${size > 3 ? '50%' : '0'};
+                    top: ${Math.random() * 100}vh;
+                    left: ${Math.random() * 100}vw;
+                    pointer-events: none;
+                    z-index: -1;
+                    animation: floatUp ${duration}s linear infinite;
+                    --move-x: ${Math.random() * 2 - 1};
+                    filter: blur(${Math.random() * 2}px);
+                `;
+                
+                document.body.appendChild(particle);
+            }
+        };
+        
+        // Add CSS for enhanced particles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(100vh) translateX(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.8;
+                }
+                90% {
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translateY(-100px) translateX(calc(var(--move-x) * 150px));
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes sparkle {
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.5);
+                    opacity: 0.5;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Create particles
+        createParticles();
+        
+        // Add sparkle effect to stat cards
+        const statCards = document.querySelectorAll('.card-stat');
+        statCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.animationDelay = `${index * 0.3}s`;
+            }, 100);
+        });
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: radial-gradient(circle, 
+                        rgba(255,255,255,1) 0%, 
+                        rgba(255,255,255,0.8) 30%, 
+                        rgba(255,255,255,0) 70%);
+                    transform: scale(0);
+                    animation: ripple 1s ease-out;
+                    width: ${size}px;
+                    height: ${size}px;
+                    top: ${y}px;
+                    left: ${x}px;
+                    pointer-events: none;
+                    z-index: 1;
+                `;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 1000);
+            });
+        });
+        
+        // Add ripple animation
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple {
+                0% {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+        
+        // Add floating animation to cards on hover
+        const floatingCards = document.querySelectorAll('.glass-card');
+        floatingCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.animation = 'cardFloat 6s ease-in-out infinite';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.animation = 'none';
+                this.style.transform = 'translateY(0)';
+            });
         });
     });
-
-    // Update progress circle animation
-    const progressCircle = document.querySelector('.progress-circle');
-    if (progressCircle) {
-        const percentage = progressCircle.getAttribute('data-percentage');
-        progressCircle.style.background = `conic-gradient(#ffd700 ${percentage}%, #e9ecef 0)`;
-    }
-});
 </script>
-{% endblock %}
+{%endblock %}
