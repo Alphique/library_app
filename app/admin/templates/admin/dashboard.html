@@ -1,333 +1,111 @@
-<!-- app/admin/templates/dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h2 fw-bold text-primary mb-2">Admin Dashboard 🛡️</h1>
-                    <p class="text-muted mb-0">Welcome back, Administrator. Here's your platform overview.</p>
-                </div>
-                <div class="text-end">
-                    <small class="text-muted">Last updated: {{ current_time.strftime('%b %d, %Y at %H:%M') if current_time else 'Just now' }}</small>
-                    <br>
-                    <span class="badge bg-success">
-                        <i class="fas fa-circle me-1"></i>System Online
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Key Metrics -->
-    <div class="row mb-4">
-        <!-- Total Users -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-primary border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Total Users</h6>
-                            <h2 class="text-white mb-1">{{ total_users|default(0) }}</h2>
-                            <small class="text-white-50">
-                                <i class="fas fa-arrow-up me-1"></i>{{ new_users_today|default(0) }} today
-                            </small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-users text-white fs-4"></i>
+<div class="admin-dashboard">
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center glass-header p-4 rounded-4">
+                    <div>
+                        <h1 class="h3 fw-bolder text-white mb-1">Admin Dashboard <span class="fs-4">🛡️</span></h1>
+                        <p class="text-white-50 mb-0">Welcome back, Administrator. System overview active.</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-white-50 d-block mb-1">Last updated: {{ current_time.strftime('%H:%M') if current_time else 'Now' }}</small>
+                        <div class="badge bg-success bg-gradient shadow-sm px-3 py-2 rounded-pill pulse-badge">
+                            <i class="fas fa-circle me-1 small"></i> System Online
                         </div>
                     </div>
-                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
-                        <div class="progress-bar bg-white" style="width: {{ ((active_users|default(0))/total_users*100) if total_users and total_users > 0 else 0 }}%"></div>
-                    </div>
-                    <small class="text-white-50">{{ active_users|default(0) }} active</small>
-                </div>
-                <div class="card-footer bg-white bg-opacity-10 border-0">
-                    <a href="{{ url_for('admin.users') }}" class="btn btn-light btn-sm w-100">
-                        <i class="fas fa-cog me-1"></i>Manage Users
-                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Total Books -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-success border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Total Books</h6>
-                            <h2 class="text-white mb-1">{{ total_books|default(0) }}</h2>
-                            <small class="text-white-50">
-                                <i class="fas fa-book me-1"></i>{{ available_books|default(0) }} available
-                            </small>
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-stat bg-gradient-primary text-white border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-20 rounded-4">
+                                <i class="fas fa-users fs-4"></i>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-white p-0" type="button"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
                         </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-book-open text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
-                        <div class="progress-bar bg-white" style="width: {{ ((available_books|default(0))/total_books*100) if total_books and total_books > 0 else 0 }}%"></div>
-                    </div>
-                    <small class="text-white-50">{{ books_uploaded_today|default(0) }} uploaded today</small>
-                </div>
-                <div class="card-footer bg-white bg-opacity-10 border-0">
-                    <a href="{{ url_for('admin.books') }}" class="btn btn-light btn-sm w-100">
-                        <i class="fas fa-cog me-1"></i>Manage Books
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Transactions -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-info border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Transactions</h6>
-                            <h2 class="text-white mb-1">{{ total_transactions|default(0) }}</h2>
-                            <small class="text-white-50">
-                                <i class="fas fa-exchange-alt me-1"></i>{{ transactions_today|default(0) }} today
-                            </small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-credit-card text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
-                        <div class="progress-bar bg-white" style="width: {{ ((completed_transactions|default(0))/total_transactions*100) if total_transactions and total_transactions > 0 else 0 }}%"></div>
-                    </div>
-                    <small class="text-white-50">{{ completed_transactions|default(0) }} completed</small>
-                </div>
-                <div class="card-footer bg-white bg-opacity-10 border-0">
-                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm w-100">
-                        <i class="fas fa-cog me-1"></i>View All
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Platform Revenue -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card card-gradient-warning border-0 shadow-hover">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title text-white-50 mb-2">Platform Revenue</h6>
-                            <h2 class="text-white mb-1">${{ "%.2f"|format(total_revenue|default(0)) }}</h2>
-                            <small class="text-white-50">
-                                <i class="fas fa-chart-line me-1"></i>${{ "%.2f"|format(revenue_today|default(0)) }} today
-                            </small>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-20 rounded-circle p-3">
-                            <i class="fas fa-dollar-sign text-white fs-4"></i>
-                        </div>
-                    </div>
-                    <div class="progress mt-2 bg-white bg-opacity-20" style="height: 4px;">
-                        <div class="progress-bar bg-white" style="width: {{ ((revenue_today|default(0))/total_revenue*100) if total_revenue and total_revenue > 0 else 0 }}%"></div>
-                    </div>
-                    <small class="text-white-50">{{ revenue_growth|default(0) }}% growth</small>
-                </div>
-                <div class="card-footer bg-white bg-opacity-10 border-0">
-                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-light btn-sm w-100">
-                        <i class="fas fa-chart-bar me-1"></i>View Reports
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rest of the template remains the same but with safe defaults -->
-    <div class="row">
-        <!-- Left Column -->
-        <div class="col-xl-8 mb-4">
-            <!-- Quick Actions -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <h5 class="fw-bold mb-0 text-primary">
-                        <i class="fas fa-bolt me-2"></i>Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <a href="{{ url_for('admin.users') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-shape-lg bg-primary bg-opacity-10 rounded-circle mb-3 mx-auto">
-                                        <i class="fas fa-users text-primary fs-2"></i>
-                                    </div>
-                                    <h6 class="fw-bold text-dark mb-2">Manage Users</h6>
-                                    <p class="text-muted small mb-0">View, edit, and manage user accounts</p>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="{{ url_for('admin.books') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-shape-lg bg-success bg-opacity-10 rounded-circle mb-3 mx-auto">
-                                        <i class="fas fa-book text-success fs-2"></i>
-                                    </div>
-                                    <h6 class="fw-bold text-dark mb-2">Manage Books</h6>
-                                    <p class="text-muted small mb-0">Oversee book catalog and content</p>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="{{ url_for('admin.transactions') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-shape-lg bg-info bg-opacity-10 rounded-circle mb-3 mx-auto">
-                                        <i class="fas fa-credit-card text-info fs-2"></i>
-                                    </div>
-                                    <h6 class="fw-bold text-dark mb-2">Transactions</h6>
-                                    <p class="text-muted small mb-0">Monitor payments and revenue</p>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="{{ url_for('admin.settings') }}" class="card action-card border-0 shadow-sm-hover text-decoration-none">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-shape-lg bg-warning bg-opacity-10 rounded-circle mb-3 mx-auto">
-                                        <i class="fas fa-cogs text-warning fs-2"></i>
-                                    </div>
-                                    <h6 class="fw-bold text-dark mb-2">System Settings</h6>
-                                    <p class="text-muted small mb-0">Configure platform settings</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity & System Health -->
-            <div class="row">
-                <!-- Recent Transactions -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-transparent border-0 py-3">
+                        <h2 class="fw-bold mb-1">{{ total_users|default(0) }}</h2>
+                        <span class="text-white-50 small">Total Users</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-10">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold mb-0 text-success">
-                                    <i class="fas fa-exchange-alt me-2"></i>Recent Transactions
-                                </h5>
-                                <span class="badge bg-success">{{ recent_transactions|length if recent_transactions else 0 }}</span>
+                                <small class="text-white"><i class="fas fa-arrow-up me-1"></i>{{ new_users_today|default(0) }} new</small>
+                                <div class="progress bg-white bg-opacity-10" style="width: 60px; height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: {{ ((active_users|default(0))/total_users*100) if total_users and total_users > 0 else 0 }}%"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            {% if recent_transactions %}
-                                <div class="timeline">
-                                    {% for transaction in recent_transactions[:5] %}
-                                    <div class="timeline-item {% if loop.first %}active{% endif %}">
-                                        <div class="timeline-marker bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}"></div>
-                                        <div class="timeline-content">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 class="mb-1 fw-bold">{{ transaction.user.username }}</h6>
-                                                    <small class="text-muted">{{ transaction.transaction_type|title }} • {{ transaction.created_at.strftime('%H:%M') }}</small>
-                                                </div>
-                                                <div class="text-end">
-                                                    <span class="fw-bold text-{{ 'success' if transaction.amount > 0 else 'danger' }}">
-                                                        ${{ "%.2f"|format(transaction.amount) }}
-                                                    </span>
-                                                    <br>
-                                                    <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }} badge-sm">
-                                                        {{ transaction.status }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <div class="text-center mt-3">
-                                    <a href="{{ url_for('admin.transactions') }}" class="btn btn-sm btn-outline-success">
-                                        <i class="fas fa-list me-1"></i>View All Transactions
-                                    </a>
-                                </div>
-                            {% else %}
-                                <div class="text-center py-4">
-                                    <i class="fas fa-exchange-alt fs-1 text-muted mb-3"></i>
-                                    <p class="text-muted">No recent transactions</p>
-                                </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- System Health -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-transparent border-0 py-3">
-                            <h5 class="fw-bold mb-0 text-info">
-                                <i class="fas fa-heartbeat me-2"></i>System Health
-                            </h5>
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-stat bg-gradient-success text-white border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-20 rounded-4">
+                                <i class="fas fa-book-open fs-4"></i>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="system-health">
-                                <div class="health-item">
-                                    <div class="health-icon bg-success">
-                                        <i class="fas fa-database"></i>
-                                    </div>
-                                    <div class="health-info">
-                                        <strong>Database</strong>
-                                        <span class="text-success">Optimal</span>
-                                    </div>
-                                    <div class="health-status">
-                                        <div class="progress" style="width: 80px; height: 6px;">
-                                            <div class="progress-bar bg-success" style="width: 95%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="health-item">
-                                    <div class="health-icon bg-success">
-                                        <i class="fas fa-hdd"></i>
-                                    </div>
-                                    <div class="health-info">
-                                        <strong>File Storage</strong>
-                                        <span class="text-success">Healthy</span>
-                                    </div>
-                                    <div class="health-status">
-                                        <div class="progress" style="width: 80px; height: 6px;">
-                                            <div class="progress-bar bg-success" style="width: 78%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="health-item">
-                                    <div class="health-icon bg-success">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                    <div class="health-info">
-                                        <strong>Payment System</strong>
-                                        <span class="text-success">Active</span>
-                                    </div>
-                                    <div class="health-status">
-                                        <div class="progress" style="width: 80px; height: 6px;">
-                                            <div class="progress-bar bg-success" style="width: 100%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="health-item">
-                                    <div class="health-icon bg-info">
-                                        <i class="fas fa-server"></i>
-                                    </div>
-                                    <div class="health-info">
-                                        <strong>Server Uptime</strong>
-                                        <span class="text-info">99.9%</span>
-                                    </div>
-                                    <div class="health-status">
-                                        <div class="progress" style="width: 80px; height: 6px;">
-                                            <div class="progress-bar bg-info" style="width: 99.9%"></div>
-                                        </div>
-                                    </div>
+                        <h2 class="fw-bold mb-1">{{ total_books|default(0) }}</h2>
+                        <span class="text-white-50 small">Total Books</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-white"><i class="fas fa-plus me-1"></i>{{ books_uploaded_today|default(0) }} today</small>
+                                <div class="progress bg-white bg-opacity-10" style="width: 60px; height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: {{ ((available_books|default(0))/total_books*100) if total_books and total_books > 0 else 0 }}%"></div>
                                 </div>
                             </div>
-                            <div class="mt-4 p-3 bg-light rounded">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">Last system check</small>
-                                    <small class="text-muted">{{ current_time.strftime('%H:%M:%S') if current_time else 'Just now' }}</small>
-                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-stat bg-gradient-info text-white border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-20 rounded-4">
+                                <i class="fas fa-exchange-alt fs-4"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-1">{{ total_transactions|default(0) }}</h2>
+                        <span class="text-white-50 small">Transactions</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-white"><i class="fas fa-clock me-1"></i>{{ transactions_today|default(0) }} today</small>
+                                <small class="text-white-50">{{ completed_transactions|default(0) }} done</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card card-stat bg-gradient-warning text-white border-0 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="icon-box bg-white bg-opacity-20 rounded-4">
+                                <i class="fas fa-dollar-sign fs-4"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold mb-1">${{ "%.2f"|format(total_revenue|default(0)) }}</h2>
+                        <span class="text-white-50 small">Total Revenue</span>
+                        
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-white"><i class="fas fa-chart-line me-1"></i>+{{ revenue_growth|default(0) }}%</small>
+                                <small class="text-white-50">${{ "%.2f"|format(revenue_today|default(0)) }} today</small>
                             </div>
                         </div>
                     </div>
@@ -335,106 +113,801 @@
             </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="col-xl-4 mb-4">
-            <!-- Platform Analytics -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <h5 class="fw-bold mb-0 text-purple">
-                        <i class="fas fa-chart-pie me-2"></i>Platform Analytics
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="analytics-grid">
-                        <div class="analytics-item text-center">
-                            <div class="analytics-value text-primary fw-bold">{{ user_engagement|default(75) }}%</div>
-                            <div class="analytics-label text-muted small">User Engagement</div>
-                        </div>
-                        <div class="analytics-item text-center">
-                            <div class="analytics-value text-success fw-bold">{{ conversion_rate|default(15) }}%</div>
-                            <div class="analytics-label text-muted small">Conversion Rate</div>
-                        </div>
-                        <div class="analytics-item text-center">
-                            <div class="analytics-value text-info fw-bold">${{ avg_transaction_value|default(25.50) }}</div>
-                            <div class="analytics-label text-muted small">Avg. Transaction</div>
+        <div class="row g-4">
+            <div class="col-xl-8">
+                
+                <div class="card glass-card border-0 mb-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-bolt me-2 text-warning"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-3 col-6">
+                                <a href="{{ url_for('admin.users') }}" class="action-btn text-center p-3 rounded-4 d-block text-decoration-none">
+                                    <div class="icon-circle bg-primary bg-opacity-10 text-primary mb-2 mx-auto">
+                                        <i class="fas fa-user-cog"></i>
+                                    </div>
+                                    <span class="d-block fw-bold text-dark small">Users</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a href="{{ url_for('admin.books') }}" class="action-btn text-center p-3 rounded-4 d-block text-decoration-none">
+                                    <div class="icon-circle bg-success bg-opacity-10 text-success mb-2 mx-auto">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <span class="d-block fw-bold text-dark small">Books</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a href="{{ url_for('admin.transactions') }}" class="action-btn text-center p-3 rounded-4 d-block text-decoration-none">
+                                    <div class="icon-circle bg-info bg-opacity-10 text-info mb-2 mx-auto">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </div>
+                                    <span class="d-block fw-bold text-dark small">Reports</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a href="{{ url_for('admin.settings') }}" class="action-btn text-center p-3 rounded-4 d-block text-decoration-none">
+                                    <div class="icon-circle bg-warning bg-opacity-10 text-warning mb-2 mx-auto">
+                                        <i class="fas fa-sliders-h"></i>
+                                    </div>
+                                    <span class="d-block fw-bold text-dark small">Settings</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Simplified categories section -->
-                    <div class="mt-4">
-                        <h6 class="fw-bold mb-3">Platform Overview</h6>
-                        <div class="category-item mb-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">Active Users</span>
-                                <span class="fw-bold">{{ active_users|default(total_users|default(0)) }}</span>
+                </div>
+
+                <div class="card glass-card border-0 mb-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-history me-2 text-primary"></i>Recent Activity</h5>
+                        <a href="{{ url_for('admin.transactions') }}" class="btn btn-sm btn-light rounded-pill px-3">View All</a>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if recent_transactions %}
+                            <div class="timeline-clean">
+                                {% for transaction in recent_transactions[:5] %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}"></div>
+                                    <div class="timeline-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="fw-bold text-dark">{{ transaction.user.username }}</span>
+                                            <span class="badge bg-light text-dark border">{{ transaction.status }}</span>
+                                        </div>
+                                        <p class="text-muted small mb-1">
+                                            {{ transaction.transaction_type|title }} 
+                                            <span class="mx-1">•</span> 
+                                            {{ transaction.created_at.strftime('%b %d, %H:%M') }}
+                                        </p>
+                                        <span class="fw-bold text-{{ 'success' if transaction.amount > 0 else 'danger' }}">
+                                            ${{ "%.2f"|format(transaction.amount) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
-                        </div>
-                        <div class="category-item mb-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">Available Books</span>
-                                <span class="fw-bold">{{ available_books|default(total_books|default(0)) }}</span>
+                        {% else %}
+                            <div class="text-center py-5 opacity-50">
+                                <i class="fas fa-clipboard-list fs-1 mb-3"></i>
+                                <p>No recent activity found</p>
                             </div>
-                        </div>
-                        <div class="category-item mb-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">Today's Revenue</span>
-                                <span class="fw-bold">${{ "%.2f"|format(revenue_today|default(0)) }}</span>
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Users -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0 text-warning">
-                            <i class="fas fa-user-plus me-2"></i>Recent Users
-                        </h5>
-                        <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-warning">View All</a>
+            <div class="col-xl-4">
+                
+                <div class="card glass-card border-0 mb-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-heartbeat me-2 text-danger"></i>System Health</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="health-grid">
+                            <div class="health-item d-flex align-items-center mb-3 p-3 rounded-3 bg-white bg-opacity-50">
+                                <div class="health-status-dot bg-success me-3 pulse"></div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">Database</h6>
+                                    <small class="text-muted">Optimal Latency</small>
+                                </div>
+                                <i class="fas fa-database text-success opacity-50"></i>
+                            </div>
+                            
+                            <div class="health-item d-flex align-items-center mb-3 p-3 rounded-3 bg-white bg-opacity-50">
+                                <div class="health-status-dot bg-success me-3"></div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">Storage</h6>
+                                    <small class="text-muted">78% Usage</small>
+                                </div>
+                                <i class="fas fa-hdd text-success opacity-50"></i>
+                            </div>
+
+                            <div class="health-item d-flex align-items-center p-3 rounded-3 bg-white bg-opacity-50">
+                                <div class="health-status-dot bg-info me-3"></div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">Server Uptime</h6>
+                                    <small class="text-muted">99.9% Availability</small>
+                                </div>
+                                <i class="fas fa-server text-info opacity-50"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    {% if recent_users %}
-                        <div class="user-list">
-                            {% for user in recent_users[:4] %}
-                            <div class="user-item d-flex align-items-center mb-3">
-                                <div class="user-avatar bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
-                                    <span class="text-white fw-bold">{{ user.username[0]|upper }}</span>
+
+                <div class="card glass-card border-0">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-user-clock me-2 text-primary"></i>New Users</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if recent_users %}
+                            <div class="d-flex flex-column gap-3">
+                                {% for user in recent_users[:5] %}
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle bg-primary text-white fw-bold me-3">
+                                        {{ user.username[0]|upper }}
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h6 class="mb-0 text-dark text-truncate">{{ user.username }}</h6>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-dark">{{ user.created_at.strftime('%d %b') }}</span>
+                                    </div>
                                 </div>
-                                <div class="user-info flex-grow-1">
-                                    <h6 class="mb-0 fw-bold">{{ user.username }}</h6>
-                                    <small class="text-muted">{{ user.email }}</small>
-                                </div>
-                                <div class="user-status text-end">
-                                    <small class="text-muted">{{ user.created_at.strftime('%b %d') }}</small>
-                                    <br>
-                                    <span class="badge bg-{{ 'success' if user.is_active else 'secondary' }} badge-sm">
-                                        {{ 'Active' if user.is_active else 'Inactive' }}
-                                    </span>
-                                </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-3">
-                            <i class="fas fa-users fs-1 text-muted mb-2"></i>
-                            <p class="text-muted small">No recent users</p>
-                        </div>
-                    {% endif %}
+                        {% else %}
+                            <p class="text-muted text-center py-3">No recent signups.</p>
+                        {% endif %}
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- CSS and JavaScript remain the same -->
 <style>
-/* ... (keep all the CSS styles from previous version) ... */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+        --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --info-gradient: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+        --warning-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.4);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    }
+
+    body {
+        background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), 
+                    url("{{ url_for('static', filename='photos/lecture_theater.png') }}") no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* === ENHANCED GRADIENTS WITH ANIMATION === */
+    .bg-gradient-primary { 
+        background: var(--primary-gradient) !important;
+        background-size: 200% 200% !important;
+        animation: gradient-flow 6s ease infinite !important;
+    }
+    .bg-gradient-success { 
+        background: var(--success-gradient) !important;
+        background-size: 200% 200% !important;
+        animation: gradient-flow 6s ease infinite 0.5s !important;
+    }
+    .bg-gradient-info { 
+        background: var(--info-gradient) !important;
+        background-size: 200% 200% !important;
+        animation: gradient-flow 6s ease infinite 1s !important;
+    }
+    .bg-gradient-warning { 
+        background: var(--warning-gradient) !important;
+        background-size: 200% 200% !important;
+        animation: gradient-flow 6s ease infinite 1.5s !important;
+    }
+
+    @keyframes gradient-flow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* === REFINED GLASS EFFECTS === */
+    .glass-header {
+        background: linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.12)
+        );
+        background-size: 200% 200%;
+        animation: shimmer 3s ease infinite;
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: shine 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes shine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        box-shadow: 
+            0 4px 6px -1px rgba(0, 0, 0, 0.05),
+            0 10px 30px -3px rgba(0, 0, 0, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+        z-index: 1;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-8px) scale(1.01);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.12),
+            0 8px 16px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* === ENHANCED STAT CARDS === */
+    .card-stat {
+        border-radius: 20px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-stat::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            transparent 100%
+        );
+        transform: rotate(30deg);
+    }
+
+    .card-stat:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .icon-box {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.25) !important;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+    }
+
+    .card-stat:hover .icon-box {
+        transform: rotate(10deg) scale(1.1);
+        background: rgba(255, 255, 255, 0.35) !important;
+    }
+
+    .card-stat h2 {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        font-size: 2.5rem;
+        background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0.9));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* === REFINED QUICK ACTIONS === */
+    .action-btn {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.6s;
+    }
+
+    .action-btn:hover::before {
+        left: 100%;
+    }
+
+    .action-btn:hover {
+        background: white;
+        transform: translateY(-6px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .icon-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+
+    .icon-circle::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        padding: 2px;
+        background: linear-gradient(135deg, currentColor, transparent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .action-btn:hover .icon-circle {
+        transform: rotate(10deg) scale(1.15);
+    }
+
+    .action-btn:hover .icon-circle::before {
+        opacity: 1;
+    }
+
+    .action-btn:hover .icon-circle i {
+        animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    /* === ENHANCED TIMELINE === */
+    .timeline-clean {
+        position: relative;
+        padding-left: 16px;
+    }
+
+    .timeline-clean::before {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: linear-gradient(to bottom, #4e54c8, #11998e, #36d1dc, #f7971e, transparent);
+        border-radius: 2px;
+        opacity: 0.3;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 24px;
+        margin-bottom: 28px;
+        opacity: 0;
+        animation: fadeInUp 0.5s ease forwards;
+        animation-delay: calc(var(--item-index, 0) * 0.1s);
+    }
+
+    .timeline-item:nth-child(1) { --item-index: 1; }
+    .timeline-item:nth-child(2) { --item-index: 2; }
+    .timeline-item:nth-child(3) { --item-index: 3; }
+    .timeline-item:nth-child(4) { --item-index: 4; }
+    .timeline-item:nth-child(5) { --item-index: 5; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover .timeline-marker {
+        transform: scale(1.3);
+        box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.9), 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .timeline-content {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        padding: 18px 20px;
+        border-radius: 14px;
+        border-left: 4px solid;
+        border-left-color: var(--border-color, #4e54c8);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .timeline-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    }
+
+    .timeline-item:hover .timeline-content {
+        transform: translateX(6px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .timeline-item:nth-child(1) .timeline-content { --border-color: #4e54c8; }
+    .timeline-item:nth-child(2) .timeline-content { --border-color: #11998e; }
+    .timeline-item:nth-child(3) .timeline-content { --border-color: #36d1dc; }
+    .timeline-item:nth-child(4) .timeline-content { --border-color: #f7971e; }
+    .timeline-item:nth-child(5) .timeline-content { --border-color: #9d50bb; }
+
+    /* === REFINED HEALTH SECTION === */
+    .health-item {
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .health-item:hover {
+        transform: translateX(8px);
+        background: rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .health-status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .health-status-dot::after {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        opacity: 0.3;
+        animation: pulse 2s ease infinite;
+    }
+
+    /* === ENHANCED USER AVATARS === */
+    .avatar-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--avatar-bg, #4e54c8), #8f94fb);
+        box-shadow: 0 6px 12px rgba(78, 84, 200, 0.3);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-circle::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 100%
+        );
+        transform: rotate(30deg);
+    }
+
+    .avatar-circle:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 10px 25px rgba(78, 84, 200, 0.4);
+    }
+
+    /* === REFINED TYPOGRAPHY === */
+    .glass-header h1 {
+        font-size: 1.75rem;
+        font-weight: 900;
+        letter-spacing: -0.025em;
+        background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.9));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-header h5 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-header h5 i {
+        font-size: 1rem;
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        margin-right: 10px;
+        background: rgba(0, 0, 0, 0.03);
+    }
+
+    /* === REFINED BUTTONS === */
+    .btn-light.rounded-pill {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.375rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light.rounded-pill:hover {
+        background: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* === ENHANCED BADGES === */
+    .pulse-badge {
+        animation: refinedPulse 2.5s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pulse-badge::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.7s;
+    }
+
+    .pulse-badge:hover::before {
+        left: 100%;
+    }
+
+    @keyframes refinedPulse {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        50% { 
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+    }
+
+    /* === CUSTOM SCROLLBAR === */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        margin: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #4e54c8, #8f94fb);
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to bottom, #11998e, #38ef7d);
+        transform: scale(1.05);
+    }
+
+    /* === RESPONSIVE ENHANCEMENTS === */
+    @media (max-width: 768px) {
+        .glass-card {
+            border-radius: 16px;
+        }
+        
+        .card-stat {
+            border-radius: 16px;
+        }
+        
+        .action-btn {
+            padding: 1.5rem 0.5rem !important;
+        }
+        
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            font-size: 1.1rem;
+        }
+        
+        .card-stat h2 {
+            font-size: 2rem;
+        }
+    }
+
+    /* === LOADING STATES === */
+    @keyframes loadingShimmer {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    .text-center.opacity-50 i {
+        animation: pulse 2s ease-in-out infinite;
+        opacity: 0.6;
+    }
+
+    /* === SMOOTH PAGE TRANSITIONS === */
+    .admin-dashboard {
+        animation: pageFadeIn 0.6s ease-out;
+    }
+
+    @keyframes pageFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* === HOVER LIFT EFFECT FOR ALL INTERACTIVE ELEMENTS === */
+    .interactive {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .interactive:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
 </style>
 
 <script>
-// ... (keep all the JavaScript from previous version) ... 
+    // Add subtle parallax effect to the header
+    document.addEventListener('DOMContentLoaded', function() {
+        const header = document.querySelector('.glass-header');
+        
+        if (header) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth) * 20;
+                const y = (e.clientY / window.innerHeight) * 20;
+                header.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        // Add ripple effect to action buttons
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.7);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    top: ${y}px;
+                    left: ${x}px;
+                    pointer-events: none;
+                `;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    });
 </script>
 {% endblock %}
