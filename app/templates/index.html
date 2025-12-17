@@ -3,286 +3,270 @@
 {% block content %}
 <style>
     :root {
-        --cavendish-navy: #002347;
-        --cavendish-blue: #003366;
+        --cavendish-deep-navy: #000a1a;
+        --cavendish-vibrant-blue: #004a99;
         --cavendish-gold: #d4af37;
-        --cavendish-gold-soft: rgba(212, 175, 55, 0.1);
-        --glass-white: rgba(255, 255, 255, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.4);
-        --text-dark: #1a202c;
-        --text-muted: #4a5568;
-        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --cavendish-gold-glow: rgba(212, 175, 55, 0.4);
+        --glass-fill: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --text-white: #ffffff;
+        --text-gold-dust: #f3e5ab;
     }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-        background-image: url("{{ url_for('static', filename='photos/CuzLibrary.png') }}");
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--cavendish-deep-navy);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: var(--text-white);
+        
+        /* THE LUMINOUS STACK - Blue Blur & Gold Rim Light */
+        background-image: 
+            /* 1. Top-Right Gold Glow (The "Artistic" Sunlight) */
+            radial-gradient(circle at 85% 5%, rgba(212, 175, 55, 0.12) 0%, transparent 40%),
+            /* 2. Central Blue Atmosphere */
+            radial-gradient(circle at 50% 50%, rgba(0, 74, 153, 0.25) 0%, transparent 70%),
+            /* 3. Transparent Blue/Navy Wash (The Blur Layer) */
+            linear-gradient(180deg, 
+                rgba(0, 18, 38, 0.65) 0%, 
+                rgba(0, 10, 26, 0.85) 100%),
+            /* 4. The Library Photo */
+            url("{{ url_for('static', filename='photos/CuzLibrary.png') }}");
+        
         background-attachment: fixed;
         background-size: cover;
         background-position: center;
-        background-color: var(--cavendish-navy);
-    }
-
-    /* Depth Overlay */
-    .page-container {
-        background: linear-gradient(180deg, rgba(0,35,71,0.9) 0%, rgba(248,250,252,0.95) 40%, #f8fafc 100%);
-        min-height: 100vh;
         overflow-x: hidden;
     }
 
-    /* ===== HERO SECTION ===== */
-    .hero-wrapper {
-        padding: 160px 0 100px;
+    .page-canvas {
+        width: 100%;
+        padding: 100px 0 100px;
+        position: relative;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 25px;
+    }
+
+    /* ===== HEADLINE WITH METAL SHEEN ===== */
+    .hero-header {
         text-align: center;
-        color: white;
+        margin-bottom: 90px;
     }
 
-    .elite-badge {
-        background: var(--cavendish-gold-soft);
-        border: 1px solid var(--cavendish-gold);
+    .pre-title {
         color: var(--cavendish-gold);
-        padding: 6px 18px;
-        border-radius: 100px;
-        font-size: 0.8rem;
-        font-weight: 700;
+        font-weight: 800;
+        letter-spacing: 5px;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        display: inline-block;
-        margin-bottom: 30px;
-        animation: fadeInDown 0.8s var(--ease-out-expo);
+        margin-bottom: 20px;
+        display: block;
+        text-shadow: 0 0 10px var(--cavendish-gold-glow);
     }
 
-    .hero-headline {
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
+    .main-title {
+        font-size: clamp(2.8rem, 8vw, 4.8rem);
         font-weight: 900;
-        line-height: 1;
-        letter-spacing: -2px;
-        margin-bottom: 25px;
-        background: linear-gradient(to bottom, #ffffff, #cbd5e1);
+        line-height: 0.95;
+        letter-spacing: -3px;
+        /* Gold-to-White Metal Gradient */
+        background: linear-gradient(to bottom, #ffffff 40%, var(--cavendish-gold) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4));
     }
 
-    /* ===== FLOATING STATS ===== */
-    .stats-row {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 50px;
+    /* ===== LUMINOUS PORTAL BOXES ===== */
+    .portal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 40px;
+        margin-bottom: 120px;
     }
 
-    .stat-blur-box {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 25px 40px;
-        border-radius: 24px;
-        transition: all 0.4s var(--ease-out-expo);
-    }
-
-    .stat-blur-box:hover {
-        background: rgba(255, 255, 255, 0.12);
-        transform: translateY(-5px);
-        border-color: var(--cavendish-gold);
-    }
-
-    .stat-val {
-        color: var(--cavendish-gold);
-        font-size: 2.2rem;
-        font-weight: 800;
-        display: block;
-    }
-
-    /* ===== PORTAL CARDS ===== */
-    .portal-section { padding: 120px 0; }
-
-    .portal-flex {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-    .portal-card-elite {
-        flex: 1;
-        min-width: 340px;
-        background: var(--glass-white);
-        backdrop-filter: blur(20px);
+    .glass-portal {
+        background: var(--glass-fill);
+        backdrop-filter: blur(35px) saturate(140%);
+        -webkit-backdrop-filter: blur(35px) saturate(140%);
         border: 1px solid var(--glass-border);
-        border-radius: 40px;
-        padding: 60px 40px;
+        border-radius: 45px;
+        padding: 70px 50px;
         text-align: center;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
-        transition: all 0.5s var(--ease-out-expo);
+        transition: all 0.7s cubic-bezier(0.15, 0.85, 0.35, 1);
         position: relative;
         overflow: hidden;
+        box-shadow: inset 0 0 30px rgba(255,255,255,0.02);
     }
 
-    .portal-card-elite::before {
+    /* Inner Glow Effect */
+    .glass-portal::after {
         content: '';
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 5px;
-        background: var(--cavendish-blue);
-        transform: scaleX(0);
-        transition: transform 0.5s var(--ease-out-expo);
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(212,175,55,0.08), transparent 70%);
+        pointer-events: none;
     }
 
-    .portal-card-elite:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: 0 40px 80px -15px rgba(0, 51, 102, 0.15);
-    }
-
-    .portal-card-elite:hover::before { transform: scaleX(1); }
-
-    .icon-circle {
-        width: 90px;
-        height: 90px;
-        background: #f1f5f9;
-        color: var(--cavendish-blue);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 30px;
-        font-size: 2rem;
-        transition: 0.4s;
-    }
-
-    .portal-card-elite:hover .icon-circle {
-        background: var(--cavendish-blue);
-        color: white;
-        transform: rotateY(360deg);
-    }
-
-    /* ===== BENTO FEATURES ===== */
-    .bento-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        margin-top: 40px;
-    }
-
-    .bento-item {
-        background: white;
-        padding: 40px;
-        border-radius: 32px;
-        border: 1px solid #edf2f7;
-        transition: 0.3s;
-    }
-
-    .bento-item:hover {
-        background: #fafafa;
+    .glass-portal:hover {
+        transform: translateY(-20px);
+        background: rgba(255, 255, 255, 0.08);
         border-color: var(--cavendish-gold);
+        box-shadow: 
+            0 40px 100px rgba(0, 0, 0, 0.6),
+            0 0 20px rgba(212, 175, 55, 0.2);
     }
 
-    /* Buttons */
-    .btn-elite {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 18px 40px;
-        border-radius: 16px;
-        font-weight: 800;
-        font-size: 1rem;
-        transition: 0.4s var(--ease-out-expo);
-        text-decoration: none;
-        cursor: pointer;
+    .icon-shard {
+        width: 90px; height: 90px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        display: flex;
+        align-items: center; justify-content: center;
+        margin: 0 auto 35px;
+        font-size: 2.2rem;
+        color: var(--text-gold-dust);
+        transition: 0.5s;
+    }
+
+    .glass-portal:hover .icon-shard {
+        background: var(--cavendish-gold);
+        color: var(--cavendish-deep-navy);
+        transform: rotateY(180deg) scale(1.1);
+        box-shadow: 0 0 25px var(--cavendish-gold-glow);
+    }
+
+    /* ===== GOLD GLOW BUTTONS ===== */
+    .btn-portal {
         width: 100%;
+        padding: 20px;
+        border-radius: 20px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.4s;
+        margin-top: 35px;
+        font-size: 0.9rem;
     }
 
-    .btn-navy { background: var(--cavendish-blue); color: white; }
-    .btn-navy:hover { background: var(--cavendish-navy); transform: scale(1.05); }
+    .btn-gold-glimmer {
+        background: linear-gradient(135deg, var(--cavendish-gold) 0%, #f1c40f 100%);
+        color: var(--cavendish-deep-navy);
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        border: none;
+    }
 
-    .btn-outline-gold {
-        border: 2px solid var(--cavendish-gold);
+    .btn-gold-glimmer:hover {
+        transform: scale(1.03);
+        box-shadow: 0 15px 35px rgba(212, 175, 55, 0.5);
+        filter: brightness(1.1);
+    }
+
+    .btn-glass {
+        border: 1px solid var(--cavendish-gold);
         color: var(--cavendish-gold);
         background: transparent;
     }
 
-    .btn-outline-gold:hover {
-        background: var(--cavendish-gold);
-        color: white;
+    .btn-glass:hover {
+        background: rgba(212, 175, 55, 0.1);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
     }
 
-    /* Animations */
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+    /* ===== BENTO SECTION ===== */
+    .bento-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .bento-tile {
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        padding: 35px;
+        border-radius: 35px;
+        transition: 0.4s ease;
+    }
+
+    .bento-tile:hover {
+        border-color: rgba(255,255,255,0.3);
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    .bento-tile i {
+        color: var(--cavendish-gold);
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .bento-tile h4 { margin-bottom: 10px; letter-spacing: 1px; }
+    .bento-tile p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.5; }
+
+    @media (max-width: 768px) {
+        .bento-row { grid-template-columns: 1fr; }
+        .main-title { font-size: 2.8rem; }
+        .page-canvas { padding-top: 70px; }
     }
 </style>
 
-<div class="page-container">
+<div class="page-canvas">
     <div class="container">
-        <header class="hero-wrapper">
-            <div class="elite-badge">Premium Academic Resource</div>
-            <h1 class="hero-headline">Elevate Your Knowledge<br>At Cavendish</h1>
-            <p style="font-size: 1.3rem; max-width: 700px; margin: 0 auto; opacity: 0.85; line-height: 1.6;">
-                Step into a digital sanctuary designed for the modern scholar. Access global insights with a local touch.
+        <header class="hero-header">
+            <span class="pre-title">Elite Knowledge Access</span>
+            <h1 class="main-title">Cavendish <br> Digital Commons</h1>
+            <p style="color: rgba(255,255,255,0.6); font-size: 1.2rem; max-width: 650px; margin: 35px auto 0; line-height: 1.7;">
+                Step into a unified sanctuary for research and academic growth. Access global insights through our secure, high-speed repository.
             </p>
-
-            <div class="stats-row">
-                <div class="stat-blur-box">
-                    <span class="stat-val">15,000+</span>
-                    <span style="font-size: 0.8rem; opacity: 0.7; font-weight: 600;">E-RESOURCES</span>
-                </div>
-                <div class="stat-blur-box">
-                    <span class="stat-val">3,200+</span>
-                    <span style="font-size: 0.8rem; opacity: 0.7; font-weight: 600;">ACTIVE USERS</span>
-                </div>
-                <div class="stat-blur-box">
-                    <span class="stat-val">Elite</span>
-                    <span style="font-size: 0.8rem; opacity: 0.7; font-weight: 600;">STANDARD</span>
-                </div>
-            </div>
         </header>
 
-        <section class="portal-section">
-            <h2 style="text-align: center; color: var(--cavendish-navy); font-size: 2.5rem; font-weight: 900; margin-bottom: 60px; letter-spacing: -1px;">Select Your Gateway</h2>
-            
-            <div class="portal-flex">
-                <div class="portal-card-elite">
-                    <div class="icon-circle"><i class="fas fa-graduation-cap"></i></div>
-                    <h3 style="font-size: 1.8rem; color: var(--cavendish-navy); margin-bottom: 15px;">Student Library</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 1.05rem;">Manage your loans, explore research journals, and access your personal digital archive.</p>
-                    <a href="{{ url_for('auth.login') }}" class="btn-elite btn-navy">Access My Library</a>
-                </div>
+        <div class="portal-grid">
+            <div class="glass-portal">
+                <div class="icon-shard"><i class="fas fa-graduation-cap"></i></div>
+                <h2 style="font-size: 2rem;">Student Library</h2>
+                <p style="color: rgba(255,255,255,0.5); margin-top: 10px;">Access journals, borrow books, and manage your research archive.</p>
+                <a href="{{ url_for('auth.login') }}" class="btn-portal btn-gold-glimmer">Open Scholar Portal</a>
+            </div>
 
-                <div class="portal-card-elite">
-                    <div class="icon-circle"><i class="fas fa-user-tie"></i></div>
-                    <h3 style="font-size: 1.8rem; color: var(--cavendish-navy); margin-bottom: 15px;">Staff & Faculty</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 1.05rem;">Administrative tools for resource management, analytics, and faculty collections.</p>
-                    <a href="{{ url_for('auth.login') }}" class="btn-elite btn-outline-gold">Staff Authentication</a>
-                </div>
+            <div class="glass-portal">
+                <div class="icon-shard"><i class="fas fa-user-shield"></i></div>
+                <h2 style="font-size: 2rem;">Staff Gateway</h2>
+                <p style="color: rgba(255,255,255,0.5); margin-top: 10px;">Management tools for faculty resources and library analytics.</p>
+                <a href="{{ url_for('auth.login') }}" class="btn-portal btn-glass">Staff Authentication</a>
             </div>
-        </section>
+        </div>
 
-        <section style="padding-bottom: 120px;">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <h2 style="color: var(--cavendish-navy); font-weight: 900; font-size: 2.2rem;">Intuitive Features</h2>
+        <div class="bento-row">
+            <div class="bento-tile">
+                <i class="fas fa-search-location"></i>
+                <h4>Global Search</h4>
+                <p>Locate physical and digital resources across all partner campuses instantly.</p>
             </div>
-            <div class="bento-grid">
-                <div class="bento-item">
-                    <i class="fas fa-search-plus" style="color: var(--cavendish-gold); font-size: 1.8rem; margin-bottom: 20px;"></i>
-                    <h4 style="font-weight: 800; margin-bottom: 10px;">Smart Retrieval</h4>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">AI-powered search to find the exact citation or chapter you need in milliseconds.</p>
-                </div>
-                <div class="bento-item">
-                    <i class="fas fa-sync" style="color: var(--cavendish-gold); font-size: 1.8rem; margin-bottom: 20px;"></i>
-                    <h4 style="font-weight: 800; margin-bottom: 10px;">Live Sync</h4>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Start reading on your desktop and pick up right where you left off on your mobile device.</p>
-                </div>
-                <div class="bento-item">
-                    <i class="fas fa-university" style="color: var(--cavendish-gold); font-size: 1.8rem; margin-bottom: 20px;"></i>
-                    <h4 style="font-weight: 800; margin-bottom: 10px;">Inter-Library</h4>
-                    <p style="font-size: 0.95rem; color: var(--text-muted);">Borrow digital titles from our partner universities through a global peer-to-peer network.</p>
-                </div>
+            <div class="bento-tile">
+                <i class="fas fa-sync-alt"></i>
+                <h4>Real-time Sync</h4>
+                <p>Your citations and history follow you across all your mobile and desktop devices.</p>
             </div>
-        </section>
+            <div class="bento-tile">
+                <i class="fas fa-microchip"></i>
+                <h4>AI Indexing</h4>
+                <p>Advanced algorithms that help surface relevant research based on your study patterns.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // Reveal animation on scroll
-    const observerOptions = { threshold: 0.1 };
+    // Smooth reveal animations for the "Elite" feel
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -290,12 +274,12 @@
                 entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.1 });
 
-    document.querySelectorAll('.portal-card-elite, .bento-item').forEach(el => {
+    document.querySelectorAll('.glass-portal, .bento-tile').forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+        el.style.transform = 'translateY(50px)';
+        el.style.transition = 'all 0.9s cubic-bezier(0.15, 0.85, 0.35, 1)';
         observer.observe(el);
     });
 </script>
