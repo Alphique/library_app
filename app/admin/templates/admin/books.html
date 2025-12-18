@@ -1,128 +1,115 @@
-<!-- app/templates/admin/books.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1>📚 Manage Books</h1>
-            <span class="badge bg-primary fs-6">Total: {{ books.total }}</span>
-        </div>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cuzlib.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-<!-- Search Form -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-light">
-                <h6 class="mb-0">🔍 Search & Filter Books</h6>
+<div class="container-fluid py-4 dashboard-relative">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h1 class="text-white fw-bold mb-0">
+                <i class="fas fa-book-reader text-gold me-2"></i>Manage <span class="text-gold-gradient">Archive</span>
+            </h1>
+            <p class="text-white-50 small mb-0">Librarian Oversight & Collection Control</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <div class="glass-stat-badge">
+                <span class="text-white-50 me-2">Total Volume:</span>
+                <span class="text-gold fw-bold fs-5">{{ books.total }}</span>
             </div>
-            <div class="card-body">
-                <form method="GET" action="{{ url_for('admin.books') }}">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control", value=request.args.get('title', '')) }}
-                        </div>
-                        <div class="col-md-3">
-                            {{ form.author.label(class="form-label") }}
-                            {{ form.author(class="form-control", value=request.args.get('author', '')) }}
-                        </div>
-                        <div class="col-md-2">
-                            {{ form.category.label(class="form-label") }}
-                            {{ form.category(class="form-select", value=request.args.get('category', '')) }}
-                        </div>
-                        <div class="col-md-2">
-                            {{ form.status.label(class="form-label") }}
-                            {{ form.status(class="form-select", value=request.args.get('status', '')) }}
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">&nbsp;</label>
-                            <div class="d-grid">
-                                {{ form.submit(class="btn btn-primary") }}
-                            </div>
-                        </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="content-glass-card p-4">
+                <form method="GET" action="{{ url_for('admin.books') }}" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="text-white-50 small text-uppercase mb-2">Title Keywords</label>
+                        {{ form.title(class="glass-input form-control", value=request.args.get('title', ''), placeholder="Enter title...") }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-white-50 small text-uppercase mb-2">Author Name</label>
+                        {{ form.author(class="glass-input form-control", value=request.args.get('author', ''), placeholder="Enter author...") }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-white-50 small text-uppercase mb-2">Category</label>
+                        {{ form.category(class="glass-input form-select", value=request.args.get('category', '')) }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="text-white-50 small text-uppercase mb-2">Status</label>
+                        {{ form.status(class="glass-input form-select", value=request.args.get('status', '')) }}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn-gold-action w-100">
+                            <i class="fas fa-search me-2"></i>Filter
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Books Table -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Books List</h5>
-            </div>
-            <div class="card-body p-0">
+    <div class="row">
+        <div class="col-12">
+            <div class="content-glass-card overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                    <table class="table table-dark-glass align-middle mb-0">
+                        <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Author</th>
+                                <th class="ps-4">Resource</th>
                                 <th>Category</th>
                                 <th>Status</th>
-                                <th>Price</th>
-                                <th>Rental Fee</th>
-                                <th>Uploader</th>
-                                <th>Uploaded</th>
-                                <th>Actions</th>
+                                <th>Financials</th>
+                                <th>Meta Data</th>
+                                <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for book in books.items %}
-                            <tr>
-                                <td><small>{{ book.book_id }}</small></td>
-                                <td>
-                                    <strong>{{ book.title }}</strong>
-                                    {% if book.description %}
-                                    <br><small class="text-muted">{{ book.description[:50] }}...</small>
-                                    {% endif %}
+                            <tr class="glass-row">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="book-icon-box me-3">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-white fw-bold mb-0">{{ book.title }}</div>
+                                            <div class="text-white-50 small">{{ book.author }}</div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td>{{ book.author }}</td>
                                 <td>
-                                    <span class="badge bg-info">{{ book.category|replace('-', ' ')|title }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }}">
-                                        {{ book.status|title }}
+                                    <span class="badge-glass-outline">
+                                        {{ book.category|replace('-', ' ')|title }}
                                     </span>
                                 </td>
                                 <td>
-                                    {% if book.price > 0 %}
-                                        <span class="text-success">${{ "%.2f"|format(book.price) }}</span>
+                                    {% if book.status == 'available' %}
+                                        <span class="status-indicator available">Available</span>
                                     {% else %}
-                                        <span class="text-muted">Free</span>
+                                        <span class="status-indicator rented">Rented</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if book.rental_fee > 0 %}
-                                        <span class="text-info">${{ "%.2f"|format(book.rental_fee) }}/day</span>
-                                    {% else %}
-                                        <span class="text-muted">-</span>
-                                    {% endif %}
+                                    <div class="small text-white-50">Price: <span class="text-white">${{ "%.2f"|format(book.price) }}</span></div>
+                                    <div class="small text-white-50">Rent: <span class="text-gold">${{ "%.2f"|format(book.rental_fee) }}/day</span></div>
                                 </td>
                                 <td>
-                                    <small>{{ book.uploader.username }}</small>
+                                    <div class="small text-white-50"><i class="fas fa-user-edit me-1"></i> {{ book.uploader.username }}</div>
+                                    <div class="small text-white-50"><i class="fas fa-calendar-alt me-1"></i> {{ book.created_at.strftime('%Y-%m-%d') }}</div>
                                 </td>
-                                <td>
-                                    <small>{{ book.created_at.strftime('%Y-%m-%d') }}</small>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" 
-                                           class="btn btn-outline-primary" target="_blank">
-                                            View
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" class="btn btn-sm btn-glass-action" title="View Detail">
+                                            <i class="fas fa-eye text-info"></i>
                                         </a>
                                         <a href="{{ url_for('admin.delete_book', book_id=book.book_id) }}" 
-                                           class="btn btn-outline-danger"
-                                           onclick="return confirm('Delete \"{{ book.title }}\"? This action cannot be undone.')">
-                                            Delete
+                                           class="btn btn-sm btn-glass-action" 
+                                           onclick="return confirm('Archive permanently?')">
+                                            <i class="fas fa-trash-alt text-danger"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -134,44 +121,155 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- Pagination -->
-{% if books.pages > 1 %}
-<div class="row mt-4">
-    <div class="col-12">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
+    {% if books.pages > 1 %}
+    <div class="mt-4">
+        <nav>
+            <ul class="pagination-glass justify-content-center">
                 {% if books.has_prev %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin.books', page=books.prev_num, title=request.args.get('title'), author=request.args.get('author'), category=request.args.get('category'), status=request.args.get('status')) }}">Previous</a>
-                </li>
+                <li><a href="{{ url_for('admin.books', page=books.prev_num) }}"><i class="fas fa-chevron-left"></i></a></li>
                 {% endif %}
                 
-                {% for page_num in books.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                {% for page_num in books.iter_pages() %}
                     {% if page_num %}
-                        {% if books.page == page_num %}
-                        <li class="page-item active">
-                            <a class="page-link" href="{{ url_for('admin.books', page=page_num, title=request.args.get('title'), author=request.args.get('author'), category=request.args.get('category'), status=request.args.get('status')) }}">{{ page_num }}</a>
+                        <li class="{{ 'active' if books.page == page_num else '' }}">
+                            <a href="{{ url_for('admin.books', page=page_num) }}">{{ page_num }}</a>
                         </li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('admin.books', page=page_num, title=request.args.get('title'), author=request.args.get('author'), category=request.args.get('category'), status=request.args.get('status')) }}">{{ page_num }}</a>
-                        </li>
-                        {% endif %}
                     {% else %}
-                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <li class="disabled"><span>...</span></li>
                     {% endif %}
                 {% endfor %}
-                
+
                 {% if books.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin.books', page=books.next_num, title=request.args.get('title'), author=request.args.get('author'), category=request.args.get('category'), status=request.args.get('status')) }}">Next</a>
-                </li>
+                <li><a href="{{ url_for('admin.books', page=books.next_num) }}"><i class="fas fa-chevron-right"></i></a></li>
                 {% endif %}
             </ul>
         </nav>
     </div>
+    {% endif %}
 </div>
-{% endif %}
+
+<style>
+    /* CORE THEME */
+    :root {
+        --glass-bg: rgba(10, 15, 30, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --gold: #d4af37;
+    }
+
+    /* Fixed Background */
+    .bg-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+    .bg-image { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.3); }
+    .bg-overlay-glass { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.95) 100%); }
+    .dashboard-relative { position: relative; z-index: 10; }
+
+    /* Glass Cards */
+    .content-glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+    }
+
+    .glass-stat-badge {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--gold);
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    /* Table Design */
+    .table-dark-glass { color: white; border-collapse: separate; border-spacing: 0 5px; }
+    .table-dark-glass thead th {
+        background: rgba(255,255,255,0.05);
+        border: none;
+        color: var(--gold);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+    .glass-row { transition: 0.3s; }
+    .glass-row:hover { background: rgba(255,255,255,0.05); }
+    
+    .book-icon-box {
+        width: 40px;
+        height: 40px;
+        background: rgba(212, 175, 55, 0.15);
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    /* Status Indicators */
+    .status-indicator {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .status-indicator.available { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+    .status-indicator.rented { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+
+    /* Inputs & Buttons */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    .glass-input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+
+    .btn-gold-action {
+        background: linear-gradient(135deg, var(--gold), #b8860b);
+        color: black;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 15px;
+        transition: 0.3s;
+    }
+    .btn-gold-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
+
+    .btn-glass-action {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        color: white;
+        margin-left: 5px;
+    }
+    .btn-glass-action:hover { background: rgba(255,255,255,0.15); }
+
+    /* Pagination */
+    .pagination-glass { display: flex; list-style: none; padding: 0; gap: 5px; }
+    .pagination-glass a, .pagination-glass span {
+        padding: 8px 16px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+    .pagination-glass li.active a { background: var(--gold); color: black; border-color: var(--gold); }
+    .pagination-glass a:hover:not(.active) { background: rgba(255,255,255,0.1); }
+
+    .badge-glass-outline {
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 5px;
+        font-size: 0.75rem;
+    }
+    .text-gold-gradient {
+        background: linear-gradient(to right, #fff, var(--gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
 {% endblock %}

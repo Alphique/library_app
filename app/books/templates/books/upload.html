@@ -1,138 +1,205 @@
-<!-- app/templates/books/upload.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-success text-white text-center">
-                <h4 class="mb-0">📤 Upload New Book</h4>
-            </div>
-            <div class="card-body p-4">
-                <form method="POST" action="" enctype="multipart/form-data">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form.title.label(class="form-label") }}
-                            {% if form.title.errors %}
-                                {{ form.title(class="form-control is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.title.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.title(class="form-control", placeholder="Enter book title") }}
-                            {% endif %}
-                        </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cuzlib.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
+</div>
+
+<div class="container py-5 dashboard-relative">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="content-glass-card shadow-lg mb-4">
+                <div class="card-header-glass text-center py-4">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-cloud-upload-alt text-gold fs-2"></i>
+                    </div>
+                    <h2 class="text-white fw-bold mb-1">Contribute to the <span class="text-gold-gradient">Vault</span></h2>
+                    <p class="text-white-50 small mb-0">Expand the university's collective intelligence</p>
+                </div>
+
+                <div class="p-4 p-md-5">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
                         
-                        <div class="col-md-6 mb-3">
-                            {{ form.author.label(class="form-label") }}
-                            {% if form.author.errors %}
-                                {{ form.author(class="form-control is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.author.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.author(class="form-control", placeholder="Enter author name") }}
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form.isbn.label(class="form-label") }}
-                            {{ form.isbn(class="form-control", placeholder="Optional ISBN") }}
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            {{ form.category.label(class="form-label") }}
-                            {% if form.category.errors %}
-                                {{ form.category(class="form-select is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.category.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.category(class="form-select") }}
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.description.label(class="form-label") }}
-                        {{ form.description(class="form-control", rows="4", placeholder="Enter book description...") }}
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form.price.label(class="form-label") }}
-                            {% if form.price.errors %}
-                                {{ form.price(class="form-control is-invalid", type="number", step="0.01", min="0") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.price.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.price(class="form-control", type="number", step="0.01", min="0", placeholder="0.00") }}
-                            {% endif %}
-                            <div class="form-text">Set to 0 if not for sale</div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            {{ form.rental_fee.label(class="form-label") }}
-                            {% if form.rental_fee.errors %}
-                                {{ form.rental_fee(class="form-control is-invalid", type="number", step="0.01", min="0") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.rental_fee.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.rental_fee(class="form-control", type="number", step="0.01", min="0", placeholder="0.00") }}
-                            {% endif %}
-                            <div class="form-text">Set to 0 if not for rent</div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.book_file.label(class="form-label") }}
-                        {{ form.book_file(class="form-control") }}
-                        {% if form.book_file.errors %}
-                            <div class="text-danger">
-                                {% for error in form.book_file.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Book Title</label>
+                                {{ form.title(class="glass-input form-control", placeholder="e.g. Advanced Macroeconomics") }}
+                                {% for error in form.title.errors %}<div class="text-danger tiny mt-1">{{ error }}</div>{% endfor %}
                             </div>
-                        {% endif %}
-                        <div class="form-text">Upload PDF file (max 16MB)</div>
-                    </div>
+                            
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Author</label>
+                                {{ form.author(class="glass-input form-control", placeholder="Full Name") }}
+                                {% for error in form.author.errors %}<div class="text-danger tiny mt-1">{{ error }}</div>{% endfor %}
+                            </div>
 
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-success btn-lg") }}
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">ISBN (Optional)</label>
+                                {{ form.isbn(class="glass-input form-control", placeholder="978-...") }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Classification</label>
+                                {{ form.category(class="glass-input form-select") }}
+                                {% for error in form.category.errors %}<div class="text-danger tiny mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Summary & Abstract</label>
+                                {{ form.description(class="glass-input form-control", rows="4", placeholder="What is this book about?") }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Sale Price ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0 text-white-50 border-white-10">$</span>
+                                    {{ form.price(class="glass-input form-control border-start-0", type="number", step="0.01", min="0", placeholder="0.00") }}
+                                </div>
+                                <div class="form-text text-white-50 tiny">Set to 0.00 for free download</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="text-white-50 small text-uppercase fw-bold mb-2">Daily Rental ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0 text-white-50 border-white-10">$</span>
+                                    {{ form.rental_fee(class="glass-input form-control border-start-0", type="number", step="0.01", min="0", placeholder="0.00") }}
+                                </div>
+                                <div class="form-text text-white-50 tiny">Set to 0.00 for no rental option</div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="upload-zone p-4 text-center border-dashed">
+                                    <label class="text-white-50 small text-uppercase fw-bold mb-3 d-block">Document Attachment (PDF)</label>
+                                    <div class="file-input-wrapper">
+                                        {{ form.book_file(class="form-control glass-input-file") }}
+                                    </div>
+                                    <p class="text-white-50 tiny mt-2 mb-0">Max allowed size: 16MB • PDF format only</p>
+                                    {% for error in form.book_file.errors %}<div class="text-danger tiny">{{ error }}</div>{% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-12 pt-3">
+                                <button type="submit" class="btn-gold-action w-100 py-3 shadow-gold">
+                                    <i class="fas fa-check-circle me-2"></i>Publish to Library
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="tip-glass-card p-3 h-100">
+                        <i class="fas fa-hand-holding-heart text-gold mb-2"></i>
+                        <h6 class="text-white small fw-bold">Open Source</h6>
+                        <p class="text-white-50 tiny mb-0">Set price to $0 to make knowledge accessible to all students.</p>
                     </div>
-                </form>
-            </div>
-        </div>
-        
-        <div class="card mt-4">
-            <div class="card-header bg-info text-white">
-                <h6 class="mb-0">💡 Upload Tips</h6>
-            </div>
-            <div class="card-body">
-                <ul class="mb-0">
-                    <li>Set both price and rental fee to 0 if you want to share the book for free</li>
-                    <li>PDF files are recommended for best compatibility</li>
-                    <li>Make sure you have the rights to share the book</li>
-                    <li>Provide a clear description to attract more readers</li>
-                </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="tip-glass-card p-3 h-100">
+                        <i class="fas fa-shield-alt text-gold mb-2"></i>
+                        <h6 class="text-white small fw-bold">Integrity</h6>
+                        <p class="text-white-50 tiny mb-0">Ensure you hold rights or permission to share this content.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="tip-glass-card p-3 h-100">
+                        <i class="fas fa-file-pdf text-gold mb-2"></i>
+                        <h6 class="text-white small fw-bold">Consistency</h6>
+                        <p class="text-white-50 tiny mb-0">PDFs preserve formatting across all student devices.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --glass-bg: rgba(10, 15, 30, 0.8);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --gold: #d4af37;
+        --border-white-10: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Fixed Background Layer */
+    .bg-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+    .bg-image { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.3); }
+    .bg-overlay-glass { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.95) 100%); }
+    .dashboard-relative { position: relative; z-index: 10; }
+
+    /* Glass Elements */
+    .content-glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
+        overflow: hidden;
+    }
+    .card-header-glass { border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); }
+    
+    .tip-glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        transition: 0.3s;
+    }
+    .tip-glass-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.08); }
+
+    /* Inputs */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid var(--border-white-10) !important;
+        color: white !important;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: 0.3s;
+    }
+    .glass-input:focus {
+        border-color: var(--gold) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    .glass-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* Upload Zone */
+    .border-dashed { border: 2px dashed var(--border-white-10); border-radius: 15px; }
+    .upload-zone { background: rgba(255,255,255,0.02); transition: 0.3s; }
+    .upload-zone:hover { background: rgba(255,255,255,0.05); border-color: var(--gold); }
+
+    /* UI Details */
+    .icon-circle {
+        width: 70px; height: 70px; 
+        background: rgba(212, 175, 55, 0.1); 
+        border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; 
+        margin: 0 auto;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    .text-gold { color: var(--gold); }
+    .text-gold-gradient {
+        background: linear-gradient(to right, #fff, var(--gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .tiny { font-size: 0.7rem; }
+    .border-white-10 { border-color: rgba(255,255,255,0.1) !important; }
+
+    /* Button */
+    .btn-gold-action {
+        background: linear-gradient(135deg, var(--gold), #b8860b);
+        color: black; font-weight: 800; border: none; border-radius: 15px;
+        text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s;
+    }
+    .btn-gold-action:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+    }
+    .shadow-gold { box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+</style>
 {% endblock %}

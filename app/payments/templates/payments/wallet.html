@@ -1,162 +1,220 @@
-<!-- app/templates/payments/wallet.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">💰 My Wallet</h4>
-            </div>
-            <div class="card-body">
-                <!-- Current Balance -->
-                <div class="row text-center mb-4">
-                    <div class="col-12">
-                        <h3 class="text-muted">Current Balance</h3>
-                        <h1 class="display-4 text-success">${{ "%.2f"|format(current_user.wallet.balance) }}</h1>
-                        <p class="text-muted">Last updated: {{ current_user.wallet.updated_at.strftime('%B %d, %Y at %H:%M') }}</p>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/wallet_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
+</div>
+
+<div class="container py-5 dashboard-relative">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="wallet-hero-card mb-4">
+                <div class="card-glass-content">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <span class="text-gold-gradient fw-bold text-uppercase letter-spacing-2">Available Credits</span>
+                            <h1 class="display-3 text-white fw-bold mb-0">
+                                <span class="text-white-50 small">$</span>{{ "%.2f"|format(current_user.wallet.balance) }}
+                            </h1>
+                        </div>
+                        <div class="wallet-chip">
+                            <i class="fas fa-microchip fa-2x text-white-50"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="sync-status">
+                            <i class="fas fa-sync-alt fa-spin me-2 text-success"></i>
+                            <span class="tiny text-white-50">Vault Secured • {{ current_user.wallet.updated_at.strftime('%H:%M %p') }}</span>
+                        </div>
+                        <div class="user-badge-glass">
+                            {{ current_user.username|upper }}
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Add Funds Form -->
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">💳 Add Funds</h5>
+            <div class="funding-container p-4 mb-4">
+                <h5 class="text-white mb-4 font-playfair"><i class="fas fa-plus-circle me-2 text-gold"></i>Expand Your Treasury</h5>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="input-group-glass mb-4">
+                        <span class="input-group-text bg-transparent border-0 text-gold">$</span>
+                        {{ form.amount(class="form-control glass-input", placeholder="Enter Custom Amount", type="number", step="0.01") }}
+                        {{ form.submit(class="btn btn-gold-action px-4", value="Initialize Transfer") }}
                     </div>
-                    <div class="card-body">
+                    {% if form.amount.errors %}
+                        <div class="text-danger tiny mb-3 px-2">
+                            {% for error in form.amount.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </form>
+
+                <div class="row g-2">
+                    {% for val in [10, 25, 50, 100] %}
+                    <div class="col-3">
                         <form method="POST" action="">
                             {{ form.hidden_tag() }}
-                            <div class="row align-items-end">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        {{ form.amount.label(class="form-label") }}
-                                        {% if form.amount.errors %}
-                                            {{ form.amount(class="form-control is-invalid", type="number", step="0.01", min="1", max="1000") }}
-                                            <div class="invalid-feedback">
-                                                {% for error in form.amount.errors %}
-                                                    <span>{{ error }}</span>
-                                                {% endfor %}
-                                            </div>
-                                        {% else %}
-                                            {{ form.amount(class="form-control", type="number", step="0.01", min="1", max="1000", placeholder="Enter amount") }}
-                                        {% endif %}
-                                        <div class="form-text">Enter amount between $1 and $1000</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-grid">
-                                        {{ form.submit(class="btn btn-success btn-lg") }}
-                                    </div>
-                                </div>
-                            </div>
+                            <input type="hidden" name="amount" value="{{ val }}">
+                            <button type="submit" class="btn btn-quick-add">
+                                <span class="tiny text-white-50">Add</span>
+                                <span class="d-block fw-bold">${{ val }}</span>
+                            </button>
                         </form>
                     </div>
-                </div>
-
-                <!-- Quick Add Buttons -->
-                <div class="card mt-3">
-                    <div class="card-header bg-info text-white">
-                        <h6 class="mb-0">⚡ Quick Add</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-3 mb-2">
-                                <form method="POST" action="" style="display: inline;">
-                                    {{ form.hidden_tag() }}
-                                    <input type="hidden" name="amount" value="10">
-                                    <button type="submit" class="btn btn-outline-primary w-100">+$10</button>
-                                </form>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <form method="POST" action="" style="display: inline;">
-                                    {{ form.hidden_tag() }}
-                                    <input type="hidden" name="amount" value="25">
-                                    <button type="submit" class="btn btn-outline-primary w-100">+$25</button>
-                                </form>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <form method="POST" action="" style="display: inline;">
-                                    {{ form.hidden_tag() }}
-                                    <input type="hidden" name="amount" value="50">
-                                    <button type="submit" class="btn btn-outline-primary w-100">+$50</button>
-                                </form>
-                            </div>
-                            <div class="col-3 mb-2">
-                                <form method="POST" action="" style="display: inline;">
-                                    {{ form.hidden_tag() }}
-                                    <input type="hidden" name="amount" value="100">
-                                    <button type="submit" class="btn btn-outline-primary w-100">+$100</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <!-- Wallet Info -->
-        <div class="card">
-            <div class="card-header bg-warning text-white">
-                <h5 class="mb-0">ℹ️ Wallet Information</h5>
-            </div>
-            <div class="card-body">
-                <h6>How it works:</h6>
-                <ul class="small">
-                    <li>Add funds to your wallet using the form</li>
-                    <li>Use wallet balance to rent or purchase books</li>
-                    <li>Earn money when others rent or buy your books</li>
-                    <li>All transactions are secure and instant</li>
-                </ul>
-                
-                <h6 class="mt-3">Quick Stats:</h6>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="border rounded p-2 mb-2">
-                            <small class="text-muted">Books Uploaded</small>
-                            <div><strong>{{ current_user.books.count() }}</strong></div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="border rounded p-2 mb-2">
-                            <small class="text-muted">Total Earnings</small>
-                            <div><strong>${{ "%.2f"|format(total_earnings) }}</strong></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div class="card mt-3">
-            <div class="card-header bg-info text-white">
-                <h6 class="mb-0">📊 Recent Activity</h6>
-            </div>
-            <div class="card-body">
-                {% if recent_transactions %}
-                    {% for transaction in recent_transactions %}
-                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                        <div>
-                            <small class="text-muted">{{ transaction.created_at.strftime('%m/%d') }}</small>
-                            <br>
-                            <small><strong>{{ transaction.transaction_type|title }}</strong></small>
-                        </div>
-                        <div class="text-end">
-                            <span class="text-{{ 'success' if transaction.amount > 0 else 'danger' }}">
-                                {{ '+' if transaction.amount > 0 else '' }}${{ "%.2f"|format(transaction.amount) }}
-                            </span>
-                        </div>
-                    </div>
                     {% endfor %}
-                    <div class="text-center mt-2">
-                        <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="mini-stat-card">
+                        <span class="tiny text-white-50 d-block">Contributions</span>
+                        <span class="fw-bold text-white">{{ current_user.books.count() }} Volumes</span>
                     </div>
-                {% else %}
-                    <p class="text-muted text-center mb-0">No recent transactions</p>
-                {% endif %}
+                </div>
+                <div class="col-6">
+                    <div class="mini-stat-card">
+                        <span class="tiny text-white-50 d-block">Revenue</span>
+                        <span class="fw-bold text-gold">${{ "%.2f"|format(total_earnings) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="activity-log-card">
+                <div class="card-header-glass d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 text-white">Recent Flux</h6>
+                    <i class="fas fa-history text-white-50"></i>
+                </div>
+                <div class="activity-body p-3">
+                    {% if recent_transactions %}
+                        {% for transaction in recent_transactions %}
+                        <div class="activity-item d-flex align-items-center mb-3">
+                            <div class="activity-icon {{ 'up' if transaction.amount > 0 else 'down' }}">
+                                <i class="fas fa-arrow-{{ 'up' if transaction.amount > 0 else 'down' }}"></i>
+                            </div>
+                            <div class="ms-3 flex-grow-1">
+                                <div class="text-white small fw-bold">{{ transaction.transaction_type|title }}</div>
+                                <div class="tiny text-white-50">{{ transaction.created_at.strftime('%b %d') }}</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="fw-bold {{ 'text-success' if transaction.amount > 0 else 'text-danger' }}">
+                                    {{ '+' if transaction.amount > 0 else '' }}${{ "%.2f"|format(transaction.amount) }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <a href="{{ url_for('payments.transaction_history') }}" class="btn btn-sm btn-outline-gold w-100 mt-2">Historical Ledger</a>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-ghost text-white-25 mb-2"></i>
+                            <p class="tiny text-white-50">No recent flows detected.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Wallet Hero */
+    .wallet-hero-card {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0.4) 100%);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 24px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    .wallet-hero-card::before {
+        content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    }
+
+    /* Inputs & Forms */
+    .funding-container {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .input-group-glass {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 5px;
+        display: flex;
+    }
+    .glass-input {
+        background: transparent !important;
+        border: none !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+    .btn-gold-action {
+        background: #d4af37;
+        color: black;
+        font-weight: bold;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+    .btn-gold-action:hover { background: white; transform: scale(1.02); }
+
+    /* Quick Add Buttons */
+    .btn-quick-add {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+    .btn-quick-add:hover { background: rgba(212,175,55,0.2); border-color: #d4af37; }
+
+    /* Sidebar Components */
+    .mini-stat-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 15px;
+        border-radius: 15px;
+        text-align: center;
+    }
+    .activity-log-card {
+        background: rgba(10, 15, 30, 0.8);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    .card-header-glass {
+        background: rgba(255,255,255,0.05);
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .activity-item {
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .activity-icon {
+        width: 35px; height: 35px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+    }
+    .activity-icon.up { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .activity-icon.down { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+    .btn-outline-gold {
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .btn-outline-gold:hover { background: #d4af37; color: black; }
+
+    .letter-spacing-2 { letter-spacing: 2px; }
+    .tiny { font-size: 0.65rem; }
+</style>
 {% endblock %}

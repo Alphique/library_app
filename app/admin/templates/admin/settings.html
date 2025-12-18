@@ -1,205 +1,211 @@
-<!-- app/templates/admin/settings.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">⚙️ System Settings</h1>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/admin_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">General Settings</h5>
+<div class="container-fluid py-5 dashboard-relative px-lg-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h1 class="page-title text-white mb-2">System <span class="text-gold-gradient">Parameters</span></h1>
+            <p class="text-white fw-bold opacity-75">Global configuration and platform telemetry.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <div class="stat-pill-shiny">
+                <span class="tiny text-gold fw-bold text-uppercase">Server Status</span>
+                <span class="fs-6 fw-bold text-success-bright"><i class="fas fa-circle me-2 tiny"></i>OPERATIONAL</span>
             </div>
-            <div class="card-body">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="mb-3">
-                        {{ form.site_name.label(class="form-label") }}
-                        {% if form.site_name.errors %}
-                            {{ form.site_name(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.site_name.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.site_name(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">The name displayed throughout the platform</div>
-                    </div>
+        </div>
+    </div>
 
-                    <div class="mb-3">
-                        {{ form.site_description.label(class="form-label") }}
-                        {{ form.site_description(class="form-control", rows="3") }}
-                        <div class="form-text">Brief description of your library platform</div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form.default_rental_days.label(class="form-label") }}
-                            {% if form.default_rental_days.errors %}
-                                {{ form.default_rental_days(class="form-control is-invalid", type="number") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.default_rental_days.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.default_rental_days(class="form-control", type="number") }}
-                            {% endif %}
-                            <div class="form-text">Default rental period in days</div>
-                        </div>
+    <div class="row g-4">
+        <div class="col-xl-7">
+            <div class="settings-card-shiny h-100">
+                <div class="p-3 border-bottom border-white-10 bg-black">
+                    <h6 class="text-gold mb-0 tiny text-uppercase fw-bold"><i class="fas fa-sliders-h me-2"></i>Core Interface Settings</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
                         
-                        <div class="col-md-6 mb-3">
-                            {{ form.transaction_fee.label(class="form-label") }}
-                            {% if form.transaction_fee.errors %}
-                                {{ form.transaction_fee(class="form-control is-invalid", type="number", step="0.01") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.transaction_fee.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.transaction_fee(class="form-control", type="number", step="0.01") }}
-                            {% endif %}
-                            <div class="form-text">Platform fee percentage on transactions</div>
+                        <div class="mb-4">
+                            <label class="tiny text-gold fw-bold mb-2">PLATFORM IDENTITY</label>
+                            {{ form.site_name(class="form-control shiny-input", placeholder="Enter Site Name") }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="tiny text-gold fw-bold mb-2">SYSTEM DESCRIPTION</label>
+                            {{ form.site_description(class="form-control shiny-input", rows="2") }}
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4 mb-4">
+                                <label class="tiny text-gold fw-bold mb-2">RENTAL CYCLE (DAYS)</label>
+                                {{ form.default_rental_days(class="form-control shiny-input", type="number") }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label class="tiny text-gold fw-bold mb-2">TRANSACTION FEE (%)</label>
+                                {{ form.transaction_fee(class="form-control shiny-input", type="number", step="0.01") }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label class="tiny text-gold fw-bold mb-2">UPLOAD LIMIT (MB)</label>
+                                {{ form.max_file_size(class="form-control shiny-input", type="number") }}
+                            </div>
+                        </div>
+
+                        <div class="pt-3">
+                            <button type="submit" class="btn btn-gold-action w-100 py-3 fw-black">SAVE SYSTEM GLOBAL CHANGES</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-5">
+            <div class="row g-4 h-100">
+                <div class="col-12">
+                    <div class="settings-card-shiny bg-black-40">
+                        <div class="p-3 border-bottom border-white-10">
+                            <h6 class="text-white mb-0 tiny text-uppercase fw-bold"><i class="fas fa-server me-2"></i>System Telemetry</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between mb-3 border-bottom border-white-10 pb-2">
+                                <span class="text-white-50 small">FLASK VERSION</span>
+                                <span class="text-white fw-bold font-monospace">v2.3.3</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 border-bottom border-white-10 pb-2">
+                                <span class="text-white-50 small">DATABASE ENGINE</span>
+                                <span class="text-gold fw-bold font-monospace">SQLITE3</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-white-50 small">LIVE SERVER TIME</span>
+                                <span class="text-success-bright fw-bold font-monospace" id="serverTime">--:--:--</span>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        {{ form.max_file_size.label(class="form-label") }}
-                        {% if form.max_file_size.errors %}
-                            {{ form.max_file_size(class="form-control is-invalid", type="number") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.max_file_size.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                <div class="col-12">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="metric-box-shiny">
+                                <span class="tiny text-white-50 d-block">TOTAL USERS</span>
+                                <span class="fs-4 text-white fw-black">{{ total_users }}</span>
                             </div>
-                        {% else %}
-                            {{ form.max_file_size(class="form-control", type="number") }}
-                        {% endif %}
-                        <div class="form-text">Maximum file upload size in MB</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-box-shiny">
+                                <span class="tiny text-white-50 d-block">TOTAL BOOKS</span>
+                                <span class="fs-4 text-white fw-black">{{ total_books }}</span>
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <div class="metric-box-shiny border-gold">
+                                <span class="tiny text-gold d-block">ESTIMATED REVENUE</span>
+                                <span class="fs-3 text-white fw-black">$0.00</span>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-success btn-lg") }}
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="card mt-4 border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0">⚠️ Danger Zone</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <h6>Clear All Data</h6>
-                        <p class="text-muted small">Permanently delete all books, users, and transactions</p>
-                        <button class="btn btn-outline-danger btn-sm" disabled>Clear All Data</button>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <h6>Reset Platform</h6>
-                        <p class="text-muted small">Reset everything to default settings</p>
-                        <button class="btn btn-outline-danger btn-sm" disabled>Reset Platform</button>
-                    </div>
-                </div>
-                <div class="alert alert-warning">
-                    <strong>Warning:</strong> These actions are irreversible and will permanently delete data.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <!-- System Information -->
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">🖥️ System Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <strong>Platform Version:</strong>
-                    <span class="float-end">v1.0.0</span>
-                </div>
-                <div class="mb-3">
-                    <strong>Flask Version:</strong>
-                    <span class="float-end">v2.3.3</span>
-                </div>
-                <div class="mb-3">
-                    <strong>Database:</strong>
-                    <span class="float-end">SQLite</span>
-                </div>
-                <div class="mb-3">
-                    <strong>Server Time:</strong>
-                    <span class="float-end" id="serverTime">{{ now.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-                </div>
-                <div class="mb-3">
-                    <strong>Uptime:</strong>
-                    <span class="float-end">100%</span>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Stats -->
-        <div class="card mt-3">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">📊 Quick Stats</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <small>Total Users:</small>
-                    <strong class="float-end">{{ total_users }}</strong>
-                </div>
-                <div class="mb-2">
-                    <small>Total Books:</small>
-                    <strong class="float-end">{{ total_books }}</strong>
-                </div>
-                <div class="mb-2">
-                    <small>Total Transactions:</small>
-                    <strong class="float-end">{{ total_transactions }}</strong>
-                </div>
-                <div class="mb-2">
-                    <small>Active Rentals:</small>
-                    <strong class="float-end">{{ active_rentals }}</strong>
-                </div>
-                <div class="mb-2">
-                    <small>Platform Revenue:</small>
-                    <strong class="float-end text-success">$0.00</strong>
-                </div>
-            </div>
-        </div>
-
-        <!-- Maintenance -->
-        <div class="card mt-3">
-            <div class="card-header bg-warning">
-                <h5 class="mb-0">🔧 Maintenance</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-warning btn-sm">Clear Cache</button>
-                    <button class="btn btn-outline-warning btn-sm">Optimize Database</button>
-                    <button class="btn btn-outline-warning btn-sm">Run Backup</button>
-                    <button class="btn btn-outline-warning btn-sm">Check Logs</button>
+        <div class="col-12 mt-4">
+            <div class="command-center-shiny">
+                <div class="row align-items-center g-4 p-4">
+                    <div class="col-lg-4">
+                        <h5 class="text-white mb-1 fw-black">Maintenance Mode</h5>
+                        <p class="text-white-50 small mb-0">System cleanup and data optimization protocols.</p>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                            <button class="btn btn-outline-gold px-4">CLEAR CACHE</button>
+                            <button class="btn btn-outline-gold px-4">OPTIMIZE DB</button>
+                            <button class="btn btn-outline-gold px-4">RUN BACKUP</button>
+                            <button class="btn btn-danger-action px-4" disabled>PLATFORM RESET</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .settings-card-shiny {
+        background: rgba(10, 11, 14, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+
+    .command-center-shiny {
+        background: linear-gradient(90deg, #000 0%, #1a1c21 100%);
+        border: 1px solid #d4af37;
+        border-radius: 12px;
+    }
+
+    .metric-box-shiny {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .border-gold { border: 1px solid #d4af37 !important; }
+
+    .shiny-input {
+        background: #111 !important;
+        border: 1px solid #333 !important;
+        color: white !important;
+        padding: 12px;
+    }
+
+    .btn-gold-action {
+        background: #d4af37;
+        color: black;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-gold-action:hover {
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-gold {
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        font-weight: bold;
+        background: transparent;
+    }
+
+    .btn-outline-gold:hover {
+        background: #d4af37;
+        color: black;
+    }
+
+    .btn-danger-action {
+        background: #440000;
+        border: 1px solid #ff4444;
+        color: #ff4444;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .text-success-bright { color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.3); }
+</style>
 
 <script>
-// Update server time every second
 function updateServerTime() {
     const now = new Date();
-    document.getElementById('serverTime').textContent = now.toLocaleString();
+    document.getElementById('serverTime').textContent = now.toLocaleTimeString();
 }
 setInterval(updateServerTime, 1000);
+updateServerTime();
 </script>
 {% endblock %}

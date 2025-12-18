@@ -1,342 +1,243 @@
-<!-- app/auth/templates/login.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="login-container">
-    <!-- Background with overlay -->
-    <div class="login-bg"></div>
+<div class="login-page-wrapper">
+    <div class="login-bg-image"></div>
+    <div class="login-overlay"></div>
     
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-7">
-                <div class="login-card">
-                    <div class="login-header">
-                        <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="CUZ Library" class="login-logo">
-                        <h2>Welcome Back</h2>
-                        <p>Sign in to your Cavendish Library account</p>
-                    </div>
-                    
-                    <div class="login-body">
-                        <!-- User Type Selection -->
-                        <div class="user-type-selector mb-4">
-                            <label class="form-label fw-bold">I am a:</label>
-                            <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="user_type" id="student" value="student" checked>
-                                <label class="btn btn-outline-primary" for="student">
-                                    <i class="fas fa-user-graduate me-2"></i>Student
-                                </label>
-                                
-                                <input type="radio" class="btn-check" name="user_type" id="admin" value="admin">
-                                <label class="btn btn-outline-warning" for="admin">
-                                    <i class="fas fa-user-shield me-2"></i>Administrator
-                                </label>
-                            </div>
-                        </div>
-
-                        <form method="POST" action="" class="login-form">
-                            {{ form.hidden_tag() }}
-                            
-                            <!-- Universal Login Field - UPDATED -->
-                            <div class="form-group">
-                                {{ form.login_identifier.label(class="form-label") }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user" id="identifier-icon"></i>
-                                    </span>
-                                    {% if form.login_identifier.errors %}
-                                        {{ form.login_identifier(class="form-control is-invalid", placeholder="Enter your email or username", id="login_identifier") }}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.login_identifier.errors %}
-                                                <span>{{ error }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        {{ form.login_identifier(class="form-control", placeholder="Enter your email or username", id="login_identifier") }}
-                                    {% endif %}
-                                </div>
-                                <small class="form-text text-muted" id="identifier-help">
-                                    Students: Use your email or student ID<br>
-                                    Admins: Use your username
-                                </small>
-                            </div>
-                            
-                            <!-- Password Field -->
-                            <div class="form-group">
-                                {{ form.password.label(class="form-label") }}
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                    {% if form.password.errors %}
-                                        {{ form.password(class="form-control is-invalid", placeholder="Enter your password") }}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.password.errors %}
-                                                <span>{{ error }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        {{ form.password(class="form-control", placeholder="Enter your password") }}
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <!-- Form Options -->
-                            <div class="form-options">
-                                <div class="form-check">
-                                    {{ form.remember(class="form-check-input") }}
-                                    {{ form.remember.label(class="form-check-label") }}
-                                </div>
-                                <a href="#" class="forgot-password">Forgot Password?</a>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="form-submit">
-                                {{ form.submit(class="btn btn-primary btn-login") }}
-                            </div>
-                        </form>
+    <div class="container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="login-card-premium">
+            
+            <div class="login-header-elite">
+                <div class="brand-badge">
+                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="CUZ" class="login-logo-img">
+                </div>
+                <h2>Intellectual Hub</h2>
+                <p>Digital Library Access</p>
+            </div>
+            
+            <div class="login-body-elite">
+                <div class="user-selector-wrapper">
+                    <div class="selector-pills">
+                        <input type="radio" name="user_type" id="student" value="student" checked>
+                        <label for="student" class="pill-item">Student</label>
                         
-                        <!-- Quick Access Divider -->
-                        <div class="login-divider">
-                            <span>Quick Access</span>
-                        </div>
-                        
-                        <!-- Demo Accounts -->
-                        <div class="demo-accounts">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <button class="btn btn-outline-primary btn-demo w-100" data-type="student" data-identifier="CUN2025100801" data-password="Testing1@">
-                                        <i class="fas fa-user-graduate me-2"></i>
-                                        Demo Student
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button class="btn btn-outline-warning btn-demo w-100" data-type="admin" data-identifier="admin" data-password="admin123">
-                                        <i class="fas fa-user-shield me-2"></i>
-                                        Demo Admin
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Demo Accounts Info -->
-                        <div class="demo-info mt-3">
-                            <div class="alert alert-info" role="alert">
-                                <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Demo Accounts</h6>
-                                <hr>
-                                <p class="mb-1"><strong>Student:</strong> CUN2025100801 / Testing1@</p>
-                                <p class="mb-0"><strong>Admin:</strong> admin / admin123</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <div class="login-footer">
-                        <p>Don't have an account? 
-                            <a href="{{ url_for('auth.register') }}" class="register-link">Create one here</a>
-                        </p>
+                        <input type="radio" name="user_type" id="admin" value="admin">
+                        <label for="admin" class="pill-item">Staff</label>
                     </div>
                 </div>
+
+                <form method="POST" action="" class="mt-4">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="input-block">
+                        <label class="input-label">Identity Credential</label>
+                        <div class="input-field-group">
+                            <span class="field-icon"><i class="fas fa-user-circle"></i></span>
+                            {{ form.login_identifier(class="elite-input", placeholder="ID or Email", id="login_identifier") }}
+                        </div>
+                    </div>
+
+                    <div class="input-block mt-3">
+                        <label class="input-label">Security Key</label>
+                        <div class="input-field-group">
+                            <span class="field-icon"><i class="fas fa-shield-alt"></i></span>
+                            {{ form.password(class="elite-input", placeholder="••••••••") }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+                        <div class="form-check custom-check">
+                            {{ form.remember(class="form-check-input") }}
+                            <label class="form-check-label text-white-50 small">Keep Active</label>
+                        </div>
+                        <a href="#" class="gold-link small">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-elite-login">
+                        Login to Archive
+                    </button>
+                </form>
+
+                <div class="demo-boundary mt-4">
+                    <span>Quick Access (Demo)</span>
+                </div>
+                
+                <div class="row g-2 mt-2">
+                    <div class="col-6">
+                        <button type="button" class="btn-demo-elite" data-type="student" data-identifier="CUN2025100801" data-password="Testing1@">Student</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn-demo-elite" data-type="admin" data-identifier="admin" data-password="admin123">Staff</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-footer-elite">
+                New to the Hub? <a href="{{ url_for('auth.register') }}" class="gold-link">Register Here</a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .login-container {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding: 2rem 0;
+    :root {
+        --accent-gold: #d4af37;
+        --deep-sapphire: #000814;
+    }
+
+    .login-page-wrapper {
         position: relative;
+        min-height: 100vh;
+        width: 100%;
         overflow: hidden;
     }
-    
-    .login-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            linear-gradient(rgba(0, 51, 102, 0.85), rgba(0, 51, 102, 0.75)),
-            url("{{ url_for('static', filename='photos/cavendish2.png') }}"),
-            linear-gradient(135deg, #003366 0%, #1a4d8f 100%);
+
+    /* Full Background Image */
+    .login-bg-image {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: url("{{ url_for('static', filename='photos/cuzlib.png') }}") no-repeat center center;
         background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        z-index: -2;
+    }
+
+    /* Dark Overlay for Readability */
+    .login-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 8, 20, 0.7), rgba(0, 8, 20, 0.9));
         z-index: -1;
     }
-    
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        overflow: hidden;
-        transition: all 0.4s ease;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+
+    .login-card-premium {
+        width: 92%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 28px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     }
-    
-    .login-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-    }
-    
-    .login-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #003366, #d4af37, #003366);
-        background-size: 200% 100%;
-        animation: shimmer 3s ease-in-out infinite;
-    }
-    
-    @keyframes shimmer {
-        0%, 100% { background-position: -200% 0; }
-        50% { background-position: 200% 0; }
-    }
-    
-    .login-header {
-        background: linear-gradient(135deg, #003366 0%, #1a4d8f 100%);
-        color: white;
-        padding: 2.5rem 2rem;
+
+    .login-header-elite {
         text-align: center;
+        padding: 40px 20px 10px;
     }
-    
-    .login-logo {
-        height: 70px;
-        margin-bottom: 1rem;
-        border-radius: 12px;
+
+    .brand-badge {
+        width: 65px; height: 65px;
+        background: #fff;
+        border-radius: 18px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
-    
-    .login-header h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+
+    .login-logo-img { width: 40px; }
+
+    .login-header-elite h2 {
+        font-family: 'Playfair Display', serif;
+        color: #fff; font-size: 1.6rem; font-weight: 700;
+        margin-bottom: 5px;
     }
-    
-    .login-body {
-        padding: 2.5rem 2rem;
+
+    .login-header-elite p {
+        color: var(--accent-gold);
+        text-transform: uppercase; letter-spacing: 2.5px;
+        font-size: 0.6rem; font-weight: 800;
     }
-    
-    .user-type-selector .btn-group {
-        border-radius: 12px;
-        overflow: hidden;
+
+    .login-body-elite { padding: 10px 30px 30px; }
+
+    /* Modern Pill Toggle */
+    .user-selector-wrapper {
+        background: rgba(0,0,0,0.4);
+        border-radius: 14px; padding: 4px;
+        border: 1px solid rgba(255,255,255,0.05);
     }
+
+    .selector-pills { display: flex; }
+    .selector-pills input { display: none; }
     
-    .user-type-selector .btn {
-        padding: 0.85rem;
-        font-weight: 600;
-        border: 2px solid #e9ecef;
+    .pill-item {
+        flex: 1; text-align: center; padding: 12px;
+        font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.4);
+        cursor: pointer; transition: 0.3s;
+        border-radius: 10px; text-transform: uppercase;
     }
-    
-    .user-type-selector .btn-check:checked + .btn {
-        border-color: #003366;
-        background: #003366;
-        color: white;
+
+    #student:checked ~ label[for="student"],
+    #admin:checked ~ label[for="admin"] {
+        background: var(--accent-gold); color: #000;
     }
-    
-    .user-type-selector .btn-check:checked + .btn-outline-warning {
-        border-color: #d4af37;
-        background: #d4af37;
-        color: #003366;
+
+    /* Inputs */
+    .input-label {
+        font-size: 0.65rem; color: var(--accent-gold);
+        text-transform: uppercase; font-weight: 800;
+        margin-bottom: 8px; display: block;
     }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
+
+    .input-field-group { position: relative; }
+
+    .field-icon {
+        position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+        color: rgba(255,255,255,0.3);
     }
-    
-    .form-label {
-        font-weight: 600;
-        color: #003366;
-        margin-bottom: 0.5rem;
+
+    .elite-input {
+        width: 100%; height: 54px;
+        background: rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding-left: 45px; color: #fff; font-size: 0.95rem;
     }
-    
-    .input-group-text {
-        background: #f8f9fa;
-        border: 2px solid #e9ecef;
-        border-right: none;
-        color: #003366;
+
+    .elite-input:focus {
+        outline: none; border-color: var(--accent-gold);
+        background: rgba(0,0,0,0.4);
     }
-    
-    .form-control {
-        border: 2px solid #e9ecef;
-        border-left: none;
-        padding: 0.85rem 1rem;
+
+    .btn-elite-login {
+        width: 100%; height: 56px;
+        background: #fff; color: #000;
+        border: none; border-radius: 14px;
+        font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        transition: 0.3s; margin-top: 10px;
     }
-    
-    .form-control:focus {
-        border-color: #003366;
-        box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.15);
+
+    .btn-elite-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+
+    .gold-link { color: var(--accent-gold); text-decoration: none; font-weight: 700; }
+
+    .demo-boundary {
+        text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        line-height: 0.1em; margin: 25px 0 15px;
     }
-    
-    .form-options {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
+    .demo-boundary span { 
+        background: rgba(20, 20, 20, 0.8); padding: 0 10px; 
+        font-size: 0.6rem; color: rgba(255,255,255,0.4);
     }
-    
-    .forgot-password {
-        color: #003366;
-        text-decoration: none;
-        font-weight: 600;
+
+    .btn-demo-elite {
+        width: 100%; padding: 10px; font-size: 0.7rem;
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        color: #fff; border-radius: 10px; font-weight: 700; text-transform: uppercase;
     }
-    
-    .btn-login {
-        background: linear-gradient(135deg, #003366 0%, #1a4d8f 100%);
-        border: none;
-        padding: 1rem 2rem;
-        font-weight: 700;
-        width: 100%;
-        border-radius: 12px;
+
+    .login-footer-elite {
+        padding: 20px; text-align: center;
+        background: rgba(0,0,0,0.3);
+        font-size: 0.8rem; color: rgba(255,255,255,0.5);
+        border-bottom-left-radius: 28px; border-bottom-right-radius: 28px;
     }
-    
-    .login-divider {
-        text-align: center;
-        margin: 2rem 0;
-        position: relative;
-    }
-    
-    .login-divider::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: #e9ecef;
-    }
-    
-    .login-divider span {
-        background: white;
-        padding: 0 1rem;
-        color: #666;
-    }
-    
-    .demo-info .alert {
-        background: rgba(13, 110, 253, 0.1);
-        border: 1px solid rgba(13, 110, 253, 0.2);
-    }
-    
-    .login-footer {
-        padding: 1.5rem 2rem;
-        background: #f8f9fa;
-        text-align: center;
-        border-top: 1px solid #e9ecef;
-    }
-    
-    @media (max-width: 768px) {
-        .login-container {
-            padding: 1rem;
-        }
-        
-        .login-header, .login-body {
-            padding: 2rem 1.5rem;
-        }
+
+    .custom-check .form-check-input {
+        background-color: transparent; border: 1px solid rgba(255,255,255,0.2);
     }
 </style>
 
@@ -344,46 +245,25 @@
     document.addEventListener('DOMContentLoaded', function() {
         const studentRadio = document.getElementById('student');
         const adminRadio = document.getElementById('admin');
-        const identifierInput = document.getElementById('login_identifier');
-        const identifierIcon = document.getElementById('identifier-icon');
-        const identifierHelp = document.getElementById('identifier-help');
-        const demoButtons = document.querySelectorAll('.btn-demo');
-        
-        // Handle user type selection
-        function handleUserTypeChange() {
-            if (studentRadio.checked) {
-                identifierInput.placeholder = 'Enter your email or student ID';
-                identifierIcon.className = 'fas fa-user-graduate';
-                identifierHelp.innerHTML = 'Students: Use your email or student ID<br>Example: CUN2025100801 or student@cavendish.ac.zm';
-            } else {
-                identifierInput.placeholder = 'Enter your admin username';
-                identifierIcon.className = 'fas fa-user-shield';
-                identifierHelp.innerHTML = 'Admins: Use your username<br>Example: admin';
-            }
-        }
-        
-        studentRadio.addEventListener('change', handleUserTypeChange);
-        adminRadio.addEventListener('change', handleUserTypeChange);
-        
-        // Initialize on page load
-        handleUserTypeChange();
-        
-        // Demo account buttons
-        demoButtons.forEach(button => {
-            button.addEventListener('click', function() {
+        const idInput = document.getElementById('login_identifier');
+        const demoBtns = document.querySelectorAll('.btn-demo-elite');
+
+        const updatePlaceholder = () => {
+            idInput.placeholder = studentRadio.checked ? "Student ID or Email" : "Staff Username";
+        };
+
+        studentRadio.addEventListener('change', updatePlaceholder);
+        adminRadio.addEventListener('change', updatePlaceholder);
+
+        demoBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
                 const type = this.getAttribute('data-type');
-                const identifier = this.getAttribute('data-identifier');
-                const password = this.getAttribute('data-password');
+                if(type === 'student') studentRadio.checked = true;
+                else adminRadio.checked = true;
                 
-                if (type === 'student') {
-                    studentRadio.checked = true;
-                } else {
-                    adminRadio.checked = true;
-                }
-                
-                handleUserTypeChange();
-                identifierInput.value = identifier;
-                document.querySelector('input[name="password"]').value = password;
+                updatePlaceholder();
+                idInput.value = this.getAttribute('data-identifier');
+                document.querySelector('input[type="password"]').value = this.getAttribute('data-password');
             });
         });
     });

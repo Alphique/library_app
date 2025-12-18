@@ -1,163 +1,102 @@
-<!-- app/templates/auth/register.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-success text-white text-center">
-                <h4 class="mb-0">
-                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="CUZ Library" height="40" class="me-2">
-                    Create Your Account
-                </h4>
-            </div>
-            <div class="card-body p-4">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    
-                    <!-- Role Selection -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Account Type</label>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-check card h-100 border-2 role-card" id="student-card">
-                                    <input class="form-check-input" type="radio" name="role" id="role_student" value="student" checked style="position: absolute; top: 10px; left: 10px;">
-                                    <label class="form-check-label card-body text-center" for="role_student" style="padding-left: 30px; cursor: pointer;">
-                                        <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">Student</h6>
-                                        <small class="text-muted">Access to books, borrowing, and study resources</small>
-                                    </label>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cuzlib.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
+</div>
+
+<div class="container py-5 dashboard-relative">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="content-glass-card shadow-lg">
+                <div class="card-header-glass text-center py-4">
+                    <div class="logo-badge-container d-inline-block mb-3">
+                        <img src="{{ url_for('static', filename='photos/logo3.png') }}" alt="CUZ" class="header-logo" style="width: 50px;">
+                    </div>
+                    <h2 class="text-white fw-bold mb-1">Join the <span class="text-gold-gradient">Archive</span></h2>
+                    <p class="text-white-50 small mb-0">Create your scholarly credentials</p>
+                </div>
+
+                <div class="p-4 p-md-5">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-white-50 small text-uppercase fw-bold mb-3">Select Account Path</label>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="role-glass-card" id="student-card">
+                                        <input class="form-check-input d-none" type="radio" name="role" id="role_student" value="student" checked>
+                                        <label class="role-label" for="role_student">
+                                            <i class="fas fa-user-graduate mb-2"></i>
+                                            <span>Student</span>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-check card h-100 border-2 role-card" id="admin-card">
-                                    <input class="form-check-input" type="radio" name="role" id="role_admin" value="admin" style="position: absolute; top: 10px; left: 10px;">
-                                    <label class="form-check-label card-body text-center" for="role_admin" style="padding-left: 30px; cursor: pointer;">
-                                        <i class="fas fa-user-shield fa-2x text-warning mb-2"></i>
-                                        <h6 class="card-title">Administrator</h6>
-                                        <small class="text-muted">Manage library system, books, and users</small>
-                                    </label>
+                                <div class="col-6">
+                                    <div class="role-glass-card" id="admin-card">
+                                        <input class="form-check-input d-none" type="radio" name="role" id="role_admin" value="admin">
+                                        <label class="role-label" for="role_admin">
+                                            <i class="fas fa-user-shield mb-2"></i>
+                                            <span>Admin</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        {% if form.role.errors %}
-                            <div class="text-danger mt-2">
-                                {% for error in form.role.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+
+                        <div class="row">
+                            <div class="col-12 mb-3" id="student_id_field">
+                                <label class="text-white-50 small mb-1">{{ form.student_id.label.text }}</label>
+                                {{ form.student_id(class="glass-input form-control", placeholder="e.g. 2024001") }}
+                                {% for error in form.student_id.errors %}<span class="text-danger small">{{ error }}</span>{% endfor %}
                             </div>
-                        {% endif %}
-                    </div>
 
-                    <!-- Student ID Field -->
-                    <div class="mb-3" id="student_id_field">
-                        {{ form.student_id.label(class="form-label") }}
-                        {% if form.student_id.errors %}
-                            {{ form.student_id(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.student_id.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                            <div class="col-12 mb-3" id="admin_code_field" style="display: none;">
+                                <label class="text-white-50 small mb-1">{{ form.admin_code.label.text }}</label>
+                                {{ form.admin_code(class="glass-input form-control", placeholder="Enter Access Key") }}
+                                {% for error in form.admin_code.errors %}<span class="text-danger small">{{ error }}</span>{% endfor %}
                             </div>
-                        {% else %}
-                            {{ form.student_id(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">Your university student ID number</div>
-                    </div>
 
-                    <!-- Admin Code Field -->
-                    <div class="mb-3" id="admin_code_field" style="display: none;">
-                        {{ form.admin_code.label(class="form-label") }}
-                        {% if form.admin_code.errors %}
-                            {{ form.admin_code(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.admin_code.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small mb-1">Username</label>
+                                {{ form.username(class="glass-input form-control", placeholder="ScholarName") }}
+                                {% for error in form.username.errors %}<span class="text-danger small">{{ error }}</span>{% endfor %}
                             </div>
-                        {% else %}
-                            {{ form.admin_code(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">Required for administrator account creation</div>
-                    </div>
 
-                    <!-- Username Field -->
-                    <div class="mb-3">
-                        {{ form.username.label(class="form-label") }}
-                        {% if form.username.errors %}
-                            {{ form.username(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.username.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small mb-1">Email Address</label>
+                                {{ form.email(class="glass-input form-control", placeholder="name@email.com") }}
+                                {% for error in form.email.errors %}<span class="text-danger small">{{ error }}</span>{% endfor %}
                             </div>
-                        {% else %}
-                            {{ form.username(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">Choose a unique username that others will see.</div>
-                    </div>
 
-                    <!-- Email Field -->
-                    <div class="mb-3">
-                        {{ form.email.label(class="form-label") }}
-                        {% if form.email.errors %}
-                            {{ form.email(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.email.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                            <div class="col-md-6 mb-3">
+                                <label class="text-white-50 small mb-1">Password</label>
+                                {{ form.password(class="glass-input form-control") }}
+                                {% for error in form.password.errors %}<span class="text-danger small">{{ error }}</span>{% endfor %}
                             </div>
-                        {% else %}
-                            {{ form.email(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">We'll never share your email with anyone else.</div>
-                    </div>
 
-                    <!-- Password Fields -->
-                    <div class="mb-3">
-                        {{ form.password.label(class="form-label") }}
-                        {% if form.password.errors %}
-                            {{ form.password(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.password.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
+                            <div class="col-md-6 mb-4">
+                                <label class="text-white-50 small mb-1">Confirm Password</label>
+                                {{ form.confirm_password(class="glass-input form-control") }}
                             </div>
-                        {% else %}
-                            {{ form.password(class="form-control") }}
-                        {% endif %}
-                        <div class="form-text">Password must be at least 8 characters with numbers and symbols.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn-gold-action") }}
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="text-white-50 small">
+                            Already a member? <a href="{{ url_for('auth.login') }}" class="text-gold text-decoration-none fw-bold">Sign In</a>
+                        </p>
                     </div>
 
-                    <div class="mb-3">
-                        {{ form.confirm_password.label(class="form-label") }}
-                        {% if form.confirm_password.errors %}
-                            {{ form.confirm_password(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.confirm_password.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.confirm_password(class="form-control") }}
-                        {% endif %}
+                    <div class="bonus-badge mt-3" id="welcome-bonus">
+                        <i class="fas fa-gift me-2"></i> New students get <strong>$100.00</strong> welcome credit!
                     </div>
-
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-success btn-lg") }}
-                    </div>
-                </form>
-
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        Already Have An Account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Sign In</a>
-                    </small>
-                </div>
-
-                <div class="alert alert-info mt-3" id="welcome-bonus">
-                    <small>
-                        <strong>🎁 Welcome Bonus!</strong> New student accounts receive $100 in their wallet to get started!
-                    </small>
                 </div>
             </div>
         </div>
@@ -165,21 +104,117 @@
 </div>
 
 <style>
-.role-card {
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-.role-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.role-card.selected {
-    border-color: #0d6efd !important;
-    background-color: #f8f9fa;
-}
-#admin-card.selected {
-    border-color: #ffc107 !important;
-}
+    /* Reuse core theme variables */
+    :root {
+        --glass-bg: rgba(10, 15, 30, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --gold: #d4af37;
+        --gold-bright: #f1c40f;
+    }
+
+    body { background: #020617; }
+
+    /* Background Setup */
+    .bg-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+    .bg-image { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.4) contrast(1.1); }
+    .bg-overlay-glass { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.9) 100%); }
+    .dashboard-relative { position: relative; z-index: 10; }
+
+    /* Glass Card */
+    .content-glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
+    }
+    .card-header-glass { border-bottom: 1px solid var(--glass-border); }
+
+    /* Input Styling */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 10px;
+        padding: 10px 15px;
+        transition: 0.3s;
+    }
+    .glass-input:focus {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    .glass-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* Role Cards */
+    .role-glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+    .role-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 10px;
+        color: rgba(255,255,255,0.6);
+        width: 100%;
+        margin: 0;
+        cursor: pointer;
+    }
+    .role-label i { font-size: 1.5rem; transition: 0.3s; }
+    
+    .role-glass-card:hover { background: rgba(255, 255, 255, 0.08); }
+    
+    .role-glass-card.selected {
+        background: rgba(212, 175, 55, 0.1);
+        border-color: var(--gold);
+    }
+    .role-glass-card.selected .role-label { color: var(--gold); }
+    .role-glass-card.selected i { transform: scale(1.1); color: var(--gold); }
+
+    /* Button and Text */
+    .btn-gold-action {
+        background: linear-gradient(135deg, var(--gold), #b8860b);
+        color: #000;
+        border: none;
+        font-weight: 800;
+        padding: 12px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+    .btn-gold-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        filter: brightness(1.1);
+    }
+    .text-gold { color: var(--gold); }
+    .text-gold-gradient {
+        background: linear-gradient(to right, #fff, var(--gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .bonus-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px dashed #10b981;
+        color: #10b981;
+        padding: 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .logo-badge-container {
+        background: white;
+        padding: 8px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    }
 </style>
 
 <script>
@@ -208,23 +243,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Initial setup
     updateFormFields();
 
-    // Add event listeners
-    studentRadio.addEventListener('change', updateFormFields);
-    adminRadio.addEventListener('change', updateFormFields);
-
-    // Add click handlers for the cards
-    studentCard.addEventListener('click', function() {
-        studentRadio.checked = true;
-        updateFormFields();
-    });
-
-    adminCard.addEventListener('click', function() {
-        adminRadio.checked = true;
-        updateFormFields();
-    });
+    studentCard.addEventListener('click', () => { studentRadio.checked = true; updateFormFields(); });
+    adminCard.addEventListener('click', () => { adminRadio.checked = true; updateFormFields(); });
 });
 </script>
 {% endblock %}

@@ -1,120 +1,194 @@
-<!-- app/templates/payments/cart.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">🛒 Shopping Cart</h1>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cart_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-{% if cart_items %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Cart Items ({{ cart_items|length }})</h5>
-            </div>
-            <div class="card-body">
+<div class="container py-5 dashboard-relative">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h1 class="page-title text-white mb-2">Resource <span class="text-gold-gradient">Cart</span></h1>
+            <p class="text-white-50 mb-0">Review your academic acquisitions before final authorization.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <span class="badge-glass-gold px-4 py-2">
+                <i class="fas fa-wallet me-2"></i>Vault Balance: ${{ "%.2f"|format(current_user.wallet.balance) }}
+            </span>
+        </div>
+    </div>
+
+    {% if cart_items %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="cart-items-wrapper">
                 {% for item in cart_items %}
-                <div class="row align-items-center mb-3 pb-3 border-bottom">
-                    <div class="col-md-8">
-                        <h6 class="mb-1">{{ item.title }}</h6>
-                        <p class="text-muted small mb-1">by {{ item.author }}</p>
-                        <span class="badge bg-{{ 'success' if item.type == 'purchase' else 'info' }}">
-                            {{ item.type|title }}
-                        </span>
-                    </div>
-                    <div class="col-md-2 text-end">
-                        {% if item.type == 'purchase' and item.price > 0 %}
-                            <strong class="text-success">${{ "%.2f"|format(item.price) }}</strong>
-                        {% elif item.type == 'rental' and item.rental_fee > 0 %}
-                            <small class="text-info">${{ "%.2f"|format(item.rental_fee) }}/day</small>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-2 text-end">
-                        <a href="{{ url_for('payments.remove_from_cart', book_id=item.book_id) }}" 
-                           class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Remove {{ item.title }} from cart?')">
-                            Remove
-                        </a>
+                <div class="cart-item-card mb-3">
+                    <div class="row align-items-center g-0">
+                        <div class="col-md-2 d-none d-md-flex justify-content-center">
+                            <div class="item-icon-circle {{ 'purchase' if item.type == 'purchase' else 'rental' }}">
+                                <i class="fas fa-{{ 'book' if item.type == 'purchase' else 'clock' }}"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-6 p-4">
+                            <h5 class="text-white mb-1 font-playfair">{{ item.title }}</h5>
+                            <p class="tiny text-white-50 mb-2">By {{ item.author }}</p>
+                            <span class="badge-outline-{{ 'success' if item.type == 'purchase' else 'info' }}">
+                                {{ item.type|upper }}
+                            </span>
+                        </div>
+                        <div class="col-md-2 text-md-center p-3">
+                            <div class="price-tag text-white fw-bold">
+                                {% if item.type == 'purchase' %}
+                                    ${{ "%.2f"|format(item.price) }}
+                                {% else %}
+                                    ${{ "%.2f"|format(item.rental_fee) }}
+                                    <span class="d-block tiny text-white-50">Per Term</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end p-4">
+                            <a href="{{ url_for('payments.remove_from_cart', book_id=item.book_id) }}" 
+                               class="btn-remove-cart"
+                               onclick="return confirm('Remove {{ item.title }}?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Order Summary</h5>
+            
+            <div class="mt-4">
+                <a href="{{ url_for('books.catalog') }}" class="btn btn-link text-white-50 text-decoration-none tiny letter-spacing-1">
+                    <i class="fas fa-chevron-left me-2"></i> RETURN TO CATALOG
+                </a>
             </div>
-            <div class="card-body">
+        </div>
+
+        <div class="col-lg-4">
+            <div class="summary-card-glass p-4">
+                <h5 class="text-white mb-4 font-playfair border-bottom border-white-10 pb-3">Acquisition Summary</h5>
+                
                 <div class="d-flex justify-content-between mb-2">
-                    <span>Subtotal:</span>
-                    <strong>${{ "%.2f"|format(total) }}</strong>
+                    <span class="text-white-50 small">Resource Subtotal</span>
+                    <span class="text-white fw-bold">${{ "%.2f"|format(total) }}</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Transaction Fee:</span>
-                    <strong>$0.00</strong>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                    <span><strong>Total:</strong></span>
-                    <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="text-white-50 small">Transfer Protocol Fee</span>
+                    <span class="text-success small fw-bold">$0.00</span>
                 </div>
 
-                <div class="d-grid gap-2">
+                <div class="total-display mb-4 p-3 rounded-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-white-50 tiny text-uppercase">Total Commitment</span>
+                        <span class="text-gold fs-3 fw-bold">${{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
                     {% if current_user.wallet.balance >= total %}
-                        <a href="{{ url_for('payments.checkout') }}" class="btn btn-success btn-lg">
-                            🛒 Checkout
+                        <a href="{{ url_for('payments.checkout') }}" class="btn btn-gold-action py-3">
+                            Proceed to Authorization <i class="fas fa-arrow-right ms-2"></i>
                         </a>
                     {% else %}
-                        <button class="btn btn-secondary btn-lg" disabled>
-                            Insufficient Funds
-                        </button>
-                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-primary">
-                            💰 Add Funds
+                        <div class="insufficient-alert p-3 rounded-3 mb-2">
+                            <i class="fas fa-exclamation-circle me-2"></i> Shortfall Detected
+                            <div class="tiny opacity-75 mt-1">Need ${{ "%.2f"|format(total - current_user.wallet.balance) }} more</div>
+                        </div>
+                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-primary py-3">
+                            <i class="fas fa-plus-circle me-2"></i> Recharge Vault
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('books.catalog') }}" class="btn btn-outline-primary">
-                        Continue Shopping
-                    </a>
                 </div>
 
-                <div class="mt-3 text-center">
-                    <small class="text-muted">
-                        Wallet Balance: <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
-                    </small>
+                <div class="cart-protection-box mt-4">
+                    <div class="protection-item">
+                        <i class="fas fa-shield-alt text-gold"></i>
+                        <span>Immediate Digital Grant</span>
+                    </div>
+                    <div class="protection-item">
+                        <i class="fas fa-history text-gold"></i>
+                        <span>7-Day Refund Policy</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="card mt-3">
-            <div class="card-header bg-info text-white">
-                <h6 class="mb-0">💡 Need Help?</h6>
-            </div>
-            <div class="card-body">
-                <small class="text-muted">
-                    • All purchases are final<br>
-                    • Digital books are delivered instantly<br>
-                    • Contact support for any issues<br>
-                    • 24/7 customer service available
-                </small>
             </div>
         </div>
     </div>
-</div>
-{% else %}
-<div class="row">
-    <div class="col-12">
-        <div class="text-center py-5">
-            <h4 class="text-muted">🛒 Your cart is empty</h4>
-            <p class="text-muted">Start adding some books to your cart!</p>
-            <a href="{{ url_for('books.catalog') }}" class="btn btn-primary btn-lg">Browse Catalog</a>
+    {% else %}
+    <div class="empty-cart-container text-center py-5">
+        <div class="cart-ghost-icon mb-4">
+            <i class="fas fa-shopping-basket fa-4x text-white-25"></i>
         </div>
+        <h2 class="text-white font-playfair mb-3">Your Cart is a Void</h2>
+        <p class="text-white-50 mb-5">No resources have been selected for acquisition yet.</p>
+        <a href="{{ url_for('books.catalog') }}" class="btn-gold-action px-5 py-3 text-decoration-none">
+            DISCOVER RESOURCES
+        </a>
     </div>
+    {% endif %}
 </div>
-{% endif %}
+
+<style>
+    /* Item Cards */
+    .cart-item-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cart-item-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateX(10px);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .item-icon-circle {
+        width: 50px; height: 50px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+    }
+    .item-icon-circle.purchase { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .item-icon-circle.rental { background: rgba(13, 202, 240, 0.15); color: #0dcaf0; }
+
+    .btn-remove-cart {
+        width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 50%; color: rgba(255,255,255,0.3); transition: 0.3s;
+    }
+    .btn-remove-cart:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+    /* Summary Card */
+    .summary-card-glass {
+        background: rgba(15, 20, 35, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 100px;
+    }
+    .total-display { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+
+    /* Alerts & Badges */
+    .insufficient-alert {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    .badge-outline-success { border: 1px solid #10b981; color: #10b981; font-size: 0.65rem; padding: 3px 10px; border-radius: 5px; }
+    .badge-outline-info { border: 1px solid #0dcaf0; color: #0dcaf0; font-size: 0.65rem; padding: 3px 10px; border-radius: 5px; }
+
+    .protection-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+
+    /* Empty State */
+    .cart-ghost-icon { 
+        width: 150px; height: 150px; background: rgba(255,255,255,0.02); 
+        border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;
+    }
+
+    .letter-spacing-1 { letter-spacing: 1px; }
+    .border-white-10 { border-color: rgba(255,255,255,0.1) !important; }
+</style>
 {% endblock %}

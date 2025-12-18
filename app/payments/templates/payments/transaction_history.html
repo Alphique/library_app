@@ -1,121 +1,201 @@
-<!-- app/templates/payments/transaction_history.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">💳 Transaction History</h1>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/ledger_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-{% if transactions %}
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">All Transactions</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for transaction in transactions %}
-                            <tr>
-                                <td>
-                                    <small>{{ transaction.created_at.strftime('%b %d, %Y') }}</small>
-                                    <br>
-                                    <small class="text-muted">{{ transaction.created_at.strftime('%H:%M') }}</small>
-                                </td>
-                                <td>
-                                    <span class="badge bg-{{ 'success' if transaction.transaction_type == 'purchase' else 'info' }}">
-                                        {{ transaction.transaction_type|title }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <strong>{{ transaction.book.title }}</strong>
-                                    <br>
-                                    <small class="text-muted">by {{ transaction.book.author }}</small>
-                                </td>
-                                <td>
-                                    <span class="text-{{ 'danger' if transaction.amount > 0 else 'success' }}">
-                                        {{ '-' if transaction.amount > 0 else '+' }}${{ "%.2f"|format(transaction.amount|abs) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-{{ 'success' if transaction.status == 'completed' else 'warning' }}">
-                                        {{ transaction.status|title }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{{ url_for('books.book_detail', book_id=transaction.book.book_id) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        View Book
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+<div class="container py-5 dashboard-relative">
+    <div class="row align-items-end mb-5">
+        <div class="col-md-6">
+            <h1 class="page-title text-white mb-2">Transaction <span class="text-gold-gradient">Archive</span></h1>
+            <p class="text-white-50 mb-0">Full transparency of your academic investment and returns.</p>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-md-end gap-3 mt-4 mt-md-0">
+                <div class="summary-pill">
+                    <span class="label">Total Spent</span>
+                    <span class="value text-danger">-${{ "%.2f"|format(total_spent) }}</span>
+                </div>
+                <div class="summary-pill">
+                    <span class="label">Operations</span>
+                    <span class="value">{{ transactions|length }}</span>
                 </div>
             </div>
         </div>
     </div>
+
+    {% if transactions %}
+    <div class="ledger-card-wrapper">
+        <div class="ledger-table-header p-4 d-flex justify-content-between">
+            <h5 class="text-white mb-0 font-playfair">Historical Flows</h5>
+            <div class="badge-glass-gold tiny px-3 py-1">SECURE ENCRYPTION ACTIVE</div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-ledger-glass mb-0">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Classification</th>
+                        <th>Resource Description</th>
+                        <th>Quantum</th>
+                        <th>Status</th>
+                        <th class="text-end">Verification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr class="ledger-row">
+                        <td>
+                            <div class="text-white small fw-bold">{{ transaction.created_at.strftime('%b %d, %Y') }}</div>
+                            <div class="tiny text-white-50">{{ transaction.created_at.strftime('%H:%M') }}</div>
+                        </td>
+                        <td>
+                            <span class="badge-outline-{{ 'info' if transaction.transaction_type == 'purchase' else 'warning' }}">
+                                {{ transaction.transaction_type|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="text-white small fw-bold">{{ transaction.book.title }}</div>
+                            <div class="tiny text-gold">Authored by {{ transaction.book.author }}</div>
+                        </td>
+                        <td>
+                            <div class="amount-flow {{ 'text-danger' if transaction.amount > 0 else 'text-success' }}">
+                                {{ '-' if transaction.amount > 0 else '+' }}${{ "%.2f"|format(transaction.amount|abs) }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="status-indicator {{ transaction.status }}"></span>
+                                <span class="tiny text-white-50 text-uppercase">{{ transaction.status }}</span>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ url_for('books.book_detail', book_id=transaction.book.book_id) }}" class="btn-verify">
+                                <i class="fas fa-external-link-alt me-1"></i> Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-md-4">
+            <div class="mini-glass-info">
+                <i class="fas fa-shopping-bag text-info"></i>
+                <div>
+                    <span class="d-block tiny text-white-50">Total Purchases</span>
+                    <span class="fw-bold text-white">{{ purchase_count }} Acquisitions</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mini-glass-info">
+                <i class="fas fa-key text-warning"></i>
+                <div>
+                    <span class="d-block tiny text-white-50">Active Rentals</span>
+                    <span class="fw-bold text-white">{{ rental_count }} Leases</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button class="btn btn-outline-light rounded-pill btn-sm px-4 opacity-50" onclick="window.print()">
+                <i class="fas fa-download me-2"></i>Export Statement
+            </button>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="empty-ledger-state text-center py-5">
+        <div class="empty-icon-wrapper mb-4">
+            <i class="fas fa-receipt fa-4x text-white-25"></i>
+        </div>
+        <h3 class="text-white font-playfair">Your ledger is empty.</h3>
+        <p class="text-white-50 mb-4">No financial movements detected in your archive yet.</p>
+        <a href="{{ url_for('books.catalog') }}" class="btn-gold-action px-5 py-2">Explore the Library</a>
+    </div>
+    {% endif %}
 </div>
 
-<!-- Statistics -->
-<div class="row mt-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body text-center">
-                <h5>Total Transactions</h5>
-                <h3>{{ transactions|length }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body text-center">
-                <h5>Total Spent</h5>
-                <h3>${{ "%.2f"|format(total_spent) }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body text-center">
-                <h5>Purchases</h5>
-                <h3>{{ purchase_count }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body text-center">
-                <h5>Rentals</h5>
-                <h3>{{ rental_count }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
-{% else %}
-<div class="row">
-    <div class="col-12">
-        <div class="text-center py-5">
-            <h4 class="text-muted">📭 No transactions yet</h4>
-            <p class="text-muted">Start renting or purchasing books to see your transaction history.</p>
-            <a href="{{ url_for('books.catalog') }}" class="btn btn-primary btn-lg">Browse Books</a>
-        </div>
-    </div>
-</div>
-{% endif %}
+<style>
+    /* Ledger Styling */
+    .ledger-card-wrapper {
+        background: rgba(10, 15, 30, 0.75);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .table-ledger-glass { color: white; vertical-align: middle; }
+    .table-ledger-glass thead th {
+        background: rgba(255,255,255,0.03);
+        border: none;
+        color: #d4af37;
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 20px;
+    }
+
+    .ledger-row { transition: 0.3s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ledger-row:hover { background: rgba(212, 175, 55, 0.05); }
+    .ledger-row td { padding: 20px; border: none; }
+
+    /* Summary Pills */
+    .summary-pill {
+        background: rgba(255,255,255,0.05);
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    .summary-pill .label { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    .summary-pill .value { font-size: 1.2rem; font-weight: 700; }
+
+    /* Status & Badges */
+    .badge-outline-info { border: 1px solid #0dcaf0; color: #0dcaf0; font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; }
+    .badge-outline-warning { border: 1px solid #ffc107; color: #ffc107; font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; }
+    
+    .status-indicator { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+    .status-indicator.completed { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-indicator.pending { background: #f59e0b; }
+
+    .amount-flow { font-weight: 800; font-family: 'Monaco', monospace; }
+
+    /* Buttons & Mini Info */
+    .btn-verify {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.7rem;
+        text-decoration: none;
+        padding: 5px 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        transition: 0.3s;
+    }
+    .btn-verify:hover { color: #d4af37; border-color: #d4af37; background: rgba(212,175,55,0.1); }
+
+    .mini-glass-info {
+        background: rgba(255,255,255,0.03);
+        padding: 15px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .mini-glass-info i { font-size: 1.2rem; }
+
+    .empty-icon-wrapper {
+        width: 120px; height: 120px; background: rgba(255,255,255,0.03);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;
+    }
+
+    .tiny { font-size: 0.65rem; }
+</style>
 {% endblock %}

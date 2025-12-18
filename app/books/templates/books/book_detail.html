@@ -1,365 +1,288 @@
-<!-- app/templates/books/book_detail.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <!-- Main Book Content -->
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cuzlib.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
+</div>
+
+<div class="container py-5 dashboard-relative">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb breadcrumb-glass">
+            <li class="breadcrumb-item"><a href="{{ url_for('books.index') }}">Archives</a></li>
+            <li class="breadcrumb-item active text-gold">{{ book.title|truncate(30) }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <!-- Book Header -->
-                    <div class="d-flex justify-content-between align-items-start mb-4">
+            <div class="manuscript-card">
+                <div class="p-4 p-md-5">
+                    <div class="d-md-flex justify-content-between align-items-start mb-4">
                         <div>
-                            <h1 class="h2 fw-bold text-primary mb-2">{{ book.title }}</h1>
-                            <h4 class="text-muted mb-3">by {{ book.author }}</h4>
-                            
-                            <!-- Badges -->
-                            <div class="d-flex gap-2 mb-3">
-                                <span class="badge bg-primary fs-6 px-3 py-2">
-                                    <i class="fas fa-tag me-1"></i>
-                                    {{ book.category|replace('-', ' ')|title }}
-                                </span>
-                                <span class="badge bg-{{ 'success' if book.status == 'available' else 'warning' }} fs-6 px-3 py-2">
-                                    <i class="fas fa-circle me-1"></i>
-                                    {{ book.status|title }}
-                                </span>
-                            </div>
+                            <span class="badge-glass-gold mb-2 d-inline-block">{{ book.category|replace('-', ' ')|title }}</span>
+                            <h1 class="display-5 text-white fw-bold manuscript-title">{{ book.title }}</h1>
+                            <p class="lead text-gold mb-0">Composed by {{ book.author }}</p>
                         </div>
-                        <div class="text-end">
-                            <div class="text-muted small">
-                                <i class="fas fa-calendar me-1"></i>
-                                {{ book.created_at.strftime('%B %d, %Y') }}
-                            </div>
-                            <div class="text-muted small">
-                                <i class="fas fa-user me-1"></i>
-                                {{ book.uploader.username }}
-                            </div>
+                        <div class="text-md-end mt-3 mt-md-0">
+                            <span class="status-indicator {{ 'available' if book.status == 'available' else 'reserved' }}">
+                                {{ book.status|title }}
+                            </span>
                         </div>
                     </div>
 
-                    <!-- Book Description -->
-                    {% if book.description %}
-                    <div class="mb-4">
-                        <h5 class="fw-bold text-dark mb-3">
-                            <i class="fas fa-file-alt me-2"></i>Description
-                        </h5>
-                        <div class="card bg-light border-0">
-                            <div class="card-body">
-                                <p class="card-text mb-0" style="line-height: 1.6;">{{ book.description }}</p>
-                            </div>
+                    <hr class="border-white-10 my-4">
+
+                    <div class="mb-5">
+                        <h5 class="section-label"><i class="fas fa-quote-left me-2"></i>Abstract & Overview</h5>
+                        <div class="abstract-box">
+                            <p class="text-white-50 lh-lg mb-0">
+                                {{ book.description or "No formal abstract has been provided for this volume in the CUZ archives." }}
+                            </p>
                         </div>
                     </div>
-                    {% endif %}
 
-                    <!-- PDF Preview Section - FIXED -->
                     {% if book.file_path %}
-                    <div class="mb-4">
-                        <h5 class="fw-bold text-dark mb-3">
-                            <i class="fas fa-file-pdf me-2"></i>Book Preview
-                        </h5>
-                        <div class="card border-0 bg-light">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    <i class="fas fa-file-pdf text-danger fs-1"></i>
+                        {% set filename = book.file_path.replace('\\', '/').split('/')[-1] %}
+                        {% set pdf_url = url_for('static', filename='uploads/books/' + filename) %}
+                        <div class="preview-shelf p-4 rounded-4 mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="pdf-icon-box">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
                                 </div>
-                                <h6 class="fw-bold mb-2">PDF Document</h6>
-                                <p class="text-muted small mb-3">Click below to view the book preview</p>
-                                
-                                {# FIX: Extract only the filename from the file_path #}
-                                {% set filename = book.file_path.split('\\')[-1] %}  {# For Windows paths #}
-                                {% set filename = filename.split('/')[-1] %}  {# For Unix paths #}
-                                {% set pdf_url = url_for('static', filename='uploads/books/' + filename) %}
-                                
-                                <div class="d-grid gap-2">
-                                    <a href="{{ pdf_url }}" 
-                                       class="btn btn-danger fw-bold py-2"
-                                       target="_blank"
-                                       onclick="handlePdfPreview(this)">
-                                        <i class="fas fa-eye me-2"></i>
-                                        View PDF Preview
-                                    </a>
-                                    <a href="{{ pdf_url }}" 
-                                       class="btn btn-outline-danger py-2"
-                                       download="{{ filename }}">
-                                        <i class="fas fa-download me-2"></i>
-                                        Download PDF
-                                    </a>
+                                <div class="col">
+                                    <h6 class="text-white mb-1">Digital Preview Available</h6>
+                                    <p class="tiny text-white-50 mb-0">Review the contents before acquiring the full volume.</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Book Details -->
-                    <div class="row g-3">
-                        {% if book.isbn %}
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-barcode text-muted me-2 fs-5"></i>
-                                <div>
-                                    <small class="text-muted d-block">ISBN</small>
-                                    <strong>{{ book.isbn }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-clock text-muted me-2 fs-5"></i>
-                                <div>
-                                    <small class="text-muted d-block">Listed</small>
-                                    <strong>{{ book.created_at.strftime('%b %d, %Y') }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Similar Books Section -->
-            {% if similar_books %}
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header bg-transparent border-0 py-3">
-                    <h5 class="fw-bold mb-0 text-dark">
-                        <i class="fas fa-book-open me-2"></i>Similar Books
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        {% for similar_book in similar_books %}
-                        <div class="col-xl-3 col-lg-4 col-md-6">
-                            <div class="card h-100 border-0 shadow-sm-hover">
-                                <div class="card-body">
-                                    <h6 class="card-title fw-bold text-dark mb-2">{{ similar_book.title|truncate(40) }}</h6>
-                                    <p class="card-text text-muted small mb-3">{{ similar_book.author }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        {% if similar_book.price > 0 %}
-                                        <span class="fw-bold text-success">${{ "%.2f"|format(similar_book.price) }}</span>
-                                        {% endif %}
-                                        <a href="{{ url_for('books.book_detail', book_id=similar_book.book_id) }}" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            View <i class="fas fa-arrow-right ms-1"></i>
-                                        </a>
+                                <div class="col-md-auto mt-3 mt-md-0">
+                                    <div class="btn-group">
+                                        <a href="{{ pdf_url }}" target="_blank" class="btn btn-sm btn-gold-action px-3">View</a>
+                                        <a href="{{ pdf_url }}" download class="btn btn-sm btn-outline-light px-3"><i class="fas fa-download"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="meta-item">
+                                <span class="tiny text-white-50 text-uppercase d-block">Identifier</span>
+                                <span class="text-white fw-bold">{{ book.isbn or "N/A" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="meta-item">
+                                <span class="tiny text-white-50 text-uppercase d-block">Contributor</span>
+                                <span class="text-white fw-bold">{{ book.uploader.username }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="meta-item">
+                                <span class="tiny text-white-50 text-uppercase d-block">Date Cataloged</span>
+                                <span class="text-white fw-bold">{{ book.created_at.strftime('%b %d, %Y') }}</span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            {% if similar_books %}
+            <div class="mt-5">
+                <h5 class="text-white mb-4 fs-6 text-uppercase letter-spacing-2">Related Academic Resources</h5>
+                <div class="row g-3">
+                    {% for similar in similar_books %}
+                    <div class="col-md-4">
+                        <a href="{{ url_for('books.book_detail', book_id=similar.book_id) }}" class="text-decoration-none">
+                            <div class="similar-glass-card p-3">
+                                <h6 class="text-white mb-1 text-truncate">{{ similar.title }}</h6>
+                                <p class="tiny text-gold mb-0">{{ similar.author }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endif %}
         </div>
 
-        <!-- Sidebar - Pricing & Actions -->
         <div class="col-lg-4">
-            <!-- Pricing Card -->
-            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                <div class="card-header bg-gradient-primary text-white py-3">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-shopping-cart me-2"></i>Pricing & Actions
-                    </h5>
+            <div class="action-glass-sidebar sticky-top" style="top: 100px;">
+                <div class="p-4 border-bottom border-white-10">
+                    <h5 class="text-white mb-0 fw-bold">Acquisition Options</h5>
                 </div>
-                <div class="card-body p-4">
-                    <!-- Pricing Information -->
-                    <div class="mb-4">
+                
+                <div class="p-4">
+                    <div class="pricing-tiers mb-4">
                         {% if book.price > 0 %}
-                        <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-success bg-opacity-10 rounded">
-                            <div>
-                                <h4 class="fw-bold text-success mb-0">${{ "%.2f"|format(book.price) }}</h4>
-                                <small class="text-muted">One-time purchase</small>
+                        <div class="tier-item purchase p-3 mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="tiny text-success text-uppercase fw-bold">Full Ownership</span>
+                                    <h3 class="text-white mb-0">${{ "%.2f"|format(book.price) }}</h3>
+                                </div>
+                                <i class="fas fa-certificate text-success fs-3 opacity-50"></i>
                             </div>
-                            <i class="fas fa-tag text-success fs-2"></i>
                         </div>
                         {% endif %}
 
                         {% if book.rental_fee > 0 %}
-                        <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-info bg-opacity-10 rounded">
-                            <div>
-                                <h5 class="fw-bold text-info mb-0">${{ "%.2f"|format(book.rental_fee) }}/day</h5>
-                                <small class="text-muted">Daily rental fee</small>
+                        <div class="tier-item rental p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="tiny text-info text-uppercase fw-bold">Temporary Lease</span>
+                                    <h4 class="text-white mb-0">${{ "%.2f"|format(book.rental_fee) }} <small class="tiny">/day</small></h4>
+                                </div>
+                                <i class="fas fa-hourglass-half text-info fs-3 opacity-50"></i>
                             </div>
-                            <i class="fas fa-clock text-info fs-2"></i>
                         </div>
                         {% endif %}
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="d-grid gap-3">
                         {% if current_user.is_authenticated and book.status == 'available' %}
                             {% if book.uploaded_by != current_user.user_id %}
                                 {% if book.price > 0 %}
-                                    <a href="{{ url_for('payments.purchase_book', book_id=book.book_id) }}" 
-                                       class="btn btn-success btn-lg fw-bold py-3"
-                                       onclick="return confirmPurchase({{ book.price }})">
-                                        <i class="fas fa-shopping-bag me-2"></i>
-                                        Purchase Now
-                                    </a>
+                                <a href="{{ url_for('payments.purchase_book', book_id=book.book_id) }}" 
+                                   class="btn-gold-action py-3 text-center" onclick="return confirm('Confirm acquisition of {{ book.title }}?')">
+                                    <i class="fas fa-shopping-cart me-2"></i>Purchase Volume
+                                </a>
                                 {% endif %}
                                 
                                 {% if book.rental_fee > 0 %}
-                                    <a href="{{ url_for('payments.rent_book', book_id=book.book_id) }}" 
-                                       class="btn btn-primary btn-lg fw-bold py-3">
-                                        <i class="fas fa-clock me-2"></i>
-                                        Rent Book
-                                    </a>
+                                <a href="{{ url_for('payments.rent_book', book_id=book.book_id) }}" 
+                                   class="btn-glass-outline py-3 text-center">
+                                    <i class="fas fa-key me-2"></i>Lease for Study
+                                </a>
                                 {% endif %}
-                                
+
                                 <a href="{{ url_for('payments.add_to_cart', book_id=book.book_id) }}" 
-                                   class="btn btn-outline-primary py-3 fw-bold">
-                                    <i class="fas fa-cart-plus me-2"></i>
-                                    Add to Cart
+                                   class="btn-link-white text-center tiny py-2">
+                                    <i class="fas fa-plus me-1"></i> Add to Collection List
                                 </a>
                             {% else %}
-                                <div class="text-center p-3 bg-light rounded">
-                                    <i class="fas fa-check-circle text-success fs-1 mb-2"></i>
-                                    <h6 class="fw-bold text-dark mb-1">Your Book</h6>
-                                    <small class="text-muted">This book belongs to you</small>
+                                <div class="owner-status text-center p-3">
+                                    <i class="fas fa-user-shield text-gold mb-2 fs-4"></i>
+                                    <p class="text-white small mb-0">This volume is part of your shared archive.</p>
                                 </div>
+                                <a href="{{ url_for('books.delete_book', book_id=book.book_id) }}" 
+                                   class="btn btn-sm btn-outline-danger mt-3" onclick="return confirm('Archive permanently?')">Remove from Library</a>
                             {% endif %}
                         {% elif not current_user.is_authenticated %}
-                            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg fw-bold py-3">
-                                <i class="fas fa-sign-in-alt me-2"></i>
-                                Login to Purchase/Rent
+                            <a href="{{ url_for('auth.login') }}" class="btn-gold-action py-3 text-center">
+                                Sign In to Acquire
                             </a>
                         {% else %}
-                            <div class="text-center p-3 bg-warning bg-opacity-10 rounded">
-                                <i class="fas fa-times-circle text-warning fs-1 mb-2"></i>
-                                <h6 class="fw-bold text-dark mb-1">Not Available</h6>
-                                <small class="text-muted">This book is currently unavailable</small>
+                            <div class="alert-glass text-center p-3">
+                                <i class="fas fa-lock text-white-50 mb-2"></i>
+                                <p class="text-white-50 small mb-0">Currently held by another scholar.</p>
                             </div>
                         {% endif %}
                     </div>
                 </div>
-            </div>
 
-            <!-- Owner Actions -->
-            {% if current_user.is_authenticated and book.uploaded_by == current_user.user_id %}
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
-                    <h6 class="mb-0 fw-bold text-dark">
-                        <i class="fas fa-cog me-2"></i>Owner Actions
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ url_for('books.delete_book', book_id=book.book_id) }}" 
-                           class="btn btn-outline-danger py-2 fw-bold"
-                           onclick="return confirm('Are you sure you want to delete this book? This action cannot be undone.')">
-                            <i class="fas fa-trash me-2"></i>
-                            Delete Book
-                        </a>
-                    </div>
+                <div class="p-4 bg-white-5 rounded-bottom text-center">
+                    <p class="tiny text-white-50 mb-0">Verified CUZ Academic Resource</p>
                 </div>
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
-<!-- JavaScript for Purchase Confirmation -->
-<script>
-function confirmPurchase(price) {
-    return confirm('Are you sure you want to purchase this book for $' + price.toFixed(2) + '?');
-}
-
-// Enhanced PDF preview with error handling
-function handlePdfPreview(button) {
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening...';
-    button.classList.add('disabled');
-    
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.classList.remove('disabled');
-    }, 2000);
-}
-
-// Add hover effects
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.shadow-sm-hover');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.classList.add('shadow-sm');
-        });
-        card.addEventListener('mouseleave', function() {
-            this.classList.remove('shadow-sm');
-        });
-    });
-
-    // Add loading state for buttons
-    const actionButtons = document.querySelectorAll('.btn');
-    actionButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (this.href && !this.classList.contains('disabled') && !this.hasAttribute('download')) {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                this.classList.add('disabled');
-                
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.classList.remove('disabled');
-                }, 3000);
-            }
-        });
-    });
-});
-</script>
-
 <style>
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #003366 0%, #1a4d8f 100%);
-}
+    :root {
+        --gold: #d4af37;
+        --glass-bg: rgba(15, 20, 35, 0.85);
+        --border-white-10: rgba(255, 255, 255, 0.1);
+    }
 
-.shadow-sm-hover {
-    transition: all 0.3s ease;
-}
+    /* Layout Elements */
+    .manuscript-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-white-10);
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
 
-.shadow-sm-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
+    .action-glass-sidebar {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--border-white-10);
+        border-radius: 20px;
+        overflow: hidden;
+    }
 
-.sticky-top {
-    position: sticky;
-    z-index: 100;
-}
+    /* Typography */
+    .manuscript-title { font-family: 'Playfair Display', serif; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .section-label { color: var(--gold); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; }
+    .letter-spacing-2 { letter-spacing: 2px; }
 
-.card {
-    border-radius: 12px;
-    overflow: hidden;
-}
+    /* Custom UI Components */
+    .badge-glass-gold {
+        background: rgba(212, 175, 55, 0.15);
+        color: var(--gold);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        padding: 5px 15px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
 
-.btn {
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
+    .abstract-box {
+        border-left: 3px solid var(--gold);
+        padding-left: 20px;
+        background: rgba(255,255,255,0.02);
+        padding: 20px;
+        border-radius: 0 15px 15px 0;
+    }
 
-.btn:hover {
-    transform: translateY(-1px);
-}
+    .preview-shelf {
+        background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+        border: 1px solid var(--border-white-10);
+    }
 
-.badge {
-    border-radius: 6px;
-}
+    .pdf-icon-box {
+        width: 50px; height: 50px; background: #dc3545; color: white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
 
-/* Loading animation */
-.fa-spinner {
-    animation: spin 1s linear infinite;
-}
+    .tier-item { border-radius: 12px; border: 1px solid transparent; transition: 0.3s; }
+    .tier-item.purchase { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.1); }
+    .tier-item.rental { background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.1); }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    .status-indicator {
+        padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    }
+    .status-indicator.available { background: #10b981; color: white; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+    .status-indicator.reserved { background: #f59e0b; color: white; }
 
-/* Enhanced button states */
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
+    /* Buttons */
+    .btn-gold-action {
+        background: linear-gradient(135deg, var(--gold), #b8860b);
+        color: black !important; font-weight: 700; border: none; border-radius: 12px;
+        text-decoration: none; transition: 0.3s;
+    }
+    .btn-gold-action:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); }
+
+    .btn-glass-outline {
+        background: rgba(255,255,255,0.05); color: white;
+        border: 1px solid var(--border-white-10); border-radius: 12px;
+        text-decoration: none; transition: 0.3s;
+    }
+    .btn-glass-outline:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+    .similar-glass-card {
+        background: rgba(255,255,255,0.03); border: 1px solid var(--border-white-10);
+        border-radius: 15px; transition: 0.3s;
+    }
+    .similar-glass-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-5px); }
+
+    .breadcrumb-glass a { color: rgba(255,255,255,0.6); text-decoration: none; }
+    .breadcrumb-glass .active { color: var(--gold); }
 </style>
 {% endblock %}

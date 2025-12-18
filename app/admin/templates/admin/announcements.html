@@ -1,162 +1,177 @@
-<!-- app/templates/admin/announcements.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">📢 Manage Announcements</h1>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/admin_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Create New Announcement</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="mb-3">
-                        {{ form.title.label(class="form-label") }}
-                        {% if form.title.errors %}
-                            {{ form.title(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.title.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.title(class="form-control", placeholder="Enter announcement title") }}
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.content.label(class="form-label") }}
-                        {% if form.content.errors %}
-                            {{ form.content(class="form-control is-invalid", rows="5") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.content.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.content(class="form-control", rows="5", placeholder="Enter announcement content...") }}
-                        {% endif %}
-                        <div class="form-text">You can use basic HTML formatting if needed</div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.is_active.label(class="form-label") }}
-                        {% if form.is_active.errors %}
-                            {{ form.is_active(class="form-select is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.is_active.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.is_active(class="form-select") }}
-                        {% endif %}
-                        <div class="form-text">Active announcements are visible to all users</div>
-                    </div>
-
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-success btn-lg") }}
-                    </div>
-                </form>
-            </div>
+<div class="container-fluid py-5 dashboard-relative px-lg-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h1 class="page-title text-white mb-2">Broadcast <span class="text-gold-gradient">Center</span></h1>
+            <p class="text-white fw-bold opacity-75">Deploy global alerts and platform-wide communications.</p>
         </div>
-
-        <!-- Existing Announcements -->
-        <div class="card mt-4">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Current Announcements</h5>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-warning text-center">
-                    <strong>No announcements created yet.</strong>
-                    <br>
-                    <small class="text-muted">Create your first announcement using the form above.</small>
-                </div>
-                
-                <!-- Example announcement structure (commented out for now) -->
-                <!--
-                <div class="card mb-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <strong>Welcome to CUZ Library!</strong>
-                        <span class="badge bg-success">Active</span>
-                    </div>
-                    <div class="card-body">
-                        <p>Welcome to our new library platform! We're excited to offer peer-to-peer book sharing.</p>
-                        <small class="text-muted">Created: 2024-01-01 | By: Admin</small>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-sm btn-outline-primary">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                    </div>
-                </div>
-                -->
+        <div class="col-md-6 text-md-end">
+            <div class="stat-pill-shiny">
+                <span class="tiny text-gold fw-bold text-uppercase">Live Broadcasts</span>
+                <span class="fs-3 fw-bold text-white">{{ announcements|selectattr('is_active')|list|length if announcements else 0 }}</span>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <!-- Announcement Guidelines -->
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h6 class="mb-0">💡 Announcement Guidelines</h6>
-            </div>
-            <div class="card-body">
-                <ul class="small mb-0">
-                    <li>Keep announcements clear and concise</li>
-                    <li>Use active announcements for important updates</li>
-                    <li>Inactive announcements are archived but not displayed</li>
-                    <li>Include relevant dates and deadlines</li>
-                    <li>Use formatting to improve readability</li>
-                    <li>Test announcements on different devices</li>
-                </ul>
-            </div>
-        </div>
+    <div class="row g-4">
+        <div class="col-xl-7">
+            <div class="settings-card-shiny h-100">
+                <div class="p-3 border-bottom border-white-10 bg-black">
+                    <h6 class="text-gold mb-0 tiny text-uppercase fw-bold"><i class="fas fa-bullhorn me-2"></i>New Transmission</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            <label class="tiny text-gold fw-bold mb-2">BROADCAST TITLE</label>
+                            {{ form.title(class="form-control shiny-input", placeholder="Heading for the announcement...") }}
+                        </div>
 
-        <!-- Quick Actions -->
-        <div class="card mt-3">
-            <div class="card-header bg-warning">
-                <h6 class="mb-0">⚡ Quick Actions</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary btn-sm">View All Announcements</button>
-                    <button class="btn btn-outline-primary btn-sm">Export Announcements</button>
-                    <button class="btn btn-outline-primary btn-sm">Announcement Templates</button>
-                    <button class="btn btn-outline-primary btn-sm">Schedule Announcement</button>
+                        <div class="mb-4">
+                            <label class="tiny text-gold fw-bold mb-2">CONTENT BLOCK (HTML SUPPORTED)</label>
+                            {{ form.content(class="form-control shiny-input", rows="6", placeholder="Detailed message content...") }}
+                        </div>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6 mb-4">
+                                <label class="tiny text-gold fw-bold mb-2">VISIBILITY STATUS</label>
+                                {{ form.is_active(class="form-select shiny-input") }}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <button type="submit" class="btn btn-gold-action w-100 py-2 fw-black">DEPLOY BROADCAST</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Announcement Stats -->
-        <div class="card mt-3">
-            <div class="card-header bg-info text-white">
-                <h6 class="mb-0">📈 Statistics</h6>
-            </div>
-            <div class="card-body">
-                <div class="text-center">
-                    <h3 class="text-primary">0</h3>
-                    <small class="text-muted">Total Announcements</small>
-                </div>
-                <div class="row text-center mt-3">
-                    <div class="col-6">
-                        <h5 class="text-success">0</h5>
-                        <small>Active</small>
+        <div class="col-xl-5">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="metric-box-shiny">
+                                <span class="tiny text-white-50 d-block">TOTAL LOGS</span>
+                                <span class="fs-4 text-white fw-black">{{ announcements|length if announcements else 0 }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-box-shiny">
+                                <span class="tiny text-white-50 d-block">AVG REACH</span>
+                                <span class="fs-4 text-white fw-black">100%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <h5 class="text-secondary">0</h5>
-                        <small>Inactive</small>
+                </div>
+
+                <div class="col-12">
+                    <div class="settings-card-shiny" style="max-height: 500px; overflow-y: auto;">
+                        <div class="p-3 border-bottom border-white-10 bg-black sticky-top">
+                            <h6 class="text-white mb-0 tiny text-uppercase fw-bold"><i class="fas fa-history me-2"></i>Transmission History</h6>
+                        </div>
+                        <div class="card-body p-3">
+                            {% if not announcements %}
+                            <div class="text-center py-5 opacity-50">
+                                <i class="fas fa-satellite-dish fs-1 text-gold mb-3"></i>
+                                <p class="text-white tiny fw-bold">NO ACTIVE TRANSMISSIONS FOUND</p>
+                            </div>
+                            {% else %}
+                                {% for announcement in announcements %}
+                                <div class="announcement-log mb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="text-white fw-bold mb-1">{{ announcement.title }}</h6>
+                                        <span class="badge {{ 'bg-success' if announcement.is_active else 'bg-secondary' }} tiny">
+                                            {{ 'LIVE' if announcement.is_active else 'ARCHIVED' }}
+                                        </span>
+                                    </div>
+                                    <p class="text-white-50 small mb-2 text-truncate">{{ announcement.content|striptags }}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="tiny text-gold fw-bold">{{ announcement.created_at.strftime('%Y-%m-%d') }}</span>
+                                        <div class="btn-group">
+                                            <button class="btn btn-dark-shiny btn-sm tiny fw-bold">EDIT</button>
+                                            <button class="btn btn-dark-shiny btn-sm tiny fw-bold text-danger">DELETE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Card Styles */
+    .settings-card-shiny {
+        background: rgba(10, 11, 14, 0.95);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 12px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    }
+
+    .metric-box-shiny {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    /* Input Styles */
+    .shiny-input {
+        background: #0a0a0a !important;
+        border: 1px solid #333 !important;
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    .shiny-input:focus { border-color: #d4af37 !important; box-shadow: 0 0 10px rgba(212,175,55,0.2); }
+
+    /* Announcement Log Item */
+    .announcement-log {
+        background: rgba(255,255,255,0.03);
+        border-left: 3px solid #d4af37;
+        padding: 12px;
+        border-radius: 0 8px 8px 0;
+        transition: 0.3s;
+    }
+    .announcement-log:hover { background: rgba(255,255,255,0.07); }
+
+    /* Buttons */
+    .btn-gold-action {
+        background: #d4af37;
+        color: black;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+    }
+    .btn-gold-action:hover { background: #fff; transform: translateY(-2px); }
+
+    .btn-dark-shiny {
+        background: #111;
+        border: 1px solid #333;
+        color: #eee;
+    }
+    .btn-dark-shiny:hover { border-color: #d4af37; color: #d4af37; }
+
+    .stat-pill-shiny {
+        background: #000;
+        border: 1px solid #d4af37;
+        padding: 10px 25px;
+        border-radius: 10px;
+        display: inline-block;
+        text-align: center;
+    }
+</style>
 {% endblock %}

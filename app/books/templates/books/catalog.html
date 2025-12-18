@@ -1,112 +1,215 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/cuzlib.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
+</div>
+
+<div class="container py-5 dashboard-relative">
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1 class="page-title text-white">
+                The Academic <br>
+                <span class="text-gold-gradient fw-bold">Grand Archive</span>
+            </h1>
+            <p class="text-white-50 lead">Access curated knowledge, scholarly texts, and shared university resources.</p>
+        </div>
+    </div>
+
+    <div class="search-glass-console p-4 mb-5">
+        <form method="GET">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        {{ search_form.search(class="glass-input form-control ps-5", placeholder="Search by title, author, or ISBN...") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    {{ search_form.category(class="glass-input form-select") }}
+                </div>
+                <div class="col-md-3">
+                    <button class="btn-gold-action w-100 py-2" type="submit">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        {% for book in books.items %}
+        <div class="col-lg-4 col-md-6">
+            <div class="book-shard-glass">
+                <div class="shard-top-meta">
+                    <span class="book-category">{{ book.category|replace('-', ' ') }}</span>
+                    {% if book.status == 'available' %}
+                        <span class="availability-pill"><i class="fas fa-check-circle me-1"></i>Available</span>
+                    {% endif %}
+                </div>
+
+                <div class="shard-body">
+                    <h3 class="book-name">{{ book.title }}</h3>
+                    <p class="author-line">By <span class="text-white">{{ book.author }}</span></p>
+                    
+                    <div class="book-abstract text-white-50">
+                        {{ book.description[:120] }}...
+                    </div>
+                </div>
+
+                <div class="shard-footer mt-auto pt-4 d-flex justify-content-between align-items-center">
+                    <div class="price-tag">
+                        {% if book.price > 0 %}
+                            <span class="text-gold fw-bold fs-5">${{ "%.2f"|format(book.price) }}</span>
+                        {% else %}
+                            <span class="text-info fw-bold">FREE ACCESS</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" class="btn-outline-gold">
+                        Explore <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-book-dead fs-1 text-white-50 mb-3"></i>
+            <h4 class="text-white">No resources found in this section</h4>
+            <p class="text-white-50">Try broadening your search keywords or checking another category.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if books.pages > 1 %}
+    <div class="mt-5 d-flex flex-column align-items-center">
+        <div class="pagination-glass-container">
+            {% if books.has_prev %}
+                <a href="{{ url_for('books.index', page=books.prev_num) }}" class="pag-nav"><i class="fas fa-chevron-left"></i></a>
+            {% endif %}
+            
+            <span class="pag-info">Page {{ books.page }} of {{ books.pages }}</span>
+
+            {% if books.has_next %}
+                <a href="{{ url_for('books.index', page=books.next_num) }}" class="pag-nav"><i class="fas fa-chevron-right"></i></a>
+            {% endif %}
+        </div>
+        <small class="text-white-50 mt-2">Discovering {{ books.total }} volumes</small>
+    </div>
+    {% endif %}
+</div>
+
 <style>
+    :root {
+        --cuz-gold: #d4af37;
+        --cuz-blue: #003366;
+        --glass-bg: rgba(10, 15, 30, 0.75);
+    }
+
+    /* Page Styling */
     .page-title {
         font-family: 'Playfair Display', serif;
-        color: var(--cuz-blue);
-        font-size: 3rem;
+        font-size: 3.5rem;
         border-left: 8px solid var(--cuz-gold);
-        padding-left: 20px;
-        margin-bottom: 40px;
+        padding-left: 25px;
+        line-height: 1.1;
     }
 
-    .search-card {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        border: 1px solid rgba(0, 51, 102, 0.1);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        margin-bottom: 50px;
-    }
-
-    .book-shard {
-        background: white;
+    /* Glass Search Console */
+    .search-glass-console {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 20px;
-        padding: 25px;
-        border-bottom: 5px solid transparent;
-        transition: 0.4s;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .search-input-group { position: relative; }
+    .search-icon { position: absolute; left: 18px; top: 14px; color: var(--cuz-gold); }
+
+    /* The New Book Shard */
+    .book-shard-glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        padding: 30px;
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .book-shard:hover {
-        transform: translateY(-10px);
-        border-bottom: 5px solid var(--cuz-gold);
-        box-shadow: 0 15px 35px rgba(0, 51, 102, 0.1);
+    .book-shard-glass:hover {
+        transform: translateY(-12px);
+        border-color: var(--cuz-gold);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        background: rgba(15, 25, 45, 0.9);
     }
+
+    .shard-top-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
     .book-category {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
         color: var(--cuz-gold);
         font-weight: 800;
+        background: rgba(212, 175, 55, 0.1);
+        padding: 4px 10px;
+        border-radius: 5px;
     }
+
+    .availability-pill { font-size: 0.65rem; color: #10b981; font-weight: bold; text-transform: uppercase; }
 
     .book-name {
         font-family: 'Playfair Display', serif;
-        color: var(--cuz-blue);
-        font-size: 1.4rem;
-        margin: 10px 0;
+        color: white;
+        font-size: 1.55rem;
+        margin-bottom: 5px;
+        line-height: 1.3;
     }
 
-    .btn-outline-cuz {
-        border: 2px solid var(--cuz-blue);
-        color: var(--cuz-blue);
-        font-weight: 700;
-        border-radius: 5px;
+    .author-line { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+    .book-abstract { font-size: 0.9rem; line-height: 1.6; }
+
+    /* Buttons */
+    .btn-outline-gold {
+        border: 1px solid var(--cuz-gold);
+        color: var(--cuz-gold);
+        padding: 6px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
         transition: 0.3s;
     }
+    .btn-outline-gold:hover { background: var(--cuz-gold); color: black; }
 
-    .btn-outline-cuz:hover {
-        background: var(--cuz-blue);
-        color: white;
+    /* Pagination */
+    .pagination-glass-container {
+        display: flex;
+        align-items: center;
+        background: var(--glass-bg);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 50px;
+        padding: 5px 20px;
+    }
+    .pag-nav { color: var(--cuz-gold); padding: 10px; font-size: 1.2rem; transition: 0.3s; }
+    .pag-nav:hover { transform: scale(1.2); color: white; }
+    .pag-info { color: white; margin: 0 20px; font-weight: 600; border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); padding: 0 20px; }
+
+    /* Utility Classes */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 12px;
+    }
+    .text-gold-gradient {
+        background: linear-gradient(to right, #fff, var(--cuz-gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 </style>
-
-<h1 class="page-title">Archives & <br>Academic Resources</h1>
-
-<div class="search-card">
-    <form method="GET">
-        <div class="row g-3">
-            <div class="col-md-6">
-                {{ search_form.search(class="form-control", placeholder="Search by book name or author...") }}
-            </div>
-            <div class="col-md-4">
-                {{ search_form.category(class="form-select") }}
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-gold w-100" type="submit">Search</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<div class="row g-4">
-    {% for book in books.items %}
-    <div class="col-md-4">
-        <div class="book-shard">
-            <div>
-                <span class="book-category">{{ book.category|replace('-', ' ') }}</span>
-                <h3 class="book-name">{{ book.title }}</h3>
-                <p class="text-muted small">By {{ book.author }}</p>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <span class="fw-bold" style="color: var(--cuz-blue)">
-                    ${{ "%.2f"|format(book.price) }}
-                </span>
-                <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}" class="btn btn-sm btn-outline-cuz">View Details</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<div class="mt-5 d-flex justify-content-center">
-    {{ books.pages }} pages in archive
-</div>
 {% endblock %}

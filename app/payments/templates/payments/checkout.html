@@ -1,183 +1,187 @@
-<!-- app/templates/payments/checkout.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">🛒 Checkout</h1>
-    </div>
+<div class="bg-system">
+    <div class="bg-image" style="background-image: url('{{ url_for('static', filename='photos/checkout_bg.png') }}');"></div>
+    <div class="bg-overlay-glass"></div>
 </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Order Review</h5>
-            </div>
-            <div class="card-body">
-                {% for item in cart_items %}
-                <div class="row align-items-center mb-3 pb-3 border-bottom">
-                    <div class="col-md-1">
-                        <div class="bg-light rounded p-2 text-center">
+<div class="container py-5 dashboard-relative">
+    <div class="row align-items-center mb-4">
+        <div class="col-12">
+            <h1 class="page-title text-white mb-0">Secure <span class="text-gold-gradient">Checkout</span></h1>
+            <p class="text-white-50">Review your selection and authorize the credit transfer.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="checkout-main-card">
+                <div class="card-header-glass p-3 d-flex justify-content-between align-items-center">
+                    <h5 class="text-white mb-0 font-playfair"><i class="fas fa-shopping-basket me-2 text-gold"></i>Resource Review</h5>
+                    <span class="badge-glass-gold tiny">{{ cart_items|length }} Items</span>
+                </div>
+                
+                <div class="card-body p-0">
+                    {% for item in cart_items %}
+                    <div class="checkout-item-row d-flex align-items-center p-4">
+                        <div class="item-type-icon {{ 'purchase' if item.type == 'purchase' else 'rental' }}">
+                            <i class="fas fa-{{ 'shopping-cart' if item.type == 'purchase' else 'hourglass-half' }}"></i>
+                        </div>
+                        <div class="ms-4 flex-grow-1">
+                            <h6 class="text-white mb-1">{{ item.title }}</h6>
+                            <p class="tiny text-white-50 mb-0">by {{ item.author }} • <span class="text-gold fw-bold">{{ item.type|title }}</span></p>
+                        </div>
+                        <div class="text-end me-4">
                             {% if item.type == 'purchase' %}
-                                🛒
+                                <div class="text-white fw-bold">${{ "%.2f"|format(item.price) }}</div>
                             {% else %}
-                                ⏰
+                                <div class="text-white fw-bold">${{ "%.2f"|format(item.rental_fee) }}</div>
+                                <div class="tiny text-white-50">Per Term</div>
                             {% endif %}
                         </div>
+                        <div>
+                            <a href="{{ url_for('payments.remove_from_cart', book_id=item.book_id) }}" class="btn-remove-glass">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-md-7">
-                        <h6 class="mb-1">{{ item.title }}</h6>
-                        <p class="text-muted small mb-1">by {{ item.author }}</p>
-                        <span class="badge bg-{{ 'success' if item.type == 'purchase' else 'info' }}">
-                            {{ item.type|title }}
-                        </span>
-                    </div>
-                    <div class="col-md-2 text-end">
-                        {% if item.type == 'purchase' and item.price > 0 %}
-                            <strong class="text-success">${{ "%.2f"|format(item.price) }}</strong>
-                        {% elif item.type == 'rental' and item.rental_fee > 0 %}
-                            <small class="text-info">${{ "%.2f"|format(item.rental_fee) }}/day</small>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-2 text-end">
-                        <a href="{{ url_for('payments.remove_from_cart', book_id=item.book_id) }}" 
-                           class="btn btn-sm btn-outline-danger">
-                            Remove
-                        </a>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
-        </div>
 
-        <!-- Payment Method -->
-        <div class="card mt-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">💳 Payment Method</h5>
-            </div>
-            <div class="card-body">
+            <div class="authorization-card mt-4 p-4">
+                <h5 class="text-white mb-4 font-playfair"><i class="fas fa-shield-alt me-2 text-success"></i>Payment Authorization</h5>
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
-                    <div class="mb-3">
-                        {{ form.payment_method.label(class="form-label") }}
-                        {% if form.payment_method.errors %}
-                            {{ form.payment_method(class="form-select is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.payment_method.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.payment_method(class="form-select") }}
-                        {% endif %}
+                    
+                    <div class="mb-4">
+                        <label class="tiny text-white-50 text-uppercase letter-spacing-1 mb-2">Select Account Source</label>
+                        {{ form.payment_method(class="form-select glass-select") }}
                     </div>
 
-                    <!-- Wallet Balance Info -->
                     {% if current_user.wallet.balance >= total %}
-                    <div class="alert alert-success">
-                        <strong>✅ Sufficient Funds</strong>
-                        <br>
-                        Your wallet balance: <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
-                        <br>
-                        Total due: <strong>${{ "%.2f"|format(total) }}</strong>
+                    <div class="auth-status-box success mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle fa-2x me-3"></i>
+                            <div>
+                                <div class="fw-bold">Vault Balance Confirmed</div>
+                                <div class="tiny opacity-75">You have sufficient credits to finalize this transaction.</div>
+                            </div>
+                        </div>
                     </div>
+                    {{ form.submit(class="btn btn-authorize-action w-100 py-3", value="Authorize Transfer", onclick="return confirm('Confirm Authorization?')") }}
                     {% else %}
-                    <div class="alert alert-warning">
-                        <strong>⚠️ Insufficient Funds</strong>
-                        <br>
-                        Your wallet balance: <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
-                        <br>
-                        Total due: <strong>${{ "%.2f"|format(total) }}</strong>
-                        <br>
-                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-sm btn-primary mt-2">Add Funds</a>
+                    <div class="auth-status-box danger mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                            <div>
+                                <div class="fw-bold">Insufficient Credits</div>
+                                <div class="tiny opacity-75">Shortfall: ${{ "%.2f"|format(total - current_user.wallet.balance) }}</div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('payments.wallet') }}" class="btn btn-sm btn-light mt-3 w-100">Deposit Funds</a>
                     </div>
+                    <button class="btn btn-secondary w-100 py-3" disabled>Authorization Locked</button>
                     {% endif %}
-
-                    <div class="d-grid">
-                        {% if current_user.wallet.balance >= total %}
-                            {{ form.submit(class="btn btn-success btn-lg", onclick="return confirm('Confirm purchase? This action cannot be undone.')") }}
-                        {% else %}
-                            <button class="btn btn-secondary btn-lg" disabled>Complete Purchase</button>
-                        {% endif %}
-                    </div>
                 </form>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <!-- Order Summary -->
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Order Summary</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Items ({{ cart_items|length }}):</span>
-                    <strong>${{ "%.2f"|format(total) }}</strong>
+        <div class="col-lg-4">
+            <div class="summary-sticky-card">
+                <h6 class="text-white-50 text-uppercase tiny letter-spacing-2 mb-4">Final Statement</h6>
+                
+                <div class="summary-line d-flex justify-content-between">
+                    <span>Subtotal</span>
+                    <span class="text-white">${{ "%.2f"|format(total) }}</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Transaction Fee:</span>
-                    <strong>$0.00</strong>
+                <div class="summary-line d-flex justify-content-between">
+                    <span>Protocol Fee</span>
+                    <span class="text-success">WAIVED</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Platform Fee:</span>
-                    <strong>$0.00</strong>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                    <span><strong>Total:</strong></span>
-                    <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+                <hr class="border-white-10 my-3">
+                <div class="summary-line d-flex justify-content-between mb-4">
+                    <span class="fw-bold text-white">Total Amount</span>
+                    <span class="fs-4 fw-bold text-gold">${{ "%.2f"|format(total) }}</span>
                 </div>
 
-                <!-- Wallet Info -->
-                <div class="alert alert-info">
-                    <h6>💰 Wallet Balance</h6>
-                    <div class="d-flex justify-content-between">
-                        <span>Current:</span>
-                        <strong>${{ "%.2f"|format(current_user.wallet.balance) }}</strong>
+                <div class="wallet-impact-box p-3 mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="tiny text-white-50">Current Vault</span>
+                        <span class="tiny text-white fw-bold">${{ "%.2f"|format(current_user.wallet.balance) }}</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span>After Purchase:</span>
-                        <strong class="text-{{ 'success' if (current_user.wallet.balance - total) >= 0 else 'danger' }}">
+                        <span class="tiny text-white-50">Post-Authorization</span>
+                        <span class="tiny fw-bold {{ 'text-success' if (current_user.wallet.balance - total) >= 0 else 'text-danger' }}">
                             ${{ "%.2f"|format(current_user.wallet.balance - total) }}
-                        </strong>
+                        </span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Purchase Protection -->
-        <div class="card mt-3">
-            <div class="card-header bg-warning">
-                <h6 class="mb-0">🛡️ Purchase Protection</h6>
-            </div>
-            <div class="card-body">
-                <small class="text-muted">
-                    • Instant digital delivery<br>
-                    • 7-day money-back guarantee<br>
-                    • Secure payment processing<br>
-                    • 24/7 customer support<br>
-                    • DRM-protected content
-                </small>
-            </div>
-        </div>
+                <div class="protection-list">
+                    <div class="protection-item"><i class="fas fa-bolt me-2 text-gold"></i> Instant Access Post-Auth</div>
+                    <div class="protection-item"><i class="fas fa-lock me-2 text-gold"></i> Encrypted Transaction</div>
+                    <div class="protection-item"><i class="fas fa-undo me-2 text-gold"></i> 7-Day Refund Policy</div>
+                </div>
 
-        <!-- Need Help -->
-        <div class="card mt-3">
-            <div class="card-header bg-secondary text-white">
-                <h6 class="mb-0">❓ Need Help?</h6>
-            </div>
-            <div class="card-body">
-                <small class="text-muted">
-                    Contact our support team:<br>
-                    • Email: library@cavendish.co.zm<br>
-                    • Phone: +260 123 456 789<br>
-                    • Hours: 24/7
-                </small>
+                <div class="support-contact mt-4 pt-4 border-top border-white-10">
+                    <p class="tiny text-white-50 mb-1">Inquiry Support:</p>
+                    <p class="tiny fw-bold text-white mb-0">library@cavendish.co.zm</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Layout Cards */
+    .checkout-main-card, .authorization-card, .summary-sticky-card {
+        background: rgba(15, 20, 35, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+    }
+
+    /* Checkout Rows */
+    .checkout-item-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+    .checkout-item-row:hover { background: rgba(255,255,255,0.02); }
+    .item-type-icon {
+        width: 45px; height: 45px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .item-type-icon.purchase { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .item-type-icon.rental { background: rgba(13, 202, 240, 0.1); color: #0dcaf0; }
+
+    .btn-remove-glass {
+        color: rgba(255, 68, 68, 0.5); font-size: 0.9rem; transition: 0.3s;
+    }
+    .btn-remove-glass:hover { color: #ff4444; transform: rotate(90deg); }
+
+    /* Authorization Styles */
+    .glass-select {
+        background: rgba(0,0,0,0.3) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: white !important;
+    }
+    .auth-status-box { padding: 20px; border-radius: 15px; }
+    .auth-status-box.success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .auth-status-box.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .btn-authorize-action {
+        background: #d4af37; color: black; font-weight: 800;
+        text-transform: uppercase; letter-spacing: 2px; border-radius: 12px; transition: 0.3s;
+    }
+    .btn-authorize-action:hover { background: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+
+    /* Summary Side */
+    .summary-sticky-card { padding: 30px; position: sticky; top: 100px; }
+    .summary-line { margin-bottom: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+    .wallet-impact-box { background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+
+    .protection-item { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+    
+    .letter-spacing-1 { letter-spacing: 1px; }
+    .border-white-10 { border-color: rgba(255,255,255,0.1) !important; }
+</style>
 {% endblock %}
