@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Cavendish Intellectual Hub{% endblock %}</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
@@ -12,13 +13,9 @@
         :root {
             --accent-gold: #d4af37;
             --deep-sapphire: #000814;
-            --electric-blue: #0052cc;
             --glass-white: rgba(255, 255, 255, 0.03);
             --glass-edge: rgba(255, 255, 255, 0.08);
-        }
-
-        * {
-            -webkit-tap-highlight-color: transparent;
+            --text-muted: rgba(255, 255, 255, 0.5);
         }
 
         body {
@@ -26,76 +23,49 @@
             background-color: var(--deep-sapphire);
             color: #fff;
             margin: 0;
-            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* ====== THE NEON AURA HEADER ====== */
+        /* ====== HEADER REFINEMENT ====== */
         .premium-nav {
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 2000;
-            padding: 15px 0;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .premium-nav.scrolled {
-            padding: 8px 0;
-            background: rgba(0, 8, 20, 0.95);
-            backdrop-filter: blur(25px) saturate(150%);
-            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            padding: 20px 0;
+            transition: all 0.4s ease;
+            background: rgba(0, 8, 20, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--glass-edge);
         }
 
         .nav-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 8px;
-            margin-left: auto;
-        }
-
-        /* Branding with Glow */
         .brand-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            z-index: 2001;
         }
 
-        .brand-logo {
-            width: 40px;
-            height: auto;
-            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
-            transition: transform 0.5s;
-        }
-
-        .brand-text {
-            line-height: 1;
-        }
+        .brand-logo { width: 38px; height: auto; transition: 0.3s; }
 
         .brand-text span {
             display: block;
             color: #fff;
             font-weight: 800;
-            letter-spacing: 0.5px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
         }
 
         .brand-text small {
@@ -105,377 +75,207 @@
             font-size: 0.75rem;
         }
 
-        /* Menu Items */
-        .menu-items {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
+        /* PC Navigation: Always Visible */
+        .menu-items { display: flex; align-items: center; gap: 30px; }
 
         .menu-link {
-            color: rgba(255,255,255,0.6);
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: 0.4s;
-            position: relative;
-        }
-
-        .menu-link:hover {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        .menu-link::before {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            width: 0;
-            height: 1px;
-            background: var(--accent-gold);
-            transition: 0.4s;
-            transform: translateX(-50%);
-        }
-
-        .menu-link:hover::before {
-            width: 100%;
-        }
-
-        /* Action Buttons */
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-wallet {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-edge);
-            padding: 6px 14px;
-            border-radius: 100px;
-            color: var(--accent-gold);
-            font-weight: 700;
             font-size: 0.75rem;
-            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
             transition: 0.3s;
-            white-space: nowrap;
         }
 
-        .btn-wallet:hover {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: var(--accent-gold);
-        }
+        .menu-link:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
 
         .btn-auth {
             background: #fff;
             color: var(--deep-sapphire);
-            padding: 8px 18px;
+            padding: 8px 22px;
             border-radius: 100px;
             font-weight: 800;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             text-decoration: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             transition: 0.3s;
-            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .btn-auth:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        }
+        .btn-auth:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
 
-        /* Mobile Actions - Hidden on Desktop */
-        .mobile-actions {
+        /* Mobile Menu Toggle: Hidden on PC */
+        .menu-toggle {
             display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
-        /* ====== MAIN VIEWPORT ====== */
-        .main-viewport {
-            padding-top: 80px;
-            min-height: calc(100vh - 350px);
-        }
-
-        /* ====== BALANCED FOOTER DESIGN ====== */
+        /* ====== DISTINCT PREMIUM FOOTER ====== */
         .premium-footer {
-            padding: 80px 0 40px;
-            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
-            border-top: 1px solid var(--glass-edge);
+            background: #020d1f;
+            position: relative;
+            padding: 120px 0 40px;
+            margin-top: 100px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            overflow: hidden;
         }
 
-        .footer-logo-large {
+        .footer-watermark {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            color: rgba(255,255,255,0.05);
-            text-align: center;
-            margin-bottom: 50px;
-            user-select: none;
-            word-break: break-word;
-            padding: 0 15px;
+            font-size: 15vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.015);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Centered 3-column footer layout */
+        .footer-main-title {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-main-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            background: linear-gradient(to bottom, #fff 20%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .footer-main-title p {
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
             gap: 50px;
-            max-width: 1200px;
-            margin: 0 auto 60px;
-            padding: 0 20px;
+            max-width: 1300px;
+            margin: 0 auto 80px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Make all sections equal width */
-        .footer-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        /* Clean Monochrome Logo for Footer */
+        .footer-brand-logo {
+            width: 55px;
+            filter: brightness(0) invert(1);
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .footer-brand-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            max-width: 300px;
         }
 
         .footer-label {
-            color: var(--accent-gold);
-            font-size: 0.7rem;
+            display: block;
+            color: #fff;
             font-weight: 800;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 25px;
-            display: block;
-            width: 100%;
         }
 
-        .footer-link {
-            display: block;
-            color: rgba(255, 255, 255, 0.6);
+        .footer-link-list { list-style: none; padding: 0; }
+        .footer-link-list li { margin-bottom: 15px; }
+        .footer-link-list a {
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 0.9rem;
-            margin-bottom: 15px;
             transition: 0.3s;
-            padding: 5px 0;
+        }
+        .footer-link-list a:hover { color: var(--accent-gold); padding-left: 5px; }
+
+        .social-links { display: flex; gap: 15px; margin-top: 30px; }
+        .social-links a {
+            width: 42px; height: 42px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; transition: 0.3s; text-decoration: none;
+        }
+        .social-links a:hover {
+            background: var(--accent-gold);
+            color: var(--deep-sapphire);
+            border-color: var(--accent-gold);
+            transform: translateY(-5px);
         }
 
-        .footer-link:hover {
-            color: #fff;
-            transform: translateX(5px);
-        }
-
-        /* Footer contact/legal section */
         .footer-bottom {
-            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
             padding-top: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.5px;
         }
 
-        .footer-contact {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            line-height: 1.6;
+        /* ====== RESPONSIVE BREAKPOINTS ====== */
+        @media (max-width: 1024px) {
+            .nav-container { padding: 0 20px; }
+            .menu-items { gap: 15px; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
         }
 
-        .footer-legal {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 1px;
-        }
-
-        /* ====== MOBILE STYLES ====== */
-        @media (max-width: 992px) {
-            .menu-toggle {
-                display: block;
-            }
+        @media (max-width: 991px) {
+            .menu-toggle { display: block; } /* Toggle only shows on mobile/tablet */
             
             .menu-items {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                width: 280px;
-                height: 100vh;
-                background: rgba(0, 8, 20, 0.98);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 100px 30px 30px;
-                transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                z-index: 2000;
-                border-right: 1px solid var(--glass-edge);
+                position: fixed; top: 0; left: -100%; width: 300px; height: 100vh;
+                background: rgba(0, 8, 20, 0.98); backdrop-filter: blur(20px);
+                flex-direction: column; align-items: flex-start;
+                padding: 100px 40px; transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                z-index: 3000; border-right: 1px solid var(--glass-edge);
             }
+            .menu-items.active { left: 0; }
+            .nav-actions { display: none; } /* Actions hidden on mobile, put inside menu-items if needed */
             
-            .menu-items.active {
-                left: 0;
-            }
-            
-            .menu-link {
-                font-size: 1rem;
-                padding: 12px 0;
-                width: 100%;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
-            
-            .nav-actions {
-                display: none;
-            }
-            
-            .mobile-actions {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                width: 100%;
-                margin-top: 30px;
-            }
-            
-            .main-viewport {
-                padding-top: 70px;
-            }
-            
-            .nav-container {
-                padding: 0 15px;
-            }
-            
-            .brand-logo {
-                width: 35px;
-            }
-            
-            .premium-nav {
-                padding: 10px 0;
-            }
-            
-            /* Mobile footer adjustments */
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                max-width: 500px;
-            }
-            
-            .footer-section {
-                align-items: center;
-                text-align: center;
-            }
-            
-            .footer-link {
-                padding: 8px 0;
-            }
+            /* Mobile specific links */
+            .menu-items .menu-link { font-size: 1rem; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); width: 100%; }
         }
 
         @media (max-width: 768px) {
-            .footer-grid {
-                gap: 35px;
-            }
-            
-            .footer-logo-large {
-                font-size: 1.8rem;
-                margin-bottom: 40px;
-            }
-            
-            .premium-footer {
-                padding: 60px 0 30px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .nav-container {
-                padding: 0 12px;
-            }
-            
-            .brand-text span {
-                font-size: 0.75rem;
-            }
-            
-            .brand-text small {
-                font-size: 0.65rem;
-            }
-            
-            .main-viewport {
-                padding-top: 65px;
-            }
-            
-            .container-fluid.px-5 {
-                padding-left: 15px !important;
-                padding-right: 15px !important;
-            }
-            
-            .footer-logo-large {
-                font-size: 1.5rem;
-                margin-bottom: 35px;
-            }
-            
-            .premium-footer {
-                padding: 50px 0 25px;
-            }
-            
-            .btn-auth {
-                padding: 10px 20px;
-                font-size: 0.8rem;
-            }
-            
-            .btn-wallet {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
-            
-            .footer-grid {
-                gap: 30px;
-            }
-        }
-
-        /* Mobile Menu Overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Better touch targets for mobile */
-        .menu-link,
-        .btn-auth,
-        .btn-wallet,
-        .footer-link {
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .footer-link {
-            justify-content: flex-start;
-        }
-
-        @media (max-width: 992px) {
-            .footer-link {
-                justify-content: center;
-            }
-        }
-
-        /* Prevent horizontal scroll */
-        .container-fluid {
-            overflow-x: hidden;
+            .footer-main-title h2 { font-size: 2.2rem; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-brand-text { margin: 0 auto; }
+            .social-links { justify-content: center; }
+            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay"></div>
-
-    <nav class="premium-nav">
+    <nav class="premium-nav" id="mainNav">
         <div class="nav-container">
-            <a href="{{ url_for('main.index') }}" class="brand-wrapper">
-                <img src="{{ url_for('static', filename='photos/logo3.png') }}" class="brand-logo" alt="CUZ">
+            <a href="/" class="brand-wrapper">
+                <img src="{{ url_for('static', filename='photos/logo3.png') }}" class="brand-logo" alt="Cavendish Logo">
                 <div class="brand-text">
                     <span>Cavendish</span>
                     <small>Intellectual Hub</small>
@@ -487,82 +287,86 @@
             </button>
 
             <div class="menu-items" id="menuItems">
-                <a href="{{ url_for('main.index') }}" class="menu-link">Archives</a>
-                <a href="{{ url_for('books.catalog') }}" class="menu-link">Catalog</a>
+                <a href="#" class="menu-link">Archives</a>
+                <a href="#" class="menu-link">Catalog</a>
                 <a href="#" class="menu-link">Research</a>
                 <a href="#" class="menu-link">E-Journals</a>
                 
-                <!-- Mobile Actions - Only visible on mobile -->
-                <div class="mobile-actions">
-                    {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('payments.wallet') }}" class="btn-wallet">
-                            CREDIT: ${{ "%.2f"|format(current_user.wallet.balance if current_user.wallet else 0) }}
-                        </a>
-                        <a href="{{ url_for('auth.logout') }}" class="btn-auth" style="background: #ff4d4d; color: white;">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('auth.login') }}" class="menu-link">Sign In</a>
-                        <a href="{{ url_for('auth.register') }}" class="btn-auth">Join Hub</a>
-                    {% endif %}
+                <div class="d-lg-none mt-5 w-100">
+                    <a href="#" class="btn-auth w-100 d-block text-center">Join Hub</a>
                 </div>
             </div>
 
-            <!-- Desktop Actions - Only visible on desktop -->
             <div class="nav-actions">
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('payments.wallet') }}" class="btn-wallet">
-                        CREDIT: ${{ "%.2f"|format(current_user.wallet.balance if current_user.wallet else 0) }}
-                    </a>
-                    <a href="{{ url_for('auth.logout') }}" class="menu-link" style="color: #ff4d4d;">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="menu-link">Sign In</a>
-                    <a href="{{ url_for('auth.register') }}" class="btn-auth">Join Hub</a>
-                {% endif %}
+                <a href="#" class="menu-link">Sign In</a>
+                <a href="#" class="btn-auth">Join Hub</a>
             </div>
         </div>
     </nav>
 
-    <main class="main-viewport">
-        <div class="container-fluid px-lg-5 px-3">
-            {% include 'includes/_messages.html' %}
+    <main style="padding-top: 100px;">
+        <div class="container-fluid px-lg-5">
             {% block content %}{% endblock %}
         </div>
     </main>
 
     <footer class="premium-footer">
-        <div class="container">
-            <div class="footer-logo-large">CAVENDISH UNIVERSITY</div>
-            
-            <!-- Centered 3-column balanced layout -->
+        <div class="footer-watermark">CAVENDISH</div>
+        
+        <div class="container footer-content">
+            <div class="footer-main-title">
+                <h2>Cavendish University</h2>
+                <p>The Intellectual Hub of Zambia</p>
+            </div>
+
             <div class="footer-grid">
-                <div class="footer-section">
-                    <span class="footer-label">NAVIGATION</span>
-                    <a href="#" class="footer-link">Digital Archive</a>
-                    <a href="#" class="footer-link">Lending Policy</a>
-                    <a href="#" class="footer-link">Curated Collections</a>
+                <div class="footer-brand-col">
+                    <img src="{{ url_for('static', filename='photos/logo3.png') }}" class="footer-brand-logo" alt="CUZ">
+                    <p class="footer-brand-text">
+                        Setting the global standard for academic excellence and digital research innovation in Central Africa.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="X"><i class="fab fa-x-twitter"></i></a>
+                    </div>
                 </div>
-                
-                <div class="footer-section">
-                    <span class="footer-label">SUPPORT</span>
-                    <a href="#" class="footer-link">Research Desk</a>
-                    <a href="#" class="footer-link">IT Assistance</a>
-                    <a href="#" class="footer-link">Booking</a>
+
+                <div>
+                    <span class="footer-label">Knowledge Base</span>
+                    <ul class="footer-link-list">
+                        <li><a href="#">Digital Archives</a></li>
+                        <li><a href="#">E-Journals</a></li>
+                        <li><a href="#">Past Examination Papers</a></li>
+                        <li><a href="#">Research Repository</a></li>
+                    </ul>
                 </div>
-                
-                <div class="footer-section">
-                    <span class="footer-label">SOCIALS</span>
-                    <a href="#" class="footer-link">LinkedIn</a>
-                    <a href="#" class="footer-link">Institutional FB</a>
-                    <a href="#" class="footer-link">Twitter / X</a>
+
+                <div>
+                    <span class="footer-label">Institutional</span>
+                    <ul class="footer-link-list">
+                        <li><a href="#">Academic Calendar</a></li>
+                        <li><a href="#">Library Policy</a></li>
+                        <li><a href="#">Staff Gateway</a></li>
+                        <li><a href="#">Student Portal</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <span class="footer-label">Support Desk</span>
+                    <ul class="footer-link-list">
+                        <li><a href="mailto:library@cavendish.ac.zm"><i class="far fa-envelope me-2"></i> library@cavendish.ac.zm</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt me-2"></i> Great East Road, Lusaka</a></li>
+                        <li><a href="#"><i class="fas fa-phone me-2"></i> +260 971 000 000</a></li>
+                    </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div class="footer-contact">
-                    Great East Road, Lusaka<br>
-                    library@cavendish.ac.zm
-                </div>
-                <div class="footer-legal">
-                    &copy; 2025 CAVENDISH UNIVERSITY ZAMBIA. ALL RIGHTS RESERVED.
+                <div>&copy; 2025 CAVENDISH UNIVERSITY ZAMBIA. ALL RIGHTS RESERVED.</div>
+                <div class="d-none d-md-block">
+                    <a href="#" class="text-reset text-decoration-none me-4">Privacy Policy</a>
+                    <a href="#" class="text-reset text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>
@@ -570,66 +374,40 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Nav scroll effect
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
-            const nav = document.querySelector('.premium-nav');
-            if (window.scrollY > 30) {
-                nav.classList.add('scrolled');
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.style.padding = '12px 0';
+                nav.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
             } else {
-                nav.classList.remove('scrolled');
+                nav.style.padding = '20px 0';
+                nav.style.boxShadow = 'none';
             }
         });
 
-        // Mobile menu toggle
+        // Mobile Menu Logic
         const menuToggle = document.getElementById('menuToggle');
         const menuItems = document.getElementById('menuItems');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const body = document.body;
 
         menuToggle.addEventListener('click', () => {
             menuItems.classList.toggle('active');
-            menuOverlay.classList.toggle('active');
-            body.style.overflow = menuItems.classList.contains('active') ? 'hidden' : '';
-            
-            // Toggle icon
+            // Change icon based on state
             const icon = menuToggle.querySelector('i');
             if (menuItems.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
+                icon.className = 'fas fa-times';
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                icon.className = 'fas fa-bars';
             }
         });
 
-        // Close menu when clicking overlay
-        menuOverlay.addEventListener('click', () => {
-            menuItems.classList.remove('active');
-            menuOverlay.classList.remove('active');
-            body.style.overflow = '';
-            menuToggle.querySelector('i').classList.remove('fa-times');
-            menuToggle.querySelector('i').classList.add('fa-bars');
-        });
-
-        // Close menu when clicking a link (on mobile)
-        document.querySelectorAll('.menu-items .menu-link, .mobile-actions a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 992) {
-                    menuItems.classList.remove('active');
-                    menuOverlay.classList.remove('active');
-                    body.style.overflow = '';
-                    menuToggle.querySelector('i').classList.remove('fa-times');
-                    menuToggle.querySelector('i').classList.add('fa-bars');
-                }
-            });
-        });
-
-        // Prevent body scroll when menu is open on iOS
-        document.addEventListener('touchmove', function(e) {
-            if (menuItems.classList.contains('active')) {
-                e.preventDefault();
+        // Close menu when clicking outside (on mobile)
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !menuItems.contains(e.target) && menuItems.classList.contains('active')) {
+                menuItems.classList.remove('active');
+                menuToggle.querySelector('i').className = 'fas fa-bars';
             }
-        }, { passive: false });
+        });
     </script>
     {% block scripts %}{% endblock %}
 </body>
