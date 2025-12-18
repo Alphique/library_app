@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Cavendish Intellectual Hub{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,6 +15,10 @@
             --electric-blue: #0052cc;
             --glass-white: rgba(255, 255, 255, 0.03);
             --glass-edge: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -32,13 +36,13 @@
             top: 0;
             width: 100%;
             z-index: 2000;
-            padding: 20px 0;
+            padding: 15px 0;
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .premium-nav.scrolled {
-            padding: 12px 0;
-            background: rgba(0, 8, 20, 0.6);
+            padding: 8px 0;
+            background: rgba(0, 8, 20, 0.95);
             backdrop-filter: blur(25px) saturate(150%);
             -webkit-backdrop-filter: blur(25px) saturate(150%);
             border-bottom: 1px solid var(--glass-edge);
@@ -47,22 +51,35 @@
         .nav-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 40px;
+            padding: 0 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            margin-left: auto;
         }
 
         /* Branding with Glow */
         .brand-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             text-decoration: none;
+            z-index: 2001;
         }
 
         .brand-logo {
-            width: 50px;
+            width: 40px;
             height: auto;
             filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
             transition: transform 0.5s;
@@ -76,8 +93,8 @@
             display: block;
             color: #fff;
             font-weight: 800;
-            letter-spacing: 1px;
-            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
             text-transform: uppercase;
         }
 
@@ -85,14 +102,14 @@
             color: var(--accent-gold);
             font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
         }
 
         /* Menu Items */
         .menu-items {
             display: flex;
             align-items: center;
-            gap: 35px;
+            gap: 25px;
         }
 
         .menu-link {
@@ -131,19 +148,20 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .btn-wallet {
             background: var(--glass-white);
             border: 1px solid var(--glass-edge);
-            padding: 8px 18px;
+            padding: 6px 14px;
             border-radius: 100px;
             color: var(--accent-gold);
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-decoration: none;
             transition: 0.3s;
+            white-space: nowrap;
         }
 
         .btn-wallet:hover {
@@ -154,14 +172,15 @@
         .btn-auth {
             background: #fff;
             color: var(--deep-sapphire);
-            padding: 10px 24px;
+            padding: 8px 18px;
             border-radius: 100px;
             font-weight: 800;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             text-decoration: none;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             transition: 0.3s;
+            white-space: nowrap;
         }
 
         .btn-auth:hover {
@@ -169,33 +188,51 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
-        /* ====== MAIN VIEWPORT ====== */
-        .main-viewport {
-            padding-top: 100px;
-            min-height: calc(100vh - 400px);
+        /* Mobile Actions - Hidden on Desktop */
+        .mobile-actions {
+            display: none;
         }
 
-        /* ====== MINIMALIST FOOTER ====== */
+        /* ====== MAIN VIEWPORT ====== */
+        .main-viewport {
+            padding-top: 80px;
+            min-height: calc(100vh - 350px);
+        }
+
+        /* ====== BALANCED FOOTER DESIGN ====== */
         .premium-footer {
-            padding: 100px 0 50px;
-            background: linear-gradient(to bottom, transparent, #000);
+            padding: 80px 0 40px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
             border-top: 1px solid var(--glass-edge);
         }
 
         .footer-logo-large {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: rgba(255,255,255,0.05);
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             user-select: none;
+            word-break: break-word;
+            padding: 0 15px;
         }
 
+        /* Centered 3-column footer layout */
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+
+        /* Make all sections equal width */
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
         .footer-label {
@@ -204,30 +241,236 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: block;
+            width: 100%;
         }
 
         .footer-link {
             display: block;
-            color: #666;
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
             font-size: 0.9rem;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             transition: 0.3s;
+            padding: 5px 0;
         }
 
         .footer-link:hover {
             color: #fff;
+            transform: translateX(5px);
+        }
+
+        /* Footer contact/legal section */
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-contact {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .footer-legal {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        /* ====== MOBILE STYLES ====== */
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .menu-items {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100vh;
+                background: rgba(0, 8, 20, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 100px 30px 30px;
+                transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                z-index: 2000;
+                border-right: 1px solid var(--glass-edge);
+            }
+            
+            .menu-items.active {
+                left: 0;
+            }
+            
+            .menu-link {
+                font-size: 1rem;
+                padding: 12px 0;
+                width: 100%;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            
+            .nav-actions {
+                display: none;
+            }
+            
+            .mobile-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+                margin-top: 30px;
+            }
+            
+            .main-viewport {
+                padding-top: 70px;
+            }
+            
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            .brand-logo {
+                width: 35px;
+            }
+            
+            .premium-nav {
+                padding: 10px 0;
+            }
+            
+            /* Mobile footer adjustments */
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                max-width: 500px;
+            }
+            
+            .footer-section {
+                align-items: center;
+                text-align: center;
+            }
+            
+            .footer-link {
+                padding: 8px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid {
+                gap: 35px;
+            }
+            
+            .footer-logo-large {
+                font-size: 1.8rem;
+                margin-bottom: 40px;
+            }
+            
+            .premium-footer {
+                padding: 60px 0 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-container {
+                padding: 0 12px;
+            }
+            
+            .brand-text span {
+                font-size: 0.75rem;
+            }
+            
+            .brand-text small {
+                font-size: 0.65rem;
+            }
+            
+            .main-viewport {
+                padding-top: 65px;
+            }
+            
+            .container-fluid.px-5 {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+            
+            .footer-logo-large {
+                font-size: 1.5rem;
+                margin-bottom: 35px;
+            }
+            
+            .premium-footer {
+                padding: 50px 0 25px;
+            }
+            
+            .btn-auth {
+                padding: 10px 20px;
+                font-size: 0.8rem;
+            }
+            
+            .btn-wallet {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            
+            .footer-grid {
+                gap: 30px;
+            }
+        }
+
+        /* Mobile Menu Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Better touch targets for mobile */
+        .menu-link,
+        .btn-auth,
+        .btn-wallet,
+        .footer-link {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-link {
+            justify-content: flex-start;
         }
 
         @media (max-width: 992px) {
-            .menu-items { display: none; }
-            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-link {
+                justify-content: center;
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        .container-fluid {
+            overflow-x: hidden;
         }
     </style>
 </head>
 <body>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
 
     <nav class="premium-nav">
         <div class="nav-container">
@@ -239,13 +482,31 @@
                 </div>
             </a>
 
-            <div class="menu-items">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="menu-items" id="menuItems">
                 <a href="{{ url_for('main.index') }}" class="menu-link">Archives</a>
                 <a href="{{ url_for('books.catalog') }}" class="menu-link">Catalog</a>
                 <a href="#" class="menu-link">Research</a>
                 <a href="#" class="menu-link">E-Journals</a>
+                
+                <!-- Mobile Actions - Only visible on mobile -->
+                <div class="mobile-actions">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('payments.wallet') }}" class="btn-wallet">
+                            CREDIT: ${{ "%.2f"|format(current_user.wallet.balance if current_user.wallet else 0) }}
+                        </a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn-auth" style="background: #ff4d4d; color: white;">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="menu-link">Sign In</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn-auth">Join Hub</a>
+                    {% endif %}
+                </div>
             </div>
 
+            <!-- Desktop Actions - Only visible on desktop -->
             <div class="nav-actions">
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('payments.wallet') }}" class="btn-wallet">
@@ -261,7 +522,7 @@
     </nav>
 
     <main class="main-viewport">
-        <div class="container-fluid px-5">
+        <div class="container-fluid px-lg-5 px-3">
             {% include 'includes/_messages.html' %}
             {% block content %}{% endblock %}
         </div>
@@ -270,39 +531,46 @@
     <footer class="premium-footer">
         <div class="container">
             <div class="footer-logo-large">CAVENDISH UNIVERSITY</div>
+            
+            <!-- Centered 3-column balanced layout -->
             <div class="footer-grid">
-                <div>
-                    <span class="footer-label">Navigation</span>
+                <div class="footer-section">
+                    <span class="footer-label">NAVIGATION</span>
                     <a href="#" class="footer-link">Digital Archive</a>
                     <a href="#" class="footer-link">Lending Policy</a>
                     <a href="#" class="footer-link">Curated Collections</a>
                 </div>
-                <div>
-                    <span class="footer-label">Support</span>
+                
+                <div class="footer-section">
+                    <span class="footer-label">SUPPORT</span>
                     <a href="#" class="footer-link">Research Desk</a>
                     <a href="#" class="footer-link">IT Assistance</a>
                     <a href="#" class="footer-link">Booking</a>
                 </div>
-                <div>
-                    <span class="footer-label">Socials</span>
+                
+                <div class="footer-section">
+                    <span class="footer-label">SOCIALS</span>
                     <a href="#" class="footer-link">LinkedIn</a>
                     <a href="#" class="footer-link">Institutional FB</a>
                     <a href="#" class="footer-link">Twitter / X</a>
                 </div>
-                <div>
-                    <span class="footer-label">Contact</span>
-                    <p class="footer-link">Great East Road, Lusaka</p>
-                    <p class="footer-link">library@cavendish.ac.zm</p>
-                </div>
             </div>
-            <div class="text-center" style="font-size: 0.7rem; color: #333; letter-spacing: 1px;">
-                &copy; 2025 CAVENDISH UNIVERSITY ZAMBIA. ALL RIGHTS RESERVED.
+            
+            <div class="footer-bottom">
+                <div class="footer-contact">
+                    Great East Road, Lusaka<br>
+                    library@cavendish.ac.zm
+                </div>
+                <div class="footer-legal">
+                    &copy; 2025 CAVENDISH UNIVERSITY ZAMBIA. ALL RIGHTS RESERVED.
+                </div>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Nav scroll effect
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.premium-nav');
             if (window.scrollY > 30) {
@@ -311,6 +579,57 @@
                 nav.classList.remove('scrolled');
             }
         });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const menuItems = document.getElementById('menuItems');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const body = document.body;
+
+        menuToggle.addEventListener('click', () => {
+            menuItems.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            body.style.overflow = menuItems.classList.contains('active') ? 'hidden' : '';
+            
+            // Toggle icon
+            const icon = menuToggle.querySelector('i');
+            if (menuItems.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close menu when clicking overlay
+        menuOverlay.addEventListener('click', () => {
+            menuItems.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            body.style.overflow = '';
+            menuToggle.querySelector('i').classList.remove('fa-times');
+            menuToggle.querySelector('i').classList.add('fa-bars');
+        });
+
+        // Close menu when clicking a link (on mobile)
+        document.querySelectorAll('.menu-items .menu-link, .mobile-actions a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    menuItems.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    body.style.overflow = '';
+                    menuToggle.querySelector('i').classList.remove('fa-times');
+                    menuToggle.querySelector('i').classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Prevent body scroll when menu is open on iOS
+        document.addEventListener('touchmove', function(e) {
+            if (menuItems.classList.contains('active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
     {% block scripts %}{% endblock %}
 </body>
